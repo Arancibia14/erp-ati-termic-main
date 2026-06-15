@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="CU58-corregido">
+    <mxGraphModel dx="1645" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+
+        <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU58: Registrando Recepción de Insumos en Obra" vertex="1">
+          <mxGeometry height="25" width="1300" x="50" y="10" as="geometry" />
+        </mxCell>
+
+        <mxCell id="h_a"   parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="SupervisorObra" vertex="1"><mxGeometry height="55" width="50" x="30" y="50" as="geometry"/></mxCell>
+        <mxCell id="h_v"   parent="1" style="html=1;whiteSpace=wrap;" value="V_Recepcion"        vertex="1"><mxGeometry x="155" y="90" width="120" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_c"   parent="1" style="html=1;whiteSpace=wrap;" value="C_Recepcion"        vertex="1"><mxGeometry x="345" y="90" width="120" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_db"  parent="1" style="html=1;whiteSpace=wrap;" value="C_MySQL"             vertex="1"><mxGeometry x="535" y="90" width="110" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_geo" parent="1" style="html=1;whiteSpace=wrap;" value="WebGeolocationAPI"  vertex="1"><mxGeometry x="715" y="90" width="145" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_p"   parent="1" style="html=1;whiteSpace=wrap;" value="Proyecto"            vertex="1"><mxGeometry x="930" y="90" width="110" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_gd"  parent="1" style="html=1;whiteSpace=wrap;" value="GuiaDespacho"        vertex="1"><mxGeometry x="1110" y="90" width="120" height="50" as="geometry"/></mxCell>
+
+        <mxCell id="ll_a"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="55"   y="105" width="10" height="680" as="geometry"/></mxCell>
+        <mxCell id="ll_v"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="210"  y="140" width="10" height="650" as="geometry"/></mxCell>
+        <mxCell id="ll_c"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="400"  y="140" width="10" height="650" as="geometry"/></mxCell>
+        <mxCell id="ll_db"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="590"  y="140" width="10" height="650" as="geometry"/></mxCell>
+        <mxCell id="ll_geo" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="787"  y="140" width="10" height="650" as="geometry"/></mxCell>
+        <mxCell id="ll_p"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="985"  y="140" width="10" height="650" as="geometry"/></mxCell>
+        <mxCell id="ll_gd"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1170" y="140" width="10" height="650" as="geometry"/></mxCell>
+
+        <mxCell id="m1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="180" as="sourcePoint"/><mxPoint x="210" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m1l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="1: presionarConfirmarRecepcionFinal()" vertex="1" connectable="0" parent="m1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m2" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="220" y="210" as="sourcePoint"/><mxPoint x="400" y="210" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m2l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="2: solicitarPosicionGPS()" vertex="1" connectable="0" parent="m2"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m3" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="410" y="240" as="sourcePoint"/><mxPoint x="590" y="240" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m3l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="3: requestCurrentPosition()" vertex="1" connectable="0" parent="m3"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m4" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="600" y="270" as="sourcePoint"/><mxPoint x="787" y="270" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m4l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="4: getCurrentPosition()" vertex="1" connectable="0" parent="m4"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m5" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="787" y="305" as="sourcePoint"/><mxPoint x="600" y="305" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m5l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="5: return latitud, longitud actuales" vertex="1" connectable="0" parent="m5"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m6" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="410" y="338" as="sourcePoint"/><mxPoint x="590" y="338" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m6l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="6: QUERY()" vertex="1" connectable="0" parent="m6"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m7" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="600" y="368" as="sourcePoint"/><mxPoint x="985" y="368" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m7l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="7: SELECT latitud_obra, longitud_obra FROM Proyecto WHERE proyecto_codigo" vertex="1" connectable="0" parent="m7"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m8" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="985" y="403" as="sourcePoint"/><mxPoint x="600" y="403" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m8l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="8: return latitud_obra, longitud_obra" vertex="1" connectable="0" parent="m8"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m9" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="590" y="435" as="sourcePoint"/><mxPoint x="410" y="435" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m9l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="9: return coordenadas obra" vertex="1" connectable="0" parent="m9"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m10" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="220" y="468" as="sourcePoint"/><mxPoint x="400" y="468" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m10l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="10: calcularDistancia(coords_supervisor, coords_obra)" vertex="1" connectable="0" parent="m10"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[supervisor fuera de rango → emitir alerta de recepción fuera del radio]&#xa;[dentro de rango → continuar]" vertex="1">
+          <mxGeometry height="34" width="360" x="418" y="476" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m11" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="400" y="528" as="sourcePoint"/><mxPoint x="220" y="528" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m11l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="11: habilitarFinalizarRegistro()" vertex="1" connectable="0" parent="m11"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m12" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="563" as="sourcePoint"/><mxPoint x="210" y="563" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m12l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="12: confirmarRecepcionFinal()" vertex="1" connectable="0" parent="m12"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m13" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="220" y="593" as="sourcePoint"/><mxPoint x="400" y="593" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m13l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="13: actualizarGuiaDespacho(guia_despacho_id)" vertex="1" connectable="0" parent="m13"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m14" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="410" y="623" as="sourcePoint"/><mxPoint x="590" y="623" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m14l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="14: QUERY()" vertex="1" connectable="0" parent="m14"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m15" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="600" y="653" as="sourcePoint"/><mxPoint x="1170" y="653" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m15l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="15: UPDATE GuiaDespacho SET estado = 'Recibido', ubicacion_verificada = true" vertex="1" connectable="0" parent="m15"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m16" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1170" y="688" as="sourcePoint"/><mxPoint x="600" y="688" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m16l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="16: return confirmacion actualizacion" vertex="1" connectable="0" parent="m16"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m17" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="590" y="718" as="sourcePoint"/><mxPoint x="410" y="718" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m17l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="17: return confirmacion" vertex="1" connectable="0" parent="m17"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m18" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="400" y="678" as="sourcePoint"/><mxPoint x="220" y="678" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m18l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="18: mostrarMensaje(&quot;Recepción confirmada. Ubicación Verificada&quot;)" vertex="1" connectable="0" parent="m18"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m19" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="210" y="750" as="sourcePoint"/><mxPoint x="65" y="750" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m19l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="19: &quot;Recepción confirmada. Ubicación Verificada&quot;" vertex="1" connectable="0" parent="m19"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

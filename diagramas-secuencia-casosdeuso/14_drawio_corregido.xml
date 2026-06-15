@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="CU14-corregido">
+    <mxGraphModel dx="1645" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU14: Registrando Bitácora Técnica Diaria" vertex="1">
+          <mxGeometry height="25" width="1300" x="50" y="10" as="geometry" />
+        </mxCell>
+
+        <!-- CABECERAS -->
+        <mxCell id="h_a"  parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="SupervisorObra" vertex="1">
+          <mxGeometry height="55" width="40" x="40" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h_v"  parent="1" style="html=1;whiteSpace=wrap;" value="V_Bitacora" vertex="1">
+          <mxGeometry x="160" y="90" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h_c"  parent="1" style="html=1;whiteSpace=wrap;" value="C_Bitacora" vertex="1">
+          <mxGeometry x="340" y="90" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h_db" parent="1" style="html=1;whiteSpace=wrap;" value="C_MySQL" vertex="1">
+          <mxGeometry x="520" y="90" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h_p"  parent="1" style="html=1;whiteSpace=wrap;" value="Proyecto" vertex="1">
+          <mxGeometry x="710" y="90" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h_b"  parent="1" style="html=1;whiteSpace=wrap;" value="BitacoraDiaria" vertex="1">
+          <mxGeometry x="900" y="90" width="110" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- LÍNEAS DE VIDA (umlLifeline nativo) -->
+        <mxCell id="ll_a"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry x="60" y="105" width="10" height="500" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_v"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry x="210" y="140" width="10" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_c"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry x="390" y="140" width="10" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_db" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry x="570" y="140" width="10" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_p"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry x="760" y="140" width="10" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_b"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry x="950" y="140" width="10" height="480" as="geometry" />
+        </mxCell>
+
+        <!-- MENSAJES -->
+        <!-- 1: Actor -> V -->
+        <mxCell id="m1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="70" y="180" as="sourcePoint"/><mxPoint x="210" y="180" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m1l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="1: seleccionarProyecto()" vertex="1" connectable="0" parent="m1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 2: V -> C -->
+        <mxCell id="m2" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="220" y="210" as="sourcePoint"/><mxPoint x="390" y="210" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m2l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="2: getProyecto(usuario_rut)" vertex="1" connectable="0" parent="m2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 3: C -> C_MySQL -->
+        <mxCell id="m3" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="400" y="240" as="sourcePoint"/><mxPoint x="570" y="240" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m3l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="3: QUERY()" vertex="1" connectable="0" parent="m3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 4: C_MySQL -> Proyecto -->
+        <mxCell id="m4" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="580" y="270" as="sourcePoint"/><mxPoint x="760" y="270" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m4l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="4: SELECT * FROM Proyecto WHERE usuario_rut" vertex="1" connectable="0" parent="m4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 5: return Proyecto -> C_MySQL -->
+        <mxCell id="m5" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="760" y="300" as="sourcePoint"/><mxPoint x="580" y="300" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m5l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="5: return proyecto_codigo, nombre_obra" vertex="1" connectable="0" parent="m5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 6: return C_MySQL -> C -->
+        <mxCell id="m6" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="570" y="330" as="sourcePoint"/><mxPoint x="400" y="330" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m6l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="6: return resultado" vertex="1" connectable="0" parent="m6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 7: return C -> V -->
+        <mxCell id="m7" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="390" y="360" as="sourcePoint"/><mxPoint x="220" y="360" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m7l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="7: desplegarFormulario(fecha_actual)" vertex="1" connectable="0" parent="m7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 8: Actor -> V -->
+        <mxCell id="m8" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="70" y="400" as="sourcePoint"/><mxPoint x="210" y="400" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m8l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="8: redactarYConfirmar(descripcion_actividades)" vertex="1" connectable="0" parent="m8">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 9: V -> C -->
+        <mxCell id="m9" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="220" y="430" as="sourcePoint"/><mxPoint x="390" y="430" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m9l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="9: validarTexto(texto)" vertex="1" connectable="0" parent="m9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[texto insuficiente → solicitar más información]&#xa;[texto suficiente → continuar]" vertex="1">
+          <mxGeometry height="34" width="300" x="408" y="438" as="geometry" />
+        </mxCell>
+
+        <!-- 10: C -> C_MySQL -->
+        <mxCell id="m10" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="400" y="490" as="sourcePoint"/><mxPoint x="570" y="490" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m10l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="10: QUERY()" vertex="1" connectable="0" parent="m10">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 11: C_MySQL -> BitacoraDiaria -->
+        <mxCell id="m11" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="580" y="520" as="sourcePoint"/><mxPoint x="950" y="520" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m11l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="11: INSERT INTO BitacoraDiaria(descripcion, fecha, usuario_rut, proyecto_codigo)" vertex="1" connectable="0" parent="m11">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="nota2" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[error de red → guardar borrador local]&#xa;[conexión OK → persistir en BD]" vertex="1">
+          <mxGeometry height="34" width="280" x="588" y="528" as="geometry" />
+        </mxCell>
+
+        <!-- 12: return BitacoraDiaria -> C_MySQL -->
+        <mxCell id="m12" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="950" y="580" as="sourcePoint"/><mxPoint x="580" y="580" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m12l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="12: return bitacora_diaria_id" vertex="1" connectable="0" parent="m12">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 13: return C_MySQL -> C -->
+        <mxCell id="m13" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="570" y="610" as="sourcePoint"/><mxPoint x="400" y="610" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m13l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="13: return bitacora_diaria_id" vertex="1" connectable="0" parent="m13">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 14: return C -> V -->
+        <mxCell id="m14" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="390" y="545" as="sourcePoint"/><mxPoint x="220" y="545" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m14l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="14: mostrarConfirmacion(&quot;Bitácora registrada exitosamente&quot;)" vertex="1" connectable="0" parent="m14">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 15: return V -> Actor -->
+        <mxCell id="m15" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="210" y="575" as="sourcePoint"/><mxPoint x="70" y="575" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m15l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="15: &quot;Bitácora registrada exitosamente&quot;" vertex="1" connectable="0" parent="m15">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
