@@ -323,6 +323,7 @@ sequelize.authenticate()
       "ALTER TABLE TRABAJADOR ADD COLUMN trabajador_activo TINYINT(1) NULL DEFAULT 1",
       "ALTER TABLE TRABAJADOR MODIFY trabajador_correo VARCHAR(150) NULL",
       "ALTER TABLE TRABAJADOR MODIFY trabajador_telefono VARCHAR(20) NULL",
+      "ALTER TABLE TRABAJADOR MODIFY proyecto_codigo_correlativo VARCHAR(50) NULL",
     ];
     for (const sql of trabMigs) {
       try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
