@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getProyectos, getTrabajadoresDelProyecto, getSueldosYLeyes, getResumenMensual } = require('../controllers/consolidacionController');
+const { getProyectos, getTrabajadoresDelProyecto, getSueldosYLeyes, getResumenMensual } = require('../controllers/manoObraController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU42 - Consolidando Costo de Mano de Obra Mensual

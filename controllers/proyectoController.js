@@ -4,9 +4,6 @@ const Proveedor = require('../models/Proveedor');
 const EstadoProyecto = require('../models/EstadoProyecto');
 const LogAuditoria = require('../models/LogAuditoria');
 
-// CU15 - C_Proyecto: Asociando Subcontratista a Proyecto
-
-// Lista todos los proveedores disponibles para vincular como subcontratista
 async function getProveedores(req, res) {
   try {
     const proveedores = await Proveedor.findAll();
@@ -17,7 +14,6 @@ async function getProveedores(req, res) {
   }
 }
 
-// Retorna el proyecto con el proveedor/subcontratista actualmente vinculado (si tiene uno)
 async function getEntidadesAsociadas(req, res) {
   try {
     const { codigo } = req.params;
@@ -40,7 +36,6 @@ async function getEntidadesAsociadas(req, res) {
   }
 }
 
-// Vincula un proveedor (subcontratista) al proyecto actualizando el campo proveedor_rut en PROYECTO
 async function vincularProveedor(req, res) {
   try {
     const { codigo } = req.params;

@@ -1,11 +1,8 @@
-// Punto de entrada del backend ERP ATI Termic
-// Carga variables de entorno, conecta a MySQL, aplica migraciones y levanta el servidor Express
-
-require('dotenv').config(); // carga las variables del archivo .env (DB_NAME, JWT_SECRET, PORT, etc.)
+require('dotenv').config();
 const express = require('express');
-const cors = require('cors');   // permite que el frontend (puerto 5173) llame al backend (puerto 3000)
+const cors = require('cors');
 const path = require('path');
-const sequelize = require('./config/database'); // instancia de conexión Sequelize a MySQL
+const sequelize = require('./config/database');
 
 // Models
 const Usuario = require('./models/Usuario');
@@ -34,6 +31,16 @@ const BitacoraComunicacion = require('./models/BitacoraComunicacion');
 const ControlCambioPpto = require('./models/ControlCambioPpto');
 const DocumentoLegal = require('./models/DocumentoLegal');
 const EquipoHVAC = require('./models/EquipoHVAC');
+const Material = require('./models/Material');
+const CertificadoLaboral = require('./models/CertificadoLaboral');
+const LiquidacionSueldo = require('./models/LiquidacionSueldo');
+const EntregaEpp = require('./models/EntregaEpp');
+const ModeloHvac = require('./models/ModeloHvac');
+const DocumentoEquipo = require('./models/DocumentoEquipo');
+const Herramienta = require('./models/Herramienta');
+const AsignacionHerramienta = require('./models/AsignacionHerramienta');
+const DevolucionObra = require('./models/DevolucionObra');
+const CertificadoCalidad = require('./models/CertificadoCalidad');
 
 // Associations
 EstadoProyecto.hasMany(Proyecto, { foreignKey: 'estado_proyecto_id' });
@@ -78,34 +85,71 @@ DocumentoLegal.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' }
 Proyecto.hasMany(EquipoHVAC, { foreignKey: 'proyecto_codigo_correlativo' });
 EquipoHVAC.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
 
+Especialidad.hasMany(Trabajador, { foreignKey: 'especialidad_id' });
+Trabajador.belongsTo(Especialidad, { foreignKey: 'especialidad_id' });
+
+Proveedor.hasMany(GuiaDespacho, { foreignKey: 'proveedor_rut' });
+GuiaDespacho.belongsTo(Proveedor, { foreignKey: 'proveedor_rut' });
+
+Material.hasMany(GuiaDespacho, { foreignKey: 'material_id' });
+GuiaDespacho.belongsTo(Material, { foreignKey: 'material_id' });
+
+Material.hasMany(DetalleOrdenCompra, { foreignKey: 'material_id' });
+DetalleOrdenCompra.belongsTo(Material, { foreignKey: 'material_id' });
+
+Proveedor.hasMany(Material, { foreignKey: 'material_proveedor_rut' });
+Material.belongsTo(Proveedor, { foreignKey: 'material_proveedor_rut' });
+
+Material.hasMany(SolicitudMaterial, { foreignKey: 'material_id' });
+SolicitudMaterial.belongsTo(Material, { foreignKey: 'material_id' });
+
+Trabajador.hasMany(EntregaEpp, { foreignKey: 'trabajador_rut' });
+EntregaEpp.belongsTo(Trabajador, { foreignKey: 'trabajador_rut' });
+
+Material.hasMany(EntregaEpp, { foreignKey: 'material_id' });
+EntregaEpp.belongsTo(Material, { foreignKey: 'material_id' });
+
 const app = express();
 
-app.use(cors());                              // habilita CORS para todas las rutas
-app.use(express.json());                      // parsea cuerpos JSON en las peticiones POST/PUT
-app.use(express.urlencoded({ extended: true })); // parsea formularios HTML
-// Sirve los archivos subidos (fotos, PDFs) como recursos estáticos accesibles por URL
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Registro de rutas: cada módulo del ERP tiene su propio router
+// Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/bitacora', require('./routes/bitacora'));
 app.use('/api/caja-chica', require('./routes/cajaChica'));
-app.use('/api/sso', require('./routes/incidente'));
+app.use('/api/sso', require('./routes/sso'));
 app.use('/api/evidencia', require('./routes/evidencia'));
 app.use('/api/proyecto', require('./routes/proyecto'));
 app.use('/api/portafolio', require('./routes/portafolio'));
 app.use('/api/orden-compra', require('./routes/ordenCompra'));
 app.use('/api/factura', require('./routes/factura'));
-app.use('/api/control-costos', require('./routes/costos'));
-app.use('/api/mano-obra', require('./routes/consolidacion'));
+app.use('/api/control-costos', require('./routes/controlCostos'));
+app.use('/api/mano-obra', require('./routes/manoObra'));
 app.use('/api/comunicacion', require('./routes/comunicacion'));
 app.use('/api/documentos', require('./routes/documentos'));
 app.use('/api/poliza', require('./routes/poliza'));
 app.use('/api/certificado', require('./routes/certificado'));
 app.use('/api/presupuesto', require('./routes/presupuesto'));
 app.use('/api/recepcion', require('./routes/recepcion'));
-app.use('/api/validacion', require('./routes/validacion'));
 app.use('/api/setup',    require('./routes/setup'));
+app.use('/api/material', require('./routes/material'));
+app.use('/api/solicitud-material', require('./routes/solicitudMaterial'));
+app.use('/api/trabajador', require('./routes/trabajador'));
+app.use('/api/guia-despacho', require('./routes/guiaDespacho'));
+app.use('/api/certificado-laboral', require('./routes/certificadoLaboral'));
+app.use('/api/liquidacion', require('./routes/liquidacion'));
+app.use('/api/anexo-contrato', require('./routes/anexoContrato'));
+app.use('/api/entrega-epp', require('./routes/entregaEpp'));
+app.use('/api/examen-medico', require('./routes/examenMedico'));
+app.use('/api/equipo', require('./routes/equipo'));
+app.use('/api/herramienta', require('./routes/herramienta'));
+app.use('/api/transito', require('./routes/transito'));
+app.use('/api/certificado-calidad', require('./routes/certificadoCalidad'));
+app.use('/api/devolucion-obra', require('./routes/devolucionObra'));
+app.use('/api/usuario', require('./routes/usuario'));
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok', timestamp: new Date() } });
@@ -115,15 +159,13 @@ const PORT = process.env.PORT || 3000;
 
 const { DataTypes } = require('sequelize');
 
-// Secuencia de arranque: 1) autenticar conexión → 2) sincronizar modelos → 3) aplicar migraciones → 4) iniciar servidor
 sequelize.authenticate()
   .then(() => {
     console.log('Conexion a MySQL establecida.');
-    // sync({ alter: false }): crea las tablas si no existen pero NO modifica columnas ya existentes
     return sequelize.sync({ alter: false });
   })
   .then(async () => {
-    // Migraciones puntuales: agregan columnas nuevas que el modelo requiere sin borrar datos existentes
+    // Migraciones puntuales: agregar columnas que faltan sin borrar datos
     const qi = sequelize.queryInterface;
     const migraciones = [
       { tabla: 'PROYECTO',   columna: 'proveedor_rut',              tipo: { type: DataTypes.STRING(20),  allowNull: true } },
@@ -275,15 +317,69 @@ sequelize.authenticate()
         console.log(`SQL OK: ${sql.substring(0, 60)}`);
       } catch (e) { console.log(`SQL skip: ${e.message.substring(0, 80)}`); }
     }
+
+    const trabMigs = [
+      "ALTER TABLE TRABAJADOR ADD COLUMN trabajador_apellidos VARCHAR(150) NULL",
+      "ALTER TABLE TRABAJADOR ADD COLUMN trabajador_activo TINYINT(1) NULL DEFAULT 1",
+      "ALTER TABLE TRABAJADOR MODIFY trabajador_correo VARCHAR(150) NULL",
+      "ALTER TABLE TRABAJADOR MODIFY trabajador_telefono VARCHAR(20) NULL",
+    ];
+    for (const sql of trabMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
+    }
+
+    const guiaMigs = [
+      "ALTER TABLE GUIA_DESPACHO ADD COLUMN proveedor_rut VARCHAR(20) NULL",
+      "ALTER TABLE GUIA_DESPACHO ADD COLUMN material_id INT NULL",
+      "ALTER TABLE GUIA_DESPACHO ADD COLUMN guia_despacho_cantidad_recibida INT NULL",
+      "ALTER TABLE GUIA_DESPACHO MODIFY orden_compra_id INT NULL",
+    ];
+    for (const sql of guiaMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
+    }
+
+    const docMaterialMigs = [
+      "ALTER TABLE DETALLE_ORDEN_COMPRA ADD COLUMN material_id INT NULL",
+    ];
+    for (const sql of docMaterialMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
+    }
+
+    const materialProveedorMigs = [
+      "ALTER TABLE MATERIAL ADD COLUMN material_proveedor_rut VARCHAR(20) NULL",
+      "ALTER TABLE SOLICITUD_MATERIAL ADD COLUMN material_id INT NULL",
+    ];
+    for (const sql of materialProveedorMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
+    }
+
+    // CU23 / CU24 - Firma digital y comprobante de entrega de EPP
+    const eppMigs = [
+      "ALTER TABLE ENTREGA_EPP ADD COLUMN entrega_epp_lote VARCHAR(50) NULL",
+      "ALTER TABLE ENTREGA_EPP ADD COLUMN entrega_epp_firma LONGTEXT NULL",
+      "ALTER TABLE ENTREGA_EPP ADD COLUMN entrega_epp_fecha_hora_validacion DATETIME NULL",
+      "ALTER TABLE ENTREGA_EPP ADD COLUMN entrega_epp_url_comprobante TEXT NULL",
+      "ALTER TABLE DOCUMENTO_LEGAL MODIFY proyecto_codigo_correlativo VARCHAR(50) NULL",
+    ];
+    for (const sql of eppMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
+    }
+
+    // CU NUEVO 4 (extensión CU32) - rebaje de costo por reingreso de materiales sobrantes
+    const devolucionMigs = [
+      "ALTER TABLE DEVOLUCION_OBRA ADD COLUMN devolucion_obra_precio_unitario DECIMAL(15,2) NULL DEFAULT 0",
+      "ALTER TABLE DEVOLUCION_OBRA ADD COLUMN devolucion_obra_monto_rebajado DECIMAL(15,2) NULL DEFAULT 0",
+    ];
+    for (const sql of devolucionMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
+    }
   })
   .then(() => {
-    // Solo levanta el servidor si la conexión y las migraciones fueron exitosas
     app.listen(PORT, () => {
       console.log(`Backend ERP ATI Termic corriendo en http://localhost:${PORT}`);
     });
   })
   .catch(err => {
-    // Si MySQL no está disponible el proceso termina con código de error 1
     console.error('Error al conectar a la base de datos:', err.message);
     process.exit(1);
   });

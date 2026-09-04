@@ -3,15 +3,10 @@ const OrdenCompra = require('../models/OrdenCompra');
 const Proyecto = require('../models/Proyecto');
 const LogAuditoria = require('../models/LogAuditoria');
 
-// CU58 - C_Recepcion: Registrando Recepción de Insumos en Obra
-// La recepción se valida geográficamente: el supervisor debe estar físicamente en la obra
+const RADIO_MAXIMO_METROS = 5000;
 
-const RADIO_MAXIMO_METROS = 5000; // radio de tolerancia GPS: 5 km desde el punto del proyecto
-
-// Fórmula de Haversine: calcula la distancia real en metros entre dos coordenadas GPS
-// Tiene en cuenta la curvatura de la Tierra usando trigonometría esférica
 function calcularDistancia(lat1, lon1, lat2, lon2) {
-  const R = 6371000; // radio de la Tierra en metros
+  const R = 6371000;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -23,11 +18,10 @@ function calcularDistancia(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Retorna las guías de despacho que todavía no han sido confirmadas en terreno
 async function getGuiasPendientes(req, res) {
   try {
     const guias = await GuiaDespacho.findAll({
-      where: { guia_despacho_estado: 'Pendiente' },
+      where: { guia_despacho_estado: 'En Tránsito' },
       include: [{
         model: OrdenCompra,
         attributes: ['proyecto_codigo_correlativo'],
@@ -41,8 +35,6 @@ async function getGuiasPendientes(req, res) {
   }
 }
 
-// Confirma la recepción de una guía usando las coordenadas GPS del supervisor
-// Si la distancia al proyecto supera RADIO_MAXIMO_METROS, igual registra pero marca como "fuera de rango"
 async function confirmarRecepcion(req, res) {
   try {
     const { id } = req.params;

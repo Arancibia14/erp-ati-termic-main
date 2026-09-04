@@ -2,9 +2,6 @@ const Proyecto = require('../models/Proyecto');
 const ControlCambioPpto = require('../models/ControlCambioPpto');
 const LogAuditoria = require('../models/LogAuditoria');
 
-// CU54 - C_Presupuesto: Registrando Control de Cambios Presupuestarios
-
-// Retorna el presupuesto actual del proyecto junto con el historial completo de modificaciones
 async function getPresupuestoActual(req, res) {
   try {
     const { codigo } = req.params;
@@ -28,7 +25,6 @@ async function getPresupuestoActual(req, res) {
   }
 }
 
-// Modifica el presupuesto del proyecto y guarda un registro del cambio con motivo y montos anterior/nuevo
 async function registrarCambioPpto(req, res) {
   try {
     const { codigo } = req.params;

@@ -20,7 +20,7 @@ export default function ValidarEvidencias() {
   const cargar = async () => {
     setLoading(true);
     try {
-      const r = await api.get('/validacion/pendientes');
+      const r = await api.get('/evidencia/pendientes');
       setEvidencias(r.data.data);
     } catch (err) {
       addToast(err.response?.data?.error || 'Error al cargar evidencias', 'error');
@@ -34,7 +34,7 @@ export default function ValidarEvidencias() {
   const validar = async (id, estado, motivo) => {
     setProcesando(id);
     try {
-      await api.patch(`/validacion/${id}/validar`, { estado, comentario: motivo });
+      await api.patch(`/evidencia/${id}/validar`, { estado, comentario: motivo });
       const label = estado === 'aprobado' ? 'aprobada' : estado === 'rechazado' ? 'rechazada' : 'marcada para re-captura';
       addToast(`Evidencia ${label}`, 'success');
       setEvidencias(prev => prev.filter(e => e.evidencia_fotografica_nro !== id));

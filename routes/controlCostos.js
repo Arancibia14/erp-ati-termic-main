@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getProyectosConPresupuesto, getGastosReales, getGastosPorMes, getUmbralDesviacion } = require('../controllers/costosController');
+const { getProyectosConPresupuesto, getGastosReales, getGastosPorMes, getUmbralDesviacion } = require('../controllers/controlCostosController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 // CU41 - Graficando Desviación de Costos

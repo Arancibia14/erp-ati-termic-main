@@ -17,8 +17,6 @@ const storage = multer.diskStorage({
   }
 });
 
-// CU55 - C_Poliza: Gestionando Pólizas de Seguros por Faena
-
 const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 },
@@ -31,8 +29,6 @@ const upload = multer({
   }
 });
 
-// Registra la póliza de seguro de un trabajador para un proyecto específico
-// Valida que no exista ya una póliza vigente para el mismo par trabajador-proyecto
 async function subirPoliza(req, res) {
   try {
     const { trabajador_rut, proyecto_codigo_correlativo, fecha_vencimiento } = req.body;

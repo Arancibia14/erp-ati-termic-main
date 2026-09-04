@@ -4,9 +4,6 @@ const EstadoProyecto = require('../models/EstadoProyecto');
 const Trabajador = require('../models/Trabajador');
 const ContratoLaboral = require('../models/ContratoLaboral');
 
-// CU42 - C_Consolidacion: Consolidando Costo de Mano de Obra Mensual
-
-// Retorna todos los proyectos para el selector del módulo
 async function getProyectos(req, res) {
   try {
     const proyectos = await Proyecto.findAll({
@@ -19,7 +16,6 @@ async function getProyectos(req, res) {
   }
 }
 
-// Retorna los trabajadores asignados a un proyecto específico
 async function getTrabajadoresDelProyecto(req, res) {
   try {
     const { codigo } = req.params;
@@ -40,7 +36,6 @@ async function getTrabajadoresDelProyecto(req, res) {
   }
 }
 
-// Retorna el detalle de contratos y costo total de un trabajador (sueldo + leyes sociales)
 async function getSueldosYLeyes(req, res) {
   try {
     const { rut } = req.params;
@@ -66,8 +61,6 @@ async function getSueldosYLeyes(req, res) {
   }
 }
 
-// Consolida el costo total de mano de obra del proyecto para un mes/año específico
-// Cruza trabajadores del proyecto con sus contratos activos en ese período
 async function getResumenMensual(req, res) {
   try {
     const { codigo } = req.params;
@@ -80,16 +73,18 @@ async function getResumenMensual(req, res) {
     const lastDay = new Date(y, m, 0).getDate();
     const finMes = `${y}-${String(m).padStart(2, '0')}-${lastDay}`;
 
+    // Busca trabajadores asignados al proyecto
     const trabajadoresDelProyecto = await Trabajador.findAll({
       where: { proyecto_codigo_correlativo: codigo }
     });
 
     if (trabajadoresDelProyecto.length === 0) {
-      return res.json({ success: true, data: { trabajadores: [], total_mes: 0, periodo: `${String(m).padStart(2, '00')}/${y}` } });
+      return res.json({ success: true, data: { trabajadores: [], total_mes: 0, periodo: `${String(m).padStart(2, '0')}/${y}` } });
     }
 
     const ruts = trabajadoresDelProyecto.map(t => t.trabajador_rut);
 
+    // Busca contratos activos en el período para esos trabajadores
     const contratos = await ContratoLaboral.findAll({
       where: {
         trabajador_rut: { [Op.in]: ruts },

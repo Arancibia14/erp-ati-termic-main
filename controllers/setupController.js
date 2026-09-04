@@ -11,11 +11,6 @@ const GuiaDespacho     = require('../models/GuiaDespacho');
 const ContratoLaboral  = require('../models/ContratoLaboral');
 const LogAuditoria     = require('../models/LogAuditoria');
 
-// Controlador de Configuración del Sistema (solo administradores)
-// Centraliza la creación de todas las entidades maestras del ERP:
-// proyectos, proveedores, trabajadores, hitos, solicitudes, guías, contratos y coordenadas GPS
-
-// Función auxiliar: registra cada acción administrativa en el log de auditoría
 const audit = async (accion, modulo, rut) => {
   try {
     await LogAuditoria.create({
@@ -24,12 +19,11 @@ const audit = async (accion, modulo, rut) => {
       log_auditoria_modulo: modulo,
       usuario_rut: rut
     });
-  } catch (_) { /* el log no es crítico: si falla no interrumpe la operación principal */ }
+  } catch (_) { /* no bloquear la operación principal */ }
 };
 
 // ── LECTURAS ──────────────────────────────────────────────────────────────────
 
-// Retorna los estados de proyecto; si la tabla está vacía los crea automáticamente (datos semilla)
 async function getEstados(req, res) {
   try {
     let estados = await EstadoProyecto.findAll();
@@ -48,7 +42,6 @@ async function getEstados(req, res) {
   }
 }
 
-// Retorna las especialidades de trabajadores; si la tabla está vacía las crea con valores por defecto
 async function getEspecialidades(req, res) {
   try {
     let especialidades = await Especialidad.findAll();
@@ -109,7 +102,6 @@ async function getOrdenes(req, res) {
 
 // ── CREACIONES ────────────────────────────────────────────────────────────────
 
-// Crea un nuevo proyecto verificando que el código correlativo no esté duplicado
 async function crearProyecto(req, res) {
   try {
     const { proyecto_codigo_correlativo, proyecto_nombre_obra, proyecto_presupuesto_asignado, proyecto_correo_contacto, estado_proyecto_id } = req.body;
@@ -136,7 +128,6 @@ async function crearProyecto(req, res) {
   }
 }
 
-// Registra un nuevo proveedor/subcontratista en el sistema
 async function crearProveedor(req, res) {
   try {
     const { proveedor_rut, proveedor_razon_social, proveedor_correo, proveedor_telefono } = req.body;
@@ -160,7 +151,6 @@ async function crearProveedor(req, res) {
   }
 }
 
-// Registra un nuevo trabajador y lo asigna opcionalmente a un proyecto
 async function crearTrabajador(req, res) {
   try {
     const { trabajador_rut, trabajador_nombres, trabajador_correo, trabajador_telefono, especialidad_id, proyecto_codigo_correlativo } = req.body;
@@ -186,7 +176,6 @@ async function crearTrabajador(req, res) {
   }
 }
 
-// Crea un hito técnico (etapa de avance) para un proyecto específico
 async function crearHito(req, res) {
   try {
     const { hito_tecnico_nombre_hito, proyecto_codigo_correlativo, hito_tecnico_avance_fisico } = req.body;
@@ -209,7 +198,6 @@ async function crearHito(req, res) {
   }
 }
 
-// Crea una solicitud de material pendiente que luego el admin convertirá en orden de compra
 async function crearSolicitudMaterial(req, res) {
   try {
     const { solicitud_material_descripcion, solicitud_material_cantidad, proyecto_codigo_correlativo } = req.body;
@@ -235,7 +223,6 @@ async function crearSolicitudMaterial(req, res) {
   }
 }
 
-// Crea una guía de despacho asociada a una orden de compra, en estado "Pendiente" de recepción
 async function crearGuiaDespacho(req, res) {
   try {
     const { guia_despacho_numero, guia_despacho_fecha, orden_compra_id } = req.body;
@@ -251,7 +238,7 @@ async function crearGuiaDespacho(req, res) {
     const guia = await GuiaDespacho.create({
       guia_despacho_numero,
       guia_despacho_fecha,
-      guia_despacho_estado: 'Pendiente',
+      guia_despacho_estado: 'En Tránsito',
       guia_despacho_ubicacion_verificada: false,
       orden_compra_id: parseInt(orden_compra_id)
     });
@@ -263,7 +250,6 @@ async function crearGuiaDespacho(req, res) {
   }
 }
 
-// Registra el contrato laboral de un trabajador con su sueldo base y leyes sociales
 async function crearContratoLaboral(req, res) {
   try {
     const { trabajador_rut, contrato_laboral_sueldo_base, contrato_laboral_leyes_sociales, contrato_laboral_fecha_inicio, contrato_laboral_fecha_termino, proyecto_codigo_correlativo } = req.body;
@@ -289,7 +275,6 @@ async function crearContratoLaboral(req, res) {
   }
 }
 
-// Guarda las coordenadas GPS del proyecto para la validación geográfica de recepciones
 async function actualizarCoordenadasProyecto(req, res) {
   try {
     const { codigo } = req.params;

@@ -20,13 +20,10 @@ const storage = multer.diskStorage({
   }
 });
 
-// CU37 - C_Factura: Vinculando Facturas Digitales a Procesos de Compra
-
 const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    // Solo acepta PDF; las facturas deben ser documentos, no imágenes
     if (path.extname(file.originalname).toLowerCase() === '.pdf') {
       cb(null, true);
     } else {
@@ -35,7 +32,6 @@ const upload = multer({
   }
 });
 
-// Retorna órdenes de compra que aún no tienen factura vinculada, incluyendo sus detalles y guías
 async function getOrdenesPendientesFact(req, res) {
   try {
     const ordenes = await OrdenCompra.findAll({
@@ -63,7 +59,6 @@ async function getOrdenesPendientesFact(req, res) {
   }
 }
 
-// Vincula una factura PDF a una orden de compra, validando folio único y monto coincidente
 async function vincularFactura(req, res) {
   try {
     const { id } = req.params;
@@ -73,7 +68,7 @@ async function vincularFactura(req, res) {
       return res.status(400).json({ success: false, error: 'Folio, monto y fecha son requeridos' });
     }
 
-    // Evita registrar dos veces la misma factura (el folio es el número único del SII)
+    // Verificar folio duplicado
     const folioExistente = await Factura.findOne({ where: { factura_folio } });
     if (folioExistente) {
       return res.status(409).json({ success: false, error: `El folio ${factura_folio} ya fue registrado en el sistema` });
@@ -86,7 +81,7 @@ async function vincularFactura(req, res) {
       return res.status(404).json({ success: false, error: 'Orden de compra no encontrada' });
     }
 
-    // Valida que el monto de la factura coincida con el total calculado de la orden (tolerancia de $1 por redondeo)
+    // Validar que el monto de la factura coincida con el total de la OC (tolerancia 1 CLP)
     const totalOC = (orden.DetalleOrdenCompras || []).reduce((sum, d) => {
       return sum + (parseFloat(d.detalle_orden_compra_cantidad) * parseFloat(d.detalle_orden_compra_precio_unitario));
     }, 0);

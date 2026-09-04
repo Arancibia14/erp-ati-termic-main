@@ -9,7 +9,10 @@ const GuiaDespacho = sequelize.define('GuiaDespacho', {
   guia_despacho_ubicacion_verificada: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
   guia_despacho_latitud_recepcion: { type: DataTypes.DECIMAL(10, 7), allowNull: true },
   guia_despacho_longitud_recepcion: { type: DataTypes.DECIMAL(10, 7), allowNull: true },
-  orden_compra_id: { type: DataTypes.INTEGER, allowNull: false }
+  guia_despacho_cantidad_recibida: { type: DataTypes.INTEGER, allowNull: true },
+  orden_compra_id: { type: DataTypes.INTEGER, allowNull: true },
+  proveedor_rut: { type: DataTypes.STRING(20), allowNull: true },
+  material_id: { type: DataTypes.INTEGER, allowNull: true }
 }, {
   tableName: 'GUIA_DESPACHO',
   timestamps: false

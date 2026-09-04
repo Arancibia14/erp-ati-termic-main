@@ -3,9 +3,6 @@ const Proyecto = require('../models/Proyecto');
 const EstadoProyecto = require('../models/EstadoProyecto');
 const ParametroSistema = require('../models/ParametroSistema');
 
-// CU41 - C_Costos: Graficando Desviación de Costos
-
-// Retorna todos los proyectos con su presupuesto asignado para el selector
 async function getProyectosConPresupuesto(req, res) {
   try {
     const proyectos = await Proyecto.findAll({
@@ -18,8 +15,6 @@ async function getProyectosConPresupuesto(req, res) {
   }
 }
 
-// Calcula los gastos reales acumulados del proyecto comparándolos con el presupuesto asignado
-// Devuelve varianza y porcentaje de desviación para detectar sobrecostos
 async function getGastosReales(req, res) {
   try {
     const { codigo } = req.params;
@@ -48,14 +43,21 @@ async function getGastosReales(req, res) {
       type: sequelize.QueryTypes.SELECT
     });
 
-    const gastos_reales = parseFloat(result.total_gastos) || 0;
+    // CU NUEVO 4 (extensión CU32) - rebaja del costo por reingreso de materiales sobrantes
+    const [rebaja] = await sequelize.query(
+      'SELECT COALESCE(SUM(devolucion_obra_monto_rebajado), 0) AS total_rebajado FROM DEVOLUCION_OBRA WHERE proyecto_codigo_correlativo = :codigo',
+      { replacements: { codigo }, type: sequelize.QueryTypes.SELECT }
+    );
+    const totalRebajado = parseFloat(rebaja.total_rebajado) || 0;
+
+    const gastos_reales = (parseFloat(result.total_gastos) || 0) - totalRebajado;
     const presupuesto = parseFloat(proyecto.proyecto_presupuesto_asignado) || 0;
     const varianza = presupuesto - gastos_reales;
     const porcentaje_desviacion = presupuesto > 0 ? ((gastos_reales - presupuesto) / presupuesto) * 100 : 0;
 
     return res.json({
       success: true,
-      data: { presupuesto, gastos_reales, varianza, porcentaje_desviacion }
+      data: { presupuesto, gastos_reales, varianza, porcentaje_desviacion, monto_rebajado_reingresos: totalRebajado }
     });
   } catch (err) {
     console.error(err);
@@ -63,8 +65,6 @@ async function getGastosReales(req, res) {
   }
 }
 
-// Genera la serie mensual de gastos reales vs presupuesto para graficar la tendencia anual
-// Incluye valores acumulados mes a mes para la curva S del proyecto
 async function getGastosPorMes(req, res) {
   try {
     const { codigo } = req.params;
@@ -77,6 +77,7 @@ async function getGastosPorMes(req, res) {
 
     const anio = parseInt(year) || new Date().getFullYear();
 
+    // Obtiene gastos reales agrupados por mes del año seleccionado
     const gastosMensuales = await sequelize.query(`
       SELECT
         DATE_FORMAT(f.factura_fecha, '%Y-%m') AS mes,
@@ -89,22 +90,39 @@ async function getGastosPorMes(req, res) {
       ORDER BY mes ASC
     `, { replacements: { codigo, anio }, type: sequelize.QueryTypes.SELECT });
 
+    // CU NUEVO 4 (extensión CU32) - rebaja mensual por reingreso de materiales sobrantes
+    const rebajasMensuales = await sequelize.query(`
+      SELECT
+        DATE_FORMAT(devolucion_obra_fecha, '%Y-%m') AS mes,
+        SUM(devolucion_obra_monto_rebajado)         AS monto_rebajado
+      FROM DEVOLUCION_OBRA
+      WHERE proyecto_codigo_correlativo = :codigo
+        AND YEAR(devolucion_obra_fecha) = :anio
+      GROUP BY mes
+    `, { replacements: { codigo, anio }, type: sequelize.QueryTypes.SELECT });
+
     const presupuesto = parseFloat(proyecto.proyecto_presupuesto_asignado) || 0;
 
+    // Construye serie de los 12 meses del año seleccionado
     const meses = [];
     for (let i = 0; i < 12; i++) {
       const d = new Date(anio, i, 1);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       const label = d.toLocaleDateString('es-CL', { month: 'short', year: '2-digit' });
       const encontrado = gastosMensuales.find(g => g.mes === key);
+      const rebaja = rebajasMensuales.find(r => r.mes === key);
+      const gastoBruto = encontrado ? parseFloat(encontrado.gasto_real) : 0;
+      const montoRebajado = rebaja ? parseFloat(rebaja.monto_rebajado) : 0;
       meses.push({
         mes: key,
         label,
-        gasto_real: encontrado ? parseFloat(encontrado.gasto_real) : 0,
+        gasto_real: gastoBruto - montoRebajado,
+        // presupuesto mensual distribuido uniformemente
         presupuesto_mensual: Math.round(presupuesto / 12)
       });
     }
 
+    // Acumulado para línea de tendencia
     let acumuladoReal = 0;
     let acumuladoPpto = 0;
     const serie = meses.map(m => {
@@ -134,8 +152,6 @@ async function getGastosPorMes(req, res) {
   }
 }
 
-// Retorna el parámetro de umbral de desviación configurado por el administrador
-// Si el porcentaje de desviación supera este valor, el sistema muestra una alerta
 async function getUmbralDesviacion(req, res) {
   try {
     const parametro = await ParametroSistema.findOne({

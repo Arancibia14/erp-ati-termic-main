@@ -1,15 +1,12 @@
 const path = require('path');
 const fs = require('fs');
-const PDFDocument = require('pdfkit'); // librería para generar PDFs en Node.js
+const PDFDocument = require('pdfkit');
 const Proyecto = require('../models/Proyecto');
 const EquipoHVAC = require('../models/EquipoHVAC');
 const DocumentoLegal = require('../models/DocumentoLegal');
 const EstadoProyecto = require('../models/EstadoProyecto');
 const LogAuditoria = require('../models/LogAuditoria');
 
-// CU56 - C_Certificado: Emitiendo Certificado de Instalación Técnica
-// Genera un PDF del certificado, lo guarda en disco y registra el documento en BD
-// Solo permite emitir certificado si el proyecto está en estado "Finalizado"
 async function generarCertificado(req, res) {
   try {
     const { proyecto_codigo_correlativo, datos_certificado } = req.body;
@@ -41,7 +38,7 @@ async function generarCertificado(req, res) {
       where: { proyecto_codigo_correlativo }
     });
 
-    // Genera el archivo PDF usando PDFKit y lo escribe en la carpeta uploads/documentos
+    // Generar PDF real
     const dir = path.join(__dirname, '../uploads/documentos');
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     const filename = `certificado_${proyecto_codigo_correlativo}_${Date.now()}.pdf`;

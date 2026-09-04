@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -c models/Material.js)",
+      "Bash(node -c controllers/materialController.js)",
+      "Bash(node -c routes/material.js)",
+      "Bash(node -c index.js)",
+      "Bash(node -c controllers/solicitudMaterialController.js)",
+      "Bash(node -c routes/solicitudMaterial.js)"
+    ]
+  }
+}

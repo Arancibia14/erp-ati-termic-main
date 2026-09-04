@@ -7,8 +7,6 @@ const EvidenciaFotografica = require('../models/EvidenciaFotografica');
 const HitoTecnico = require('../models/HitoTecnico');
 const LogAuditoria = require('../models/LogAuditoria');
 
-// CU45 - C_Portafolio: Gestionando Portafolio de Obras
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dir = path.join(__dirname, '../uploads/portafolio');
@@ -33,7 +31,6 @@ const upload = multer({
   }
 });
 
-// Retorna todos los proyectos con su estado para mostrar el portafolio general
 async function getListadoProyectos(req, res) {
   try {
     const proyectos = await Proyecto.findAll({
@@ -46,7 +43,6 @@ async function getListadoProyectos(req, res) {
   }
 }
 
-// Retorna el detalle de un proyecto específico por su código correlativo
 async function getProyecto(req, res) {
   try {
     const { codigo } = req.params;
@@ -63,8 +59,6 @@ async function getProyecto(req, res) {
   }
 }
 
-// Actualiza los datos del proyecto y opcionalmente adjunta nuevas fotos de portafolio
-// Las fotos se vinculan automáticamente al primer hito técnico del proyecto
 async function actualizarProyecto(req, res) {
   try {
     const { codigo } = req.params;

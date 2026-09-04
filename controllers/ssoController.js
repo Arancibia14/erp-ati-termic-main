@@ -8,9 +8,6 @@ const IncidenteSSO = require('../models/IncidenteSSO');
 const Accidente = require('../models/Accidente');
 const LogAuditoria = require('../models/LogAuditoria');
 
-// CU57 - C_Incidente: Registrando Incidentes de Seguridad y Salud Ocupacional (SSO)
-
-// multer guarda las fotos del incidente en uploads/sso/
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dir = path.join(__dirname, '../uploads/sso');
@@ -24,7 +21,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
-// Retorna los proyectos activos para el selector del formulario de incidentes
 async function getProyectos(req, res) {
   try {
     const proyectos = await Proyecto.findAll({
@@ -37,7 +33,6 @@ async function getProyectos(req, res) {
   }
 }
 
-// Retorna los trabajadores asignados al proyecto para marcarlos como involucrados en el incidente
 async function getTrabajadores(req, res) {
   try {
     const { codigo } = req.params;
@@ -51,7 +46,6 @@ async function getTrabajadores(req, res) {
   }
 }
 
-// Registra un incidente SSO con fotos opcionales y crea registros de Accidente para trabajadores afectados
 async function registrarIncidente(req, res) {
   try {
     const {

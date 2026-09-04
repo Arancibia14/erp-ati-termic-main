@@ -9,7 +9,7 @@ const DocumentoLegal = sequelize.define('DocumentoLegal', {
   documento_legal_fecha_vencimiento: { type: DataTypes.DATEONLY, allowNull: true },
   documento_legal_estado: { type: DataTypes.STRING(50), allowNull: false, defaultValue: 'Vigente' },
   trabajador_rut: { type: DataTypes.STRING(20), allowNull: true },
-  proyecto_codigo_correlativo: { type: DataTypes.STRING(50), allowNull: false }
+  proyecto_codigo_correlativo: { type: DataTypes.STRING(50), allowNull: true }
 }, {
   tableName: 'DOCUMENTO_LEGAL',
   timestamps: false

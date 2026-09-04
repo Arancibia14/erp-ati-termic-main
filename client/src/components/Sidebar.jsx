@@ -4,7 +4,9 @@ import {
   BookOpen, DollarSign, AlertTriangle, Camera, CheckSquare,
   ShoppingCart, FileText, BarChart2, LogOut, Menu, X,
   MessageSquare, Package, Award, Users, Briefcase, Image,
-  Search, TrendingUp, Shield, Settings, ChevronDown, ChevronRight
+  Search, TrendingUp, Shield, Settings, ChevronDown, ChevronRight,
+  ClipboardList, Truck, FileCheck, Receipt, HardHat, ArrowRightLeft, Wrench,
+  Undo2, History, BadgeCheck, UserCog
 } from 'lucide-react';
 import logo from '../assets/logo.png';
 
@@ -15,7 +17,16 @@ const NAV_ITEMS = [
   { to: '/evidencia',         icon: Camera,         label: 'Evidencias' },
   { to: '/comunicacion',      icon: MessageSquare,  label: 'Comunicaciones' },
   { to: '/recepcion-insumos', icon: Package,        label: 'Recepción Insumos' },
-  { to: '/certificado',       icon: Award,          label: 'Certificado Técnico' }
+  { to: '/certificado',       icon: Award,          label: 'Certificado Técnico' },
+  { to: '/solicitud-materiales', icon: ClipboardList, label: 'Nueva Solicitud de Materiales' },
+  { to: '/ingreso-guia',      icon: Truck,          label: 'Ingreso por Guía' },
+  { to: '/documentacion-laboral', icon: FileCheck,  label: 'Documentación Laboral' },
+  { to: '/entrega-epp',       icon: HardHat,        label: 'Entrega de EPP' },
+  { to: '/historial-epp',     icon: ClipboardList,  label: 'Historial Entregas EPP' },
+  { to: '/herramientas',      icon: Wrench,         label: 'Herramientas' },
+  { to: '/materiales-transito', icon: Truck,        label: 'Materiales en Tránsito' },
+  { to: '/certificados-calidad', icon: BadgeCheck,  label: 'Certificados de Calidad' },
+  { to: '/devolucion-obra',   icon: Undo2,          label: 'Devolución de Obra' }
 ];
 
 const ADMIN_ITEMS = [
@@ -29,7 +40,15 @@ const ADMIN_ITEMS = [
   { to: '/documentos',          icon: Search,       label: 'Buscador Documentos' },
   { to: '/control-presupuesto', icon: TrendingUp,   label: 'Control Presupuesto' },
   { to: '/polizas',             icon: Shield,       label: 'Pólizas de Seguro' },
-  { to: '/configuracion',       icon: Settings,     label: 'Configuración' }
+  { to: '/configuracion',       icon: Settings,     label: 'Configuración' },
+  { to: '/catalogo',            icon: Package,      label: 'Catálogo Maestro' },
+  { to: '/aprobaciones',        icon: CheckSquare,  label: 'Aprobaciones Pendientes' },
+  { to: '/trabajadores',        icon: Users,        label: 'Trabajadores' },
+  { to: '/liquidaciones',       icon: Receipt,      label: 'Liquidaciones de Sueldo' },
+  { to: '/anexo-contrato',      icon: ArrowRightLeft, label: 'Anexo de Contrato' },
+  { to: '/catalogo-equipos',    icon: Package,        label: 'Catálogo de Equipos' },
+  { to: '/historial-oc',        icon: History,        label: 'Historial Órdenes de Compra' },
+  { to: '/usuarios',            icon: UserCog,        label: 'Usuarios del Sistema' }
 ];
 
 function NavItem({ to, icon: Icon, label, onClick }) {

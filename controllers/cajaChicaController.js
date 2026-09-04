@@ -5,9 +5,6 @@ const EstadoProyecto = require('../models/EstadoProyecto');
 const EgresoCajaChica = require('../models/EgresoCajaChica');
 const LogAuditoria = require('../models/LogAuditoria');
 
-// CU39 - C_CajaChica: Registrando Egreso de Caja Chica
-
-// Retorna la lista de proyectos para el selector del formulario
 async function getProyectos(req, res) {
   try {
     const proyectos = await Proyecto.findAll({
@@ -20,7 +17,6 @@ async function getProyectos(req, res) {
   }
 }
 
-// Calcula el saldo disponible de caja chica: presupuesto asignado menos total de egresos ya registrados
 async function getSaldo(req, res) {
   try {
     const { codigo } = req.params;
@@ -29,7 +25,6 @@ async function getSaldo(req, res) {
       return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
     }
 
-    // Suma todos los egresos del proyecto con SQL directo; COALESCE evita NULL si no hay registros
     const [result] = await sequelize.query(
       'SELECT COALESCE(SUM(egreso_caja_chica_monto), 0) as total_egresos FROM EGRESO_CAJA_CHICA WHERE proyecto_codigo_correlativo = :codigo',
       { replacements: { codigo }, type: sequelize.QueryTypes.SELECT }
@@ -53,7 +48,6 @@ async function getSaldo(req, res) {
   }
 }
 
-// Registra un egreso de caja chica verificando que el monto no supere el saldo disponible
 async function registrarEgreso(req, res) {
   try {
     const { proyecto_codigo_correlativo, egreso_caja_chica_monto, egreso_caja_chica_concepto, egreso_caja_chica_fecha } = req.body;
@@ -110,7 +104,6 @@ async function registrarEgreso(req, res) {
   }
 }
 
-// Retorna el historial de egresos de un proyecto ordenado del más reciente al más antiguo
 async function getEgresosByProyecto(req, res) {
   try {
     const { codigo } = req.params;

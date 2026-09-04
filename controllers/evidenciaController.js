@@ -5,9 +5,6 @@ const HitoTecnico = require('../models/HitoTecnico');
 const EvidenciaFotografica = require('../models/EvidenciaFotografica');
 const LogAuditoria = require('../models/LogAuditoria');
 
-// CU16 - C_Evidencia: Cargando Evidencias Fotográficas de Avance
-
-// multer gestiona la subida de imágenes y las guarda en uploads/evidencias/
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dir = path.join(__dirname, '../uploads/evidencias');
@@ -23,7 +20,6 @@ const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    // Solo acepta imágenes; rechaza PDF, Word, etc.
     const tipos = /jpeg|jpg|png|webp/;
     if (tipos.test(path.extname(file.originalname).toLowerCase())) {
       cb(null, true);
@@ -33,7 +29,6 @@ const upload = multer({
   }
 });
 
-// Retorna los hitos técnicos de un proyecto para que el supervisor elija a cuál pertenece la evidencia
 async function getHitosPorProyecto(req, res) {
   try {
     const { codigo } = req.params;
@@ -45,7 +40,6 @@ async function getHitosPorProyecto(req, res) {
   }
 }
 
-// Sube una foto de evidencia asociada a un hito técnico, registrando también las coordenadas GPS de captura
 async function subirEvidencia(req, res) {
   try {
     const { hito_tecnico_id, evidencia_fotografica_latitud, evidencia_fotografica_longitud } = req.body;
@@ -90,4 +84,54 @@ async function subirEvidencia(req, res) {
   }
 }
 
-module.exports = { getHitosPorProyecto, subirEvidencia, upload };
+async function getPendientes(req, res) {
+  try {
+    const evidencias = await EvidenciaFotografica.findAll({
+      where: { evidencia_fotografica_estado_aprobacion: 'pendiente' },
+      include: [{ model: HitoTecnico, attributes: ['hito_tecnico_nombre_hito', 'proyecto_codigo_correlativo'] }],
+      order: [['evidencia_fotografica_fecha_captura', 'DESC']]
+    });
+    return res.json({ success: true, data: evidencias });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al obtener evidencias pendientes' });
+  }
+}
+
+async function validarEvidencia(req, res) {
+  try {
+    const { id } = req.params;
+    const { estado, comentario } = req.body;
+
+    if (!['aprobado', 'rechazado', 're_captura'].includes(estado)) {
+      return res.status(400).json({ success: false, error: 'Estado debe ser "aprobado", "rechazado" o "re_captura"' });
+    }
+
+    if (estado === 'rechazado' && !comentario?.trim()) {
+      return res.status(400).json({ success: false, error: 'El motivo de rechazo es requerido' });
+    }
+
+    const evidencia = await EvidenciaFotografica.findByPk(id);
+    if (!evidencia) {
+      return res.status(404).json({ success: false, error: 'Evidencia no encontrada' });
+    }
+
+    await evidencia.update({
+      evidencia_fotografica_estado_aprobacion: estado
+    });
+
+    await LogAuditoria.create({
+      log_auditoria_fecha_hora: new Date(),
+      log_auditoria_accion: `Evidencia #${id} ${estado}${comentario ? ': ' + comentario.substring(0, 80) : ''}`,
+      log_auditoria_modulo: 'EVIDENCIA',
+      usuario_rut: req.user.rut
+    });
+
+    return res.json({ success: true, data: { id, estado } });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al validar evidencia' });
+  }
+}
+
+module.exports = { getHitosPorProyecto, subirEvidencia, getPendientes, validarEvidencia, upload };

@@ -5,25 +5,19 @@ const BitacoraComunicacion = require('../models/BitacoraComunicacion');
 const Proyecto = require('../models/Proyecto');
 const LogAuditoria = require('../models/LogAuditoria');
 
-// CU44 - C_Comunicacion: Registrando Comunicación del Proyecto
-
-// Configuración de multer: define dónde y con qué nombre guardar los archivos adjuntos
-// multer es el middleware que procesa multipart/form-data (formularios con archivos)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dir = path.join(__dirname, '../uploads/comunicaciones');
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true }); // crea la carpeta si no existe
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    // nombre único usando timestamp para evitar colisiones entre archivos del mismo nombre
     cb(null, `comunicacion_${Date.now()}${path.extname(file.originalname)}`);
   }
 });
 
-const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } }); // límite de 10 MB por archivo
+const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
-// Retorna el historial de comunicaciones de un proyecto ordenado por fecha descendente
 async function getHistorialComunicaciones(req, res) {
   try {
     const { codigo } = req.params;
@@ -45,7 +39,6 @@ async function getHistorialComunicaciones(req, res) {
   }
 }
 
-// Registra una nueva comunicación del proyecto (reunión, correo, llamada, etc.) con adjunto opcional
 async function registrarComunicacion(req, res) {
   try {
     const { descripcion, fecha, tipo, participantes, proyecto_codigo_correlativo } = req.body;
