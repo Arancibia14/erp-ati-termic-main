@@ -4,7 +4,8 @@ const sequelize = require('../config/database');
 const EntregaEpp = sequelize.define('EntregaEpp', {
   entrega_epp_id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   entrega_epp_cantidad: { type: DataTypes.INTEGER, allowNull: false },
-  entrega_epp_fecha: { type: DataTypes.DATEONLY, allowNull: false },
+  // La columna de la tabla se llama entrega_epp_fecha_entrega
+  entrega_epp_fecha: { type: DataTypes.DATEONLY, field: 'entrega_epp_fecha_entrega', allowNull: false },
   entrega_epp_estado: { type: DataTypes.STRING(50), allowNull: false, defaultValue: 'Pendiente' },
   entrega_epp_lote: { type: DataTypes.STRING(50), allowNull: true },
   entrega_epp_firma: { type: DataTypes.TEXT('long'), allowNull: true },

@@ -329,6 +329,17 @@ sequelize.authenticate()
       try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
     }
 
+    // Columnas que el modelo Material espera y que el schema original no incluye
+    const matMigs = [
+      "ALTER TABLE MATERIAL ADD COLUMN material_descripcion TEXT NULL",
+      "ALTER TABLE MATERIAL ADD COLUMN material_categoria VARCHAR(100) NULL",
+      "ALTER TABLE MATERIAL ADD COLUMN material_activo TINYINT(1) NULL DEFAULT 1",
+    ];
+    for (const sql of matMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
+    }
+
+
     const guiaMigs = [
       "ALTER TABLE GUIA_DESPACHO ADD COLUMN proveedor_rut VARCHAR(20) NULL",
       "ALTER TABLE GUIA_DESPACHO ADD COLUMN material_id INT NULL",
@@ -361,6 +372,15 @@ sequelize.authenticate()
       "ALTER TABLE ENTREGA_EPP ADD COLUMN entrega_epp_fecha_hora_validacion DATETIME NULL",
       "ALTER TABLE ENTREGA_EPP ADD COLUMN entrega_epp_url_comprobante TEXT NULL",
       "ALTER TABLE DOCUMENTO_LEGAL MODIFY proyecto_codigo_correlativo VARCHAR(50) NULL",
+      // El schema original no contempla la entrega por lote de varios articulos:
+      // faltan cantidad, estado, material y usuario emisor. Las dos columnas
+      // heredadas quedan opcionales porque el flujo actual no las usa.
+      "ALTER TABLE ENTREGA_EPP ADD COLUMN entrega_epp_cantidad INT NULL DEFAULT 1",
+      "ALTER TABLE ENTREGA_EPP ADD COLUMN entrega_epp_estado VARCHAR(50) NULL DEFAULT 'Pendiente'",
+      "ALTER TABLE ENTREGA_EPP ADD COLUMN material_id INT NULL",
+      "ALTER TABLE ENTREGA_EPP ADD COLUMN usuario_rut VARCHAR(20) NULL",
+      "ALTER TABLE ENTREGA_EPP MODIFY entrega_epp_detalle_equipos TEXT NULL",
+      "ALTER TABLE ENTREGA_EPP MODIFY entrega_epp_firma_digital TEXT NULL",
     ];
     for (const sql of eppMigs) {
       try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
