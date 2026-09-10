@@ -111,7 +111,13 @@ async function asignar(req, res) {
       where: { trabajador_rut: tecnico_rut },
       order: [['contrato_laboral_fecha_inicio', 'DESC']]
     });
-    if (contrato && contrato.contrato_laboral_fecha_termino && contrato.contrato_laboral_fecha_termino < hoy()) {
+    if (!contrato) {
+      return res.status(400).json({
+        success: false,
+        error: 'El técnico no tiene un contrato laboral registrado. No se puede asignar la herramienta.'
+      });
+    }
+    if (contrato.contrato_laboral_fecha_termino && contrato.contrato_laboral_fecha_termino < hoy()) {
       return res.status(400).json({
         success: false,
         error: `El contrato del técnico venció el ${contrato.contrato_laboral_fecha_termino}. No se puede asignar la herramienta.`
