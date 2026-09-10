@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const DevolucionObra = require('../models/DevolucionObra');
 const GuiaDespacho = require('../models/GuiaDespacho');
 const OrdenCompra = require('../models/OrdenCompra');
@@ -66,10 +67,15 @@ async function getDespachado(req, res) {
   }
 }
 
-// CU NUEVO 4 (extensión CU32) - Precio unitario de referencia del material en la OC del proyecto
+// CU NUEVO 4 (extensión CU32) - Precio unitario de referencia del material en la OC del proyecto.
+// Se toma la OC más reciente que tenga precio: una solicitud aprobada sin costo
+// estimado genera una OC en $0, que no sirve como referencia.
 async function precioUnitarioReferencia(proyecto, materialId) {
-  const detalles = await DetalleOrdenCompra.findAll({
-    where: { material_id: materialId },
+  const detalle = await DetalleOrdenCompra.findOne({
+    where: {
+      material_id: materialId,
+      detalle_orden_compra_precio_unitario: { [Op.gt]: 0 }
+    },
     include: [{
       model: OrdenCompra,
       attributes: [],
@@ -78,8 +84,7 @@ async function precioUnitarioReferencia(proyecto, materialId) {
     }],
     order: [['detalle_orden_compra_id', 'DESC']]
   });
-  if (!detalles.length) return 0;
-  return parseFloat(detalles[0].detalle_orden_compra_precio_unitario) || 0;
+  return detalle ? parseFloat(detalle.detalle_orden_compra_precio_unitario) : 0;
 }
 
 // CU32 - Registrando reingreso de materiales sobrantes
