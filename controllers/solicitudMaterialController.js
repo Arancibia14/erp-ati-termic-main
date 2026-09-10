@@ -86,7 +86,7 @@ async function getSolicitudesPendientes(req, res) {
   }
 }
 
-async function generarOrdenCompraDesdeSolicitud(solicitud, req, costoEstimado = 0) {
+async function generarOrdenCompraDesdeSolicitud(solicitud, req, costoEstimado) {
   if (!solicitud.material_id) {
     return { oc_generada: false, motivo: 'La solicitud es una Solicitud Especial sin material de catálogo asociado; genera la Orden de Compra manualmente' };
   }
@@ -113,10 +113,7 @@ async function generarOrdenCompraDesdeSolicitud(solicitud, req, costoEstimado = 
   // El costo estimado que ingresa el administrador al aprobar es el total de la
   // solicitud; el detalle de la OC guarda el precio por unidad (redondeado a 2
   // decimales, que es la precision de la columna).
-  const cantidad = parseFloat(solicitud.solicitud_material_cantidad) || 0;
-  const precioUnitario = costoEstimado > 0 && cantidad > 0
-    ? Math.round((costoEstimado / cantidad) * 100) / 100
-    : 0;
+  const precioUnitario = Math.round((costoEstimado / solicitud.solicitud_material_cantidad) * 100) / 100;
 
   await DetalleOrdenCompra.create({
     detalle_orden_compra_descripcion_material: material.material_nombre,
@@ -151,14 +148,22 @@ async function aprobarSolicitud(req, res) {
       return res.status(400).json({ success: false, error: 'La solicitud ya fue validada' });
     }
 
-    if (cantidad) {
-      solicitud.solicitud_material_cantidad = cantidad;
+    // El costo estimado define el precio de la OC automática: sin él, la OC queda en $0
+    const costoEstimado = parseFloat(monto_estimado);
+    if (!Number.isFinite(costoEstimado) || costoEstimado <= 0) {
+      return res.status(400).json({ success: false, error: 'El costo estimado es obligatorio y debe ser mayor a cero' });
+    }
+
+    const cantidadEditada = cantidad !== undefined && cantidad !== null && cantidad !== '';
+    const cantidadFinal = Number(cantidadEditada ? cantidad : solicitud.solicitud_material_cantidad);
+    if (!Number.isInteger(cantidadFinal) || cantidadFinal < 1) {
+      return res.status(400).json({ success: false, error: 'La cantidad debe ser un número entero mayor a cero' });
     }
 
     const proyecto = await Proyecto.findByPk(solicitud.proyecto_codigo_correlativo);
-    const costoEstimado = monto_estimado ? parseFloat(monto_estimado) : 0;
     const alertaPresupuesto = !!(proyecto && costoEstimado > parseFloat(proyecto.proyecto_presupuesto_asignado));
 
+    solicitud.solicitud_material_cantidad = cantidadFinal;
     solicitud.solicitud_material_estado = 'aprobada';
     await solicitud.save();
 

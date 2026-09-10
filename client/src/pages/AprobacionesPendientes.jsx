@@ -45,10 +45,20 @@ export default function AprobacionesPendientes() {
   };
 
   const aprobar = s => {
+    const costo = parseFloat(montoEstimado);
+    if (!Number.isFinite(costo) || costo <= 0) {
+      addToast('Ingresa el costo estimado: es obligatorio y debe ser mayor a cero', 'error');
+      return;
+    }
+    const cantidad = cantidadEditada === '' ? undefined : Number(cantidadEditada);
+    if (cantidad !== undefined && (!Number.isInteger(cantidad) || cantidad < 1)) {
+      addToast('La cantidad debe ser un número entero mayor a cero', 'error');
+      return;
+    }
     setProcesando(true);
     api.put(`/solicitud-material/${s.solicitud_material_id}/aprobar`, {
-      cantidad: cantidadEditada ? parseInt(cantidadEditada) : undefined,
-      monto_estimado: montoEstimado ? parseFloat(montoEstimado) : undefined
+      cantidad,
+      monto_estimado: costo
     })
       .then(r => {
         const { alerta_presupuesto, oc_generada, motivo_pausa_oc, orden_compra } = r.data.data;
@@ -148,12 +158,15 @@ export default function AprobacionesPendientes() {
                               <label className="form-label">Costo Estimado (CLP)</label>
                               <input
                                 type="number"
-                                min="0"
+                                min="1"
                                 className="form-input"
                                 placeholder="Ingresa el costo estimado de la solicitud..."
                                 value={montoEstimado}
                                 onChange={e => setMontoEstimado(e.target.value)}
                               />
+                              <p style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 4 }}>
+                                Obligatorio. Es el total de la solicitud y define el precio de la Orden de Compra que se genera al aprobar.
+                              </p>
                             </div>
 
                             {presupuestoExcedido(s) && (
