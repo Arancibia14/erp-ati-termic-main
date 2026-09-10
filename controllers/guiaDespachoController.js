@@ -4,6 +4,7 @@ const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
 const Proveedor = require('../models/Proveedor');
 const Material = require('../models/Material');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 async function getProveedores(req, res) {
   try {
@@ -101,7 +102,7 @@ async function crearGuia(req, res) {
     // inventario cuando se confirma su recepción (recepcionController).
     const guia = await GuiaDespacho.create({
       guia_despacho_numero: numero,
-      guia_despacho_fecha: fecha || new Date().toISOString().split('T')[0],
+      guia_despacho_fecha: fecha || fechaHoy(),
       guia_despacho_estado: 'Registrada',
       proveedor_rut,
       orden_compra_id,

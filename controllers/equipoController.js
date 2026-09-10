@@ -4,6 +4,7 @@ const fs = require('fs');
 const ModeloHvac = require('../models/ModeloHvac');
 const DocumentoEquipo = require('../models/DocumentoEquipo');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 const FORMATOS_OK = ['.pdf', '.jpg', '.jpeg', '.png'];
 
@@ -122,7 +123,7 @@ async function subirDocumento(req, res) {
         documento_equipo_etiqueta: etiqueta.trim(),
         documento_equipo_url: `/uploads/documentacion-equipos/${req.file.filename}`,
         documento_equipo_formato: path.extname(req.file.originalname).replace('.', '').toLowerCase(),
-        documento_equipo_fecha: new Date().toISOString().split('T')[0]
+        documento_equipo_fecha: fechaHoy()
       });
     } catch (dbErr) {
       // Excepción 2: Error de almacenamiento

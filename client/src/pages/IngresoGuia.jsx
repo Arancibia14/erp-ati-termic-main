@@ -3,6 +3,7 @@ import { Truck, Search, Send } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import { fechaLocal } from '../utils/fecha';
 
 export default function IngresoGuia() {
   const { toasts, addToast, removeToast } = useToast();
@@ -21,7 +22,7 @@ export default function IngresoGuia() {
   const [numeroGuia, setNumeroGuia] = useState('');
   const [proveedorSeleccionado, setProveedorSeleccionado] = useState('');
   const [ordenCompraSeleccionada, setOrdenCompraSeleccionada] = useState('');
-  const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
+  const [fecha, setFecha] = useState(fechaLocal());
   const [busqueda, setBusqueda] = useState('');
   const [materialSeleccionado, setMaterialSeleccionado] = useState(null);
   const [cantidadRecibida, setCantidadRecibida] = useState('');
@@ -87,7 +88,7 @@ export default function IngresoGuia() {
     setNumeroGuia('');
     setProveedorSeleccionado('');
     setOrdenCompraSeleccionada('');
-    setFecha(new Date().toISOString().split('T')[0]);
+    setFecha(fechaLocal());
     setBusqueda('');
     setMaterialSeleccionado(null);
     setCantidadRecibida('');

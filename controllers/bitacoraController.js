@@ -2,6 +2,7 @@ const Proyecto = require('../models/Proyecto');
 const EstadoProyecto = require('../models/EstadoProyecto');
 const BitacoraDiaria = require('../models/BitacoraDiaria');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 async function getProyectos(req, res) {
   try {
@@ -28,7 +29,7 @@ async function registrarBitacora(req, res) {
     }
 
     const bitacora = await BitacoraDiaria.create({
-      bitacora_diaria_fecha: bitacora_diaria_fecha || new Date().toISOString().split('T')[0],
+      bitacora_diaria_fecha: bitacora_diaria_fecha || fechaHoy(),
       bitacora_diaria_descripcion_actividad: bitacora_diaria_descripcion_actividad.trim(),
       usuario_rut: req.user.rut,
       proyecto_codigo_correlativo

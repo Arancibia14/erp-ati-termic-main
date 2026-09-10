@@ -3,8 +3,9 @@ const AsignacionHerramienta = require('../models/AsignacionHerramienta');
 const Trabajador = require('../models/Trabajador');
 const ContratoLaboral = require('../models/ContratoLaboral');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
-const hoy = () => new Date().toISOString().split('T')[0];
+const hoy = () => fechaHoy();
 
 // Buscador de herramientas
 async function getHerramientas(req, res) {

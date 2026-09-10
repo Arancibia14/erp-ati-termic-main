@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { DollarSign, Plus, Send, X } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import { fechaLocal } from '../utils/fecha';
 
 const fmt = n => n !== undefined && n !== null ? `$${parseFloat(n).toLocaleString('es-CL')}` : '--';
 
@@ -17,7 +18,7 @@ export default function CajaChica() {
   const [form, setForm] = useState({
     egreso_caja_chica_monto: '',
     egreso_caja_chica_concepto: '',
-    egreso_caja_chica_fecha: new Date().toISOString().split('T')[0]
+    egreso_caja_chica_fecha: fechaLocal()
   });
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export default function CajaChica() {
   };
 
   const abrirNuevo = () => {
-    setForm({ egreso_caja_chica_monto: '', egreso_caja_chica_concepto: '', egreso_caja_chica_fecha: new Date().toISOString().split('T')[0] });
+    setForm({ egreso_caja_chica_monto: '', egreso_caja_chica_concepto: '', egreso_caja_chica_fecha: fechaLocal() });
     setMostrarForm(true);
   };
 

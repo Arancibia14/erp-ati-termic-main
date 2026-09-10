@@ -5,6 +5,7 @@ const Material = require('../models/Material');
 const OrdenCompra = require('../models/OrdenCompra');
 const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 async function getMisSolicitudes(req, res) {
   try {
@@ -37,7 +38,7 @@ async function crearSolicitud(req, res) {
       solicitud_material_descripcion: descripcion,
       solicitud_material_cantidad: cantidad,
       solicitud_material_estado: 'pendiente',
-      solicitud_material_fecha: new Date().toISOString().split('T')[0],
+      solicitud_material_fecha: fechaHoy(),
       proyecto_codigo_correlativo,
       usuario_rut: req.user.rut,
       material_id: material_id || null
@@ -102,7 +103,7 @@ async function generarOrdenCompraDesdeSolicitud(solicitud, req, costoEstimado = 
   const folio = `OC-${Date.now()}`;
   const ordenCompra = await OrdenCompra.create({
     orden_compra_folio: folio,
-    orden_compra_fecha: new Date().toISOString().split('T')[0],
+    orden_compra_fecha: fechaHoy(),
     orden_compra_estado: 'Emitida',
     proveedor_rut: material.material_proveedor_rut,
     proyecto_codigo_correlativo: solicitud.proyecto_codigo_correlativo,

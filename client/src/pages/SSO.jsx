@@ -3,6 +3,7 @@ import { AlertTriangle, Plus, Trash2, Send, Camera, X } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import { fechaHoraLocal } from '../utils/fecha';
 
 const GRAVEDADES = ['leve', 'grave', 'fatal'];
 const TIPOS = ['Accidente', 'Incidente', 'Enfermedad Laboral'];
@@ -17,7 +18,7 @@ export default function SSO() {
     incidente_sso_gravedad: 'leve',
     incidente_sso_tipo: '',
     incidente_sso_lugar: '',
-    incidente_sso_fecha_hora: new Date().toISOString().slice(0, 16)
+    incidente_sso_fecha_hora: fechaHoraLocal()
   });
   const [involucrados, setInvolucrados] = useState([]);
   const [fotos, setFotos] = useState([]);

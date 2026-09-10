@@ -4,6 +4,7 @@ const fs = require('fs');
 const CertificadoLaboral = require('../models/CertificadoLaboral');
 const Proyecto = require('../models/Proyecto');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -93,7 +94,7 @@ async function cargarCertificados(req, res) {
         eliminarArchivo(existente.certificado_laboral_url_f30_1);
         existente.certificado_laboral_url_f30_1 = `/uploads/certificados-laborales/${archivoF30_1.filename}`;
       }
-      existente.certificado_laboral_fecha_carga = new Date().toISOString().split('T')[0];
+      existente.certificado_laboral_fecha_carga = fechaHoy();
       await existente.save();
       certificado = existente;
     } else {
@@ -102,7 +103,7 @@ async function cargarCertificados(req, res) {
         certificado_laboral_periodo: periodo,
         certificado_laboral_url_f30: archivoF30 ? `/uploads/certificados-laborales/${archivoF30.filename}` : null,
         certificado_laboral_url_f30_1: archivoF30_1 ? `/uploads/certificados-laborales/${archivoF30_1.filename}` : null,
-        certificado_laboral_fecha_carga: new Date().toISOString().split('T')[0]
+        certificado_laboral_fecha_carga: fechaHoy()
       });
     }
 

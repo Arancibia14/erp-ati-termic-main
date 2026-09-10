@@ -3,6 +3,7 @@ import { MessageSquare, Send, Paperclip } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import { fechaLocal } from '../utils/fecha';
 
 const TIPOS = ['Reunión', 'Correo', 'Llamada', 'Acta', 'Visita a Terreno', 'Otro'];
 
@@ -16,7 +17,7 @@ export default function Comunicacion() {
   const [adjunto, setAdjunto] = useState(null);
   const [form, setForm] = useState({
     tipo: '',
-    fecha: new Date().toISOString().split('T')[0],
+    fecha: fechaLocal(),
     participantes: '',
     descripcion: ''
   });
@@ -63,7 +64,7 @@ export default function Comunicacion() {
     try {
       await api.post('/comunicacion', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
       addToast('Comunicación registrada exitosamente', 'success');
-      setForm({ tipo: '', fecha: new Date().toISOString().split('T')[0], participantes: '', descripcion: '' });
+      setForm({ tipo: '', fecha: fechaLocal(), participantes: '', descripcion: '' });
       setAdjunto(null);
       cargarHistorial(codigoSeleccionado);
     } catch (err) {
@@ -208,7 +209,7 @@ export default function Comunicacion() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
                   <Badge value={c.bitacora_comunicacion_tipo} />
                   <span style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>
-                    {new Date(c.bitacora_comunicacion_fecha).toLocaleDateString('es-CL')}
+                    {new Date(c.bitacora_comunicacion_fecha + 'T00:00:00').toLocaleDateString('es-CL')}
                   </span>
                 </div>
                 <p style={{ fontSize: 13, lineHeight: 1.5, marginBottom: 4, color: 'var(--color-text-primary)' }}>

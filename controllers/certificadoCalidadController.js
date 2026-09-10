@@ -6,6 +6,7 @@ const GuiaDespacho = require('../models/GuiaDespacho');
 const Material = require('../models/Material');
 const Proveedor = require('../models/Proveedor');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 const FORMATOS_OK = ['.pdf', '.jpg', '.jpeg', '.png'];
 
@@ -128,7 +129,7 @@ async function cargarCertificado(req, res) {
         certificado_calidad_numero: numero.trim(),
         certificado_calidad_url: `/uploads/certificados-calidad/${req.file.filename}`,
         certificado_calidad_fecha_emision: fecha_emision || null,
-        certificado_calidad_fecha_carga: new Date().toISOString().split('T')[0],
+        certificado_calidad_fecha_carga: fechaHoy(),
         usuario_rut: req.user.rut
       });
     } catch (dbErr) {

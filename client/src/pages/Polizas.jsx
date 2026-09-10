@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Shield, Upload, User } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import { fechaLocal } from '../utils/fecha';
 
 export default function Polizas() {
   const { toasts, addToast, removeToast } = useToast();
@@ -143,7 +144,7 @@ export default function Polizas() {
               type="date"
               className="form-input"
               value={form.fecha_vencimiento}
-              min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
+              min={fechaLocal(new Date(Date.now() + 86400000))}
               onChange={e => setForm(f => ({ ...f, fecha_vencimiento: e.target.value }))}
             />
           </div>

@@ -5,6 +5,7 @@ const { Op } = require('sequelize');
 const DocumentoLegal = require('../models/DocumentoLegal');
 const Trabajador = require('../models/Trabajador');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 const FORMATOS_OK = ['.pdf', '.jpg', '.jpeg', '.png'];
 
@@ -53,7 +54,7 @@ async function getExamenesTrabajador(req, res) {
       order: [['documento_legal_fecha_emision', 'DESC']]
     });
 
-    const hoy = new Date().toISOString().split('T')[0];
+    const hoy = fechaHoy();
     const data = examenes.map(e => ({
       ...e.toJSON(),
       vencido: !!e.documento_legal_fecha_vencimiento && e.documento_legal_fecha_vencimiento < hoy
@@ -91,7 +92,7 @@ async function cargarExamen(req, res) {
       return res.status(404).json({ success: false, error: 'Trabajador no encontrado' });
     }
 
-    const hoy = new Date().toISOString().split('T')[0];
+    const hoy = fechaHoy();
     const vencido = fecha_vencimiento < hoy;
 
     const certificado = await DocumentoLegal.create({

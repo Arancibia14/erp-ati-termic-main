@@ -5,6 +5,7 @@ const DocumentoLegal = require('../models/DocumentoLegal');
 const Trabajador = require('../models/Trabajador');
 const Proyecto = require('../models/Proyecto');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -41,8 +42,9 @@ async function subirPoliza(req, res) {
       return res.status(400).json({ success: false, error: 'Se requiere el archivo PDF de la póliza' });
     }
 
-    const fechaVenc = new Date(fecha_vencimiento);
-    if (fechaVenc <= new Date()) {
+    // Se compara como texto YYYY-MM-DD contra la fecha de hoy en Chile:
+    // new Date('YYYY-MM-DD') se interpreta como medianoche UTC
+    if (fecha_vencimiento <= fechaHoy()) {
       return res.status(400).json({ success: false, error: 'La fecha de vencimiento debe ser futura' });
     }
 
@@ -74,7 +76,7 @@ async function subirPoliza(req, res) {
     const poliza = await DocumentoLegal.create({
       documento_legal_tipo: 'poliza',
       documento_legal_url_pdf: `/uploads/documentos/${req.file.filename}`,
-      documento_legal_fecha_emision: new Date().toISOString().split('T')[0],
+      documento_legal_fecha_emision: fechaHoy(),
       documento_legal_fecha_vencimiento: fecha_vencimiento,
       documento_legal_estado: 'Vigente',
       trabajador_rut,

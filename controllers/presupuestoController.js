@@ -1,6 +1,7 @@
 const Proyecto = require('../models/Proyecto');
 const ControlCambioPpto = require('../models/ControlCambioPpto');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 async function getPresupuestoActual(req, res) {
   try {
@@ -53,7 +54,7 @@ async function registrarCambioPpto(req, res) {
     await proyecto.update({ proyecto_presupuesto_asignado: nuevo });
 
     const cambio = await ControlCambioPpto.create({
-      control_cambio_ppto_fecha: new Date().toISOString().split('T')[0],
+      control_cambio_ppto_fecha: fechaHoy(),
       control_cambio_ppto_monto_anterior: monto_anterior,
       control_cambio_ppto_monto_nuevo: nuevo,
       control_cambio_ppto_motivo: motivo,

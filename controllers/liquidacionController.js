@@ -4,6 +4,7 @@ const fs = require('fs');
 const LiquidacionSueldo = require('../models/LiquidacionSueldo');
 const Trabajador = require('../models/Trabajador');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -85,7 +86,7 @@ async function cargarLiquidacion(req, res) {
     if (existente) {
       eliminarArchivo(existente.liquidacion_sueldo_url_pdf);
       existente.liquidacion_sueldo_url_pdf = `/uploads/liquidaciones/${req.file.filename}`;
-      existente.liquidacion_sueldo_fecha_carga = new Date().toISOString().split('T')[0];
+      existente.liquidacion_sueldo_fecha_carga = fechaHoy();
       await existente.save();
       liquidacion = existente;
     } else {
@@ -93,7 +94,7 @@ async function cargarLiquidacion(req, res) {
         trabajador_rut,
         liquidacion_sueldo_periodo: periodo,
         liquidacion_sueldo_url_pdf: `/uploads/liquidaciones/${req.file.filename}`,
-        liquidacion_sueldo_fecha_carga: new Date().toISOString().split('T')[0]
+        liquidacion_sueldo_fecha_carga: fechaHoy()
       });
     }
 

@@ -6,6 +6,7 @@ const ContratoLaboral = require('../models/ContratoLaboral');
 const Proyecto = require('../models/Proyecto');
 const DocumentoLegal = require('../models/DocumentoLegal');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy, ZONA_HORARIA } = require('../utils/fecha');
 
 async function getInfoContractual(req, res) {
   try {
@@ -132,7 +133,7 @@ async function generarAnexoTraslado(req, res) {
 
       doc.moveDown(2);
       doc.fontSize(8).fillColor('#888')
-        .text(`Emitido el ${new Date().toLocaleDateString('es-CL')} — ATI Termic SpA`, { align: 'center' });
+        .text(`Emitido el ${new Date().toLocaleDateString('es-CL', { timeZone: ZONA_HORARIA })} — ATI Termic SpA`, { align: 'center' });
 
       doc.end();
       stream.on('finish', resolve);
@@ -142,7 +143,7 @@ async function generarAnexoTraslado(req, res) {
     const documento = await DocumentoLegal.create({
       documento_legal_tipo: 'AnexoTraslado',
       documento_legal_url_pdf: urlPdf,
-      documento_legal_fecha_emision: new Date().toISOString().split('T')[0],
+      documento_legal_fecha_emision: fechaHoy(),
       documento_legal_fecha_vencimiento: null,
       documento_legal_estado: 'PendienteFirma',
       trabajador_rut,

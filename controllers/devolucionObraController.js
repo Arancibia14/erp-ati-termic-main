@@ -4,6 +4,7 @@ const OrdenCompra = require('../models/OrdenCompra');
 const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
 const Material = require('../models/Material');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 const ESTADOS_DANIO = ['Dañado', 'Defectuoso'];
 
@@ -136,7 +137,7 @@ async function registrarReingreso(req, res) {
       devolucion_obra_estado_fisico: estado_fisico,
       devolucion_obra_observacion: observacion ? observacion.trim() : null,
       devolucion_obra_vale: vale,
-      devolucion_obra_fecha: new Date().toISOString().split('T')[0],
+      devolucion_obra_fecha: fechaHoy(),
       devolucion_obra_precio_unitario: precioUnitario,
       devolucion_obra_monto_rebajado: montoRebajado,
       usuario_rut: req.user.rut

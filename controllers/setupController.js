@@ -10,6 +10,7 @@ const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
 const GuiaDespacho     = require('../models/GuiaDespacho');
 const ContratoLaboral  = require('../models/ContratoLaboral');
 const LogAuditoria     = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 const audit = async (accion, modulo, rut) => {
   try {
@@ -211,7 +212,7 @@ async function crearSolicitudMaterial(req, res) {
       solicitud_material_descripcion,
       solicitud_material_cantidad: parseInt(solicitud_material_cantidad),
       solicitud_material_estado: 'pendiente',
-      solicitud_material_fecha: new Date().toISOString().split('T')[0],
+      solicitud_material_fecha: fechaHoy(),
       proyecto_codigo_correlativo,
       usuario_rut: req.user.rut
     });

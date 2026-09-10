@@ -3,6 +3,7 @@ import { BookOpen, Plus, Send, X, ChevronDown } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import { fechaLocal } from '../utils/fecha';
 
 const DRAFT_KEY = 'erp_bitacora_draft';
 
@@ -16,7 +17,7 @@ export default function Bitacora() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     bitacora_diaria_descripcion_actividad: '',
-    bitacora_diaria_fecha: new Date().toISOString().split('T')[0]
+    bitacora_diaria_fecha: fechaLocal()
   });
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export default function Bitacora() {
   };
 
   const abrirNueva = () => {
-    setForm({ bitacora_diaria_descripcion_actividad: '', bitacora_diaria_fecha: new Date().toISOString().split('T')[0] });
+    setForm({ bitacora_diaria_descripcion_actividad: '', bitacora_diaria_fecha: fechaLocal() });
     setMostrarForm(true);
   };
 

@@ -189,7 +189,7 @@ export default function ControlPresupuesto() {
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                       <span style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>
-                        {new Date(c.control_cambio_ppto_fecha).toLocaleDateString('es-CL')}
+                        {new Date(c.control_cambio_ppto_fecha + 'T00:00:00').toLocaleDateString('es-CL')}
                       </span>
                       <span style={{
                         fontSize: 12,

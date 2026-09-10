@@ -7,6 +7,7 @@ const Material = require('../models/Material');
 const EntregaEpp = require('../models/EntregaEpp');
 const DocumentoLegal = require('../models/DocumentoLegal');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy, ZONA_HORARIA } = require('../utils/fecha');
 
 async function getTrabajadoresActivos(req, res) {
   try {
@@ -69,7 +70,7 @@ async function crearEntrega(req, res) {
       materiales.push({ material, cantidad });
     }
 
-    const fecha = new Date().toISOString().split('T')[0];
+    const fecha = fechaHoy();
     const lote = `LOTE-${Date.now()}`;
     const entregas = [];
     for (const { material, cantidad } of materiales) {
@@ -307,7 +308,7 @@ async function generarComprobante(req, res) {
         doc.moveDown(0.3);
         doc.fontSize(10).font('Helvetica').fillColor('#000');
         doc.text(`Folio de entrega: ${lote}`);
-        doc.text(`Fecha y hora de validación: ${new Date(fechaHora).toLocaleString('es-CL')}`);
+        doc.text(`Fecha y hora de validación: ${new Date(fechaHora).toLocaleString('es-CL', { timeZone: ZONA_HORARIA })}`);
         doc.moveDown(1);
 
         doc.fontSize(12).font('Helvetica-Bold').fillColor('#333').text('ARTÍCULOS ENTREGADOS');
@@ -346,7 +347,7 @@ async function generarComprobante(req, res) {
 
         doc.moveDown(2);
         doc.fontSize(8).fillColor('#888')
-          .text(`Documento generado el ${new Date().toLocaleString('es-CL')} — ATI Termic SpA. Registro inalterable.`, { align: 'center' });
+          .text(`Documento generado el ${new Date().toLocaleString('es-CL', { timeZone: ZONA_HORARIA })} — ATI Termic SpA. Registro inalterable.`, { align: 'center' });
 
         doc.end();
         stream.on('finish', resolve);
@@ -364,7 +365,7 @@ async function generarComprobante(req, res) {
     const documento = await DocumentoLegal.create({
       documento_legal_tipo: 'ComprobanteEPP',
       documento_legal_url_pdf: urlPdf,
-      documento_legal_fecha_emision: new Date().toISOString().split('T')[0],
+      documento_legal_fecha_emision: fechaHoy(),
       documento_legal_fecha_vencimiento: null,
       documento_legal_estado: 'Emitido',
       trabajador_rut: trabajador.trabajador_rut,

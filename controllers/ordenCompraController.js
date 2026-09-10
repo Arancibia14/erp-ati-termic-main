@@ -5,6 +5,7 @@ const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
 const Proveedor = require('../models/Proveedor');
 const Proyecto = require('../models/Proyecto');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 async function getProveedores(req, res) {
   try {
@@ -53,7 +54,7 @@ async function generarOrdenCompra(req, res) {
     const folio = `OC-${Date.now()}`;
     const ordenCompra = await OrdenCompra.create({
       orden_compra_folio: folio,
-      orden_compra_fecha: new Date().toISOString().split('T')[0],
+      orden_compra_fecha: fechaHoy(),
       orden_compra_estado: 'Emitida',
       proveedor_rut,
       proyecto_codigo_correlativo: solicitud.proyecto_codigo_correlativo,

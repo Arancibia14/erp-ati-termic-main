@@ -4,6 +4,7 @@ const Proyecto = require('../models/Proyecto');
 const EstadoProyecto = require('../models/EstadoProyecto');
 const EgresoCajaChica = require('../models/EgresoCajaChica');
 const LogAuditoria = require('../models/LogAuditoria');
+const { fechaHoy } = require('../utils/fecha');
 
 async function getProyectos(req, res) {
   try {
@@ -83,7 +84,7 @@ async function registrarEgreso(req, res) {
 
     const egreso = await EgresoCajaChica.create({
       egreso_caja_chica_monto: monto,
-      egreso_caja_chica_fecha: egreso_caja_chica_fecha || new Date().toISOString().split('T')[0],
+      egreso_caja_chica_fecha: egreso_caja_chica_fecha || fechaHoy(),
       egreso_caja_chica_concepto,
       proyecto_codigo_correlativo
     });
