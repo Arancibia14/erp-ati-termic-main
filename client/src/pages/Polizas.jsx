@@ -13,6 +13,15 @@ export default function Polizas() {
   const [loading, setLoading] = useState(false);
   const [pdf, setPdf] = useState(null);
   const [form, setForm] = useState({ trabajador_rut: '', fecha_vencimiento: '' });
+  // Fecha mínima del vencimiento: mañana. Se calcula una sola vez al montar,
+  // porque leer el reloj durante el render no es puro (regla react-hooks/purity).
+  // setDate suma un día de calendario; sumar 86400000 ms se salta un día cuando
+  // Chile adelanta la hora (ese día dura 23 horas).
+  const [fechaMinima] = useState(() => {
+    const manana = new Date();
+    manana.setDate(manana.getDate() + 1);
+    return fechaLocal(manana);
+  });
 
   useEffect(() => {
     api.get('/mano-obra/proyectos')
@@ -144,7 +153,7 @@ export default function Polizas() {
               type="date"
               className="form-input"
               value={form.fecha_vencimiento}
-              min={fechaLocal(new Date(Date.now() + 86400000))}
+              min={fechaMinima}
               onChange={e => setForm(f => ({ ...f, fecha_vencimiento: e.target.value }))}
             />
           </div>
