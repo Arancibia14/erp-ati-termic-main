@@ -12,6 +12,7 @@ const GuiaDespacho     = require('../models/GuiaDespacho');
 const ContratoLaboral  = require('../models/ContratoLaboral');
 const LogAuditoria     = require('../models/LogAuditoria');
 const { fechaHoy } = require('../utils/fecha');
+const { validarRutChileno } = require('../utils/rut');
 
 const audit = async (accion, modulo, rut) => {
   try {
@@ -172,18 +173,22 @@ async function crearTrabajador(req, res) {
     if (!trabajador_rut || !trabajador_nombres || !trabajador_correo || !trabajador_telefono || !especialidad_id) {
       return res.status(400).json({ success: false, error: 'RUT, nombres, correo, teléfono y especialidad son requeridos' });
     }
-    const existe = await Trabajador.findByPk(trabajador_rut);
+    const validacion = validarRutChileno(trabajador_rut);
+    if (!validacion.valido) return res.status(400).json({ success: false, error: validacion.error });
+    const rut = validacion.rut;
+
+    const existe = await Trabajador.findByPk(rut);
     if (existe) return res.status(400).json({ success: false, error: 'Ya existe un trabajador con ese RUT' });
 
     const trabajador = await Trabajador.create({
-      trabajador_rut,
+      trabajador_rut: rut,
       trabajador_nombres,
       trabajador_correo,
       trabajador_telefono,
       especialidad_id: parseInt(especialidad_id),
       proyecto_codigo_correlativo: proyecto_codigo_correlativo || null
     });
-    await audit(`Trabajador ${trabajador_rut} creado`, 'SETUP', req.user.rut);
+    await audit(`Trabajador ${rut} creado`, 'SETUP', req.user.rut);
     return res.status(201).json({ success: true, data: trabajador });
   } catch (err) {
     console.error(err);

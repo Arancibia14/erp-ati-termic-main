@@ -1,41 +1,23 @@
 const Trabajador = require('../models/Trabajador');
 const Especialidad = require('../models/Especialidad');
 const LogAuditoria = require('../models/LogAuditoria');
+const { normalizarRut, validarRutChileno, RUT_INVALIDO } = require('../utils/rut');
 
-// Normaliza el RUT a formato NUMERO-DV: quita puntos, espacios y hace opcional el guion.
-// Acepta desde 6 digitos (trabajadores de mayor edad) hasta 9.
-function normalizarRut(rut) {
-  if (!rut) return null;
-  const limpio = String(rut).replace(/[.\s]/g, '').toUpperCase().trim();
-  const m = /^(\d{6,9})-?([0-9K])$/.exec(limpio);
-  return m ? `${m[1]}-${m[2]}` : null;
-}
-
-function calcularDv(numero) {
-  let suma = 0;
-  let multiplo = 2;
-  for (let i = numero.length - 1; i >= 0; i--) {
-    suma += parseInt(numero[i]) * multiplo;
-    multiplo = multiplo === 7 ? 2 : multiplo + 1;
-  }
-  const resto = 11 - (suma % 11);
-  return resto === 11 ? '0' : resto === 10 ? 'K' : String(resto);
-}
-
-// Devuelve { valido, rut, error }. Tanto el error de formato como el de digito
-// verificador entregan el mismo mensaje: el sistema no revela el DV esperado.
-const RUT_INVALIDO = 'El RUT ingresado tiene un formato inválido';
-
-function validarRutChileno(rut) {
+// Primero se busca el valor tal cual, para seguir encontrando los registros
+// antiguos que Configuración guardó con puntos; después normalizado, para
+// aceptar el RUT en cualquier formato.
+async function buscarPorRut(rut) {
+  const exacto = await Trabajador.findByPk(rut);
+  if (exacto) return exacto;
   const normalizado = normalizarRut(rut);
-  if (!normalizado) {
-    return { valido: false, error: RUT_INVALIDO };
+  return normalizado ? Trabajador.findByPk(normalizado) : null;
+}
+
+function responderNoEncontrado(res, rut) {
+  if (!validarRutChileno(rut).valido) {
+    return res.status(400).json({ success: false, error: RUT_INVALIDO });
   }
-  const [numero, dv] = normalizado.split('-');
-  if (calcularDv(numero) !== dv) {
-    return { valido: false, error: RUT_INVALIDO };
-  }
-  return { valido: true, rut: normalizado };
+  return res.status(404).json({ success: false, error: 'Trabajador no encontrado' });
 }
 
 async function getEspecialidades(req, res) {
@@ -112,10 +94,8 @@ async function actualizarTrabajador(req, res) {
     const { rut } = req.params;
     const { nombres, apellidos, correo, telefono, especialidad_id } = req.body;
 
-    const trabajador = await Trabajador.findByPk(rut);
-    if (!trabajador) {
-      return res.status(404).json({ success: false, error: 'Trabajador no encontrado' });
-    }
+    const trabajador = await buscarPorRut(rut);
+    if (!trabajador) return responderNoEncontrado(res, rut);
 
     if (!nombres || !apellidos || !especialidad_id) {
       return res.status(400).json({ success: false, error: 'Nombres, apellidos y especialidad son obligatorios' });
@@ -138,10 +118,8 @@ async function actualizarTrabajador(req, res) {
 async function desactivarTrabajador(req, res) {
   try {
     const { rut } = req.params;
-    const trabajador = await Trabajador.findByPk(rut);
-    if (!trabajador) {
-      return res.status(404).json({ success: false, error: 'Trabajador no encontrado' });
-    }
+    const trabajador = await buscarPorRut(rut);
+    if (!trabajador) return responderNoEncontrado(res, rut);
     trabajador.trabajador_activo = false;
     await trabajador.save();
     return res.json({ success: true, data: trabajador });
