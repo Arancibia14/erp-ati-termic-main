@@ -25,7 +25,7 @@ async function guiasDelProyecto(proyecto, materialId) {
   });
 }
 
-// Materiales que fueron despachados a un proyecto (para el selector)
+// Materiales recibidos en la obra (para el selector)
 async function getMaterialesDespachados(req, res) {
   try {
     const { proyecto } = req.query;
@@ -37,11 +37,11 @@ async function getMaterialesDespachados(req, res) {
     return res.json({ success: true, data: materiales });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, error: 'Error al obtener los materiales despachados' });
+    return res.status(500).json({ success: false, error: 'Error al obtener los materiales recibidos en la obra' });
   }
 }
 
-// Cantidad despachada / ya devuelta / disponible para devolver
+// Cantidad recibida en la obra / ya devuelta / disponible para devolver
 async function getDespachado(req, res) {
   try {
     const { proyecto, material } = req.query;
@@ -63,7 +63,7 @@ async function getDespachado(req, res) {
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, error: 'Error al calcular la cantidad despachada' });
+    return res.status(500).json({ success: false, error: 'Error al calcular la cantidad recibida en la obra' });
   }
 }
 
@@ -118,7 +118,7 @@ async function registrarReingreso(req, res) {
       // Excepción 1: Exceso de devolución
       return res.status(409).json({
         success: false,
-        error: `La cantidad a devolver (${cant}) supera lo despachado a la obra (disponible: ${Math.max(disponible, 0)}).`
+        error: `La cantidad a devolver (${cant}) supera lo recibido en la obra (disponible: ${Math.max(disponible, 0)}).`
       });
     }
 

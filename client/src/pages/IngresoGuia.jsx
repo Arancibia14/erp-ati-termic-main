@@ -113,16 +113,16 @@ export default function IngresoGuia() {
     })
       .then(r => {
         if (r.data.data.alerta_exceso) {
-          addToast('Ingreso de materiales exitoso — la cantidad supera lo comprado', 'warning');
+          addToast('Guía registrada, pero la cantidad supera lo comprado en la OC', 'warning');
         } else {
-          addToast('Ingreso de materiales exitoso', 'success');
+          addToast('Guía registrada. El stock se sumará cuando se confirme la recepción en obra', 'success');
         }
         limpiarFormulario();
         cargarGuias();
         cargarRegistradas();
       })
       .catch(err => {
-        const mensaje = err.response?.data?.error || 'Error al registrar el ingreso';
+        const mensaje = err.response?.data?.error || 'Error al registrar la guía';
         setErrorGuia(mensaje);
         addToast(mensaje, 'error');
       })
@@ -237,7 +237,7 @@ export default function IngresoGuia() {
 
         {materialSeleccionado && (
           <div className="form-group">
-            <label className="form-label">Cantidad Recibida ({materialSeleccionado.material_unidad_medida})</label>
+            <label className="form-label">Cantidad según la guía ({materialSeleccionado.material_unidad_medida})</label>
             <input
               type="number"
               min="1"
@@ -249,7 +249,7 @@ export default function IngresoGuia() {
         )}
 
         <button className="btn btn-primary" onClick={confirmarRecepcion} disabled={confirmando}>
-          {confirmando ? 'Confirmando...' : 'Confirmar Recepción'}
+          {confirmando ? 'Registrando...' : 'Registrar Guía'}
         </button>
       </div>
 

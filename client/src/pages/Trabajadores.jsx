@@ -113,7 +113,7 @@ export default function Trabajadores() {
     setErrorRut('');
     api.post('/trabajador', form)
       .then(() => {
-        addToast('Expediente actualizado exitosamente', 'success');
+        addToast('Expediente creado exitosamente', 'success');
         cancelarForm();
         cargarTrabajadores();
       })

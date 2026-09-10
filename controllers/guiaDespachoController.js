@@ -122,7 +122,7 @@ async function crearGuia(req, res) {
     return res.status(201).json({ success: true, data: { guia, alerta_exceso: alertaExceso } });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, error: 'Error al registrar el ingreso de materiales' });
+    return res.status(500).json({ success: false, error: 'Error al registrar la guía de despacho' });
   }
 }
 

@@ -38,7 +38,7 @@ export default function DevolucionObra() {
     if (!codigo) return;
     api.get('/devolucion-obra/materiales', { params: { proyecto: codigo } })
       .then(r => setMateriales(r.data.data))
-      .catch(() => addToast('Error al cargar materiales despachados', 'error'));
+      .catch(() => addToast('Error al cargar los materiales recibidos en la obra', 'error'));
     cargarHistorial(codigo);
   };
 
@@ -112,7 +112,7 @@ export default function DevolucionObra() {
             <div className="form-group">
               <label className="form-label">Material a reintegrar</label>
               <select className="form-select" value={form.material_id} onChange={e => elegirMaterial(e.target.value)}>
-                <option value="">Selecciona un material despachado...</option>
+                <option value="">Selecciona un material recibido en la obra...</option>
                 {materiales.map(m => (
                   <option key={m.material_id} value={m.material_id}>
                     {m.material_codigo_sku} — {m.material_nombre}
@@ -121,14 +121,14 @@ export default function DevolucionObra() {
               </select>
               {materiales.length === 0 && (
                 <span style={{ fontSize: 12, color: 'var(--color-warning)', display: 'block', marginTop: 6 }}>
-                  No hay materiales despachados a esta obra (vía guía de despacho con OC).
+                  No hay materiales recibidos en esta obra. Solo se pueden devolver materiales de guías con la recepción confirmada.
                 </span>
               )}
             </div>
 
             {despacho && (
               <div style={{ background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)', borderRadius: 4, padding: '10px 14px', marginBottom: 16, fontSize: 12 }}>
-                Cantidad máxima despachada a la obra: <strong>{despacho.despachado}</strong> ·
+                Cantidad recibida en la obra: <strong>{despacho.despachado}</strong> ·
                 {' '}Ya devuelto: <strong>{despacho.ya_devuelto}</strong> ·
                 {' '}Disponible para devolver: <strong>{despacho.disponible}</strong>
               </div>
