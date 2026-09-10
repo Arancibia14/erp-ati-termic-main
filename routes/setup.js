@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const {
-  getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes,
+  getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos,
   crearProyecto, crearProveedor, crearTrabajador, crearHito, crearSolicitudMaterial,
-  crearGuiaDespacho, crearContratoLaboral, actualizarCoordenadasProyecto
+  crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
+  actualizarCoordenadasProyecto
 } = require('../controllers/setupController');
 const { verifyToken } = require('../middleware/auth');
 
@@ -12,6 +13,7 @@ router.get('/especialidades',    verifyToken, getEspecialidades);
 router.get('/proyectos',         verifyToken, getProyectos);
 router.get('/trabajadores',      verifyToken, getTrabajadores);
 router.get('/ordenes',           verifyToken, getOrdenes);
+router.get('/contratos',         verifyToken, getContratos);
 router.post('/proyecto',         verifyToken, crearProyecto);
 router.post('/proveedor',        verifyToken, crearProveedor);
 router.post('/trabajador',       verifyToken, crearTrabajador);
@@ -20,5 +22,7 @@ router.post('/solicitud-material', verifyToken, crearSolicitudMaterial);
 router.post('/guia-despacho',    verifyToken, crearGuiaDespacho);
 router.post('/contrato',         verifyToken, crearContratoLaboral);
 router.put('/proyecto/:codigo/coordenadas', verifyToken, actualizarCoordenadasProyecto);
+router.put('/contrato/:id',      verifyToken, actualizarContratoLaboral);
+router.delete('/contrato/:id',   verifyToken, eliminarContratoLaboral);
 
 module.exports = router;

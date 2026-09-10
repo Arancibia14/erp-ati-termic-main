@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Settings, FolderPlus, Building2, UserPlus, Flag,
-  ClipboardList, Truck, FileText, MapPin
+  ClipboardList, Truck, FileText, MapPin, Edit3, Trash2
 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
@@ -27,6 +27,8 @@ export default function Configuracion() {
   const [proyectos,     setProyectos]     = useState([]);
   const [trabajadores,  setTrabajadores]  = useState([]);
   const [ordenes,       setOrdenes]       = useState([]);
+  const [contratos,     setContratos]     = useState([]);
+  const [editandoContrato, setEditandoContrato] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const [fProyecto,   setFProyecto]   = useState({ codigo: '', nombre: '', presupuesto: '', correo: '', estado_id: '' });
@@ -46,12 +48,18 @@ export default function Configuracion() {
   }, []);
 
   useEffect(() => {
-    if (tab === 'guia')     api.get('/setup/ordenes').then(r => setOrdenes(r.data.data)).catch(() => {});
-    if (tab === 'contrato') api.get('/setup/trabajadores').then(r => setTrabajadores(r.data.data)).catch(() => {});
+    if (tab === 'guia') api.get('/setup/ordenes').then(r => setOrdenes(r.data.data)).catch(() => {});
+    if (tab === 'contrato') {
+      api.get('/setup/trabajadores').then(r => setTrabajadores(r.data.data)).catch(() => {});
+      cargarContratos();
+    }
   }, [tab]);
 
   const cargarProyectos = () =>
     api.get('/setup/proyectos').then(r => setProyectos(r.data.data)).catch(() => {});
+
+  const cargarContratos = () =>
+    api.get('/setup/contratos').then(r => setContratos(r.data.data)).catch(() => {});
 
   const send = async (endpoint, body, onSuccess) => {
     setLoading(true);
@@ -163,18 +171,65 @@ export default function Configuracion() {
     });
   };
 
-  const submitContrato = e => {
+  const contratoVacio = { rut: '', sueldo: '', leyes: '', inicio: '', termino: '', proyecto_codigo: '' };
+
+  const submitContrato = async e => {
     e.preventDefault();
     if (!fContrato.rut || !fContrato.sueldo || !fContrato.inicio)
       return addToast('Trabajador, sueldo base y fecha de inicio son requeridos', 'error');
-    send('/setup/contrato', {
+    const body = {
       trabajador_rut: fContrato.rut,
       contrato_laboral_sueldo_base: fContrato.sueldo,
       contrato_laboral_leyes_sociales: fContrato.leyes || 0,
       contrato_laboral_fecha_inicio: fContrato.inicio,
       contrato_laboral_fecha_termino: fContrato.termino || null,
       proyecto_codigo_correlativo: fContrato.proyecto_codigo || null
-    }, () => setFContrato({ rut: '', sueldo: '', leyes: '', inicio: '', termino: '', proyecto_codigo: '' }));
+    };
+    setLoading(true);
+    try {
+      if (editandoContrato) {
+        await api.put(`/setup/contrato/${editandoContrato}`, body);
+        addToast('Contrato actualizado correctamente', 'success');
+      } else {
+        await api.post('/setup/contrato', body);
+        addToast('Contrato creado correctamente', 'success');
+      }
+      setFContrato(contratoVacio);
+      setEditandoContrato(null);
+      cargarContratos();
+    } catch (err) {
+      addToast(err.response?.data?.error || 'Error al guardar el contrato', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const editarContrato = c => {
+    setFContrato({
+      rut: c.trabajador_rut,
+      sueldo: parseFloat(c.contrato_laboral_sueldo_base),
+      leyes: parseFloat(c.contrato_laboral_leyes_sociales),
+      inicio: c.contrato_laboral_fecha_inicio,
+      termino: c.contrato_laboral_fecha_termino || '',
+      proyecto_codigo: c.proyecto_codigo_correlativo || ''
+    });
+    setEditandoContrato(c.contrato_laboral_id_contrato);
+  };
+
+  const cancelarEdicionContrato = () => {
+    setFContrato(contratoVacio);
+    setEditandoContrato(null);
+  };
+
+  const eliminarContrato = id => {
+    if (!window.confirm('¿Eliminar este contrato laboral? Esta acción no se puede deshacer.')) return;
+    api.delete(`/setup/contrato/${id}`)
+      .then(() => {
+        addToast('Contrato eliminado', 'success');
+        if (editandoContrato === id) cancelarEdicionContrato();
+        cargarContratos();
+      })
+      .catch(err => addToast(err.response?.data?.error || 'Error al eliminar el contrato', 'error'));
   };
 
   const ProyectoSelect = ({ value, onChange, required = false }) => (
@@ -518,7 +573,7 @@ export default function Configuracion() {
         {/* ── CONTRATOS LABORALES ───────────────────────────────── */}
         {tab === 'contrato' && (
           <div className="card">
-            <SectionTitle>Nuevo Contrato Laboral</SectionTitle>
+            <SectionTitle>{editandoContrato ? 'Editar Contrato Laboral' : 'Nuevo Contrato Laboral'}</SectionTitle>
             <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 14 }}>
               Registra el sueldo y leyes sociales de un trabajador. Estos datos alimentan el módulo de Mano de Obra.
             </p>
@@ -530,7 +585,7 @@ export default function Configuracion() {
               <form onSubmit={submitContrato}>
                 <div className="form-group">
                   <label className="form-label">Trabajador</label>
-                  <select className="form-select" value={fContrato.rut}
+                  <select className="form-select" value={fContrato.rut} disabled={!!editandoContrato}
                     onChange={e => setFContrato(f => ({ ...f, rut: e.target.value }))}>
                     <option value="">Seleccionar trabajador...</option>
                     {trabajadores.map(t => (
@@ -539,6 +594,11 @@ export default function Configuracion() {
                       </option>
                     ))}
                   </select>
+                  {editandoContrato && (
+                    <p style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 4 }}>
+                      El trabajador de un contrato no se puede cambiar; elimina y crea uno nuevo si te equivocaste de persona.
+                    </p>
+                  )}
                 </div>
                 <div className="form-grid-2">
                   <div className="form-group" style={fieldStyle}>
@@ -566,10 +626,62 @@ export default function Configuracion() {
                 </div>
                 <ProyectoSelect value={fContrato.proyecto_codigo}
                   onChange={e => setFContrato(f => ({ ...f, proyecto_codigo: e.target.value }))} />
-                <button type="submit" className="btn btn-primary" style={{ marginTop: 16 }} disabled={loading}>
-                  <FileText size={15} /> {loading ? 'Creando...' : 'Crear Contrato'}
-                </button>
+                <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+                  <button type="submit" className="btn btn-primary" disabled={loading}>
+                    <FileText size={15} />
+                    {loading ? 'Guardando...' : editandoContrato ? 'Guardar Cambios' : 'Crear Contrato'}
+                  </button>
+                  {editandoContrato && (
+                    <button type="button" className="btn btn-secondary" onClick={cancelarEdicionContrato} disabled={loading}>
+                      Cancelar
+                    </button>
+                  )}
+                </div>
               </form>
+            )}
+
+            {contratos.length > 0 && (
+              <div style={{ marginTop: 24 }}>
+                <p style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 10 }}>
+                  Contratos registrados ({contratos.length})
+                </p>
+                <div className="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Trabajador</th><th>Sueldo Base</th><th>Leyes Sociales</th>
+                        <th>Inicio</th><th>Término</th><th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {contratos.map(c => (
+                        <tr key={c.contrato_laboral_id_contrato}>
+                          <td style={{ fontSize: 13 }}>
+                            {c.Trabajador ? `${c.Trabajador.trabajador_nombres} ${c.Trabajador.trabajador_apellidos || ''}`.trim() : c.trabajador_rut}
+                            <span style={{ display: 'block', fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'monospace' }}>{c.trabajador_rut}</span>
+                          </td>
+                          <td style={{ fontSize: 13 }}>${parseFloat(c.contrato_laboral_sueldo_base).toLocaleString('es-CL')}</td>
+                          <td style={{ fontSize: 13 }}>${parseFloat(c.contrato_laboral_leyes_sociales).toLocaleString('es-CL')}</td>
+                          <td style={{ fontSize: 13 }}>{c.contrato_laboral_fecha_inicio}</td>
+                          <td style={{ fontSize: 13 }}>{c.contrato_laboral_fecha_termino || '—'}</td>
+                          <td>
+                            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                              <button className="btn btn-secondary" style={{ padding: '5px 10px', fontSize: 12 }}
+                                onClick={() => editarContrato(c)}>
+                                <Edit3 size={13} /> Editar
+                              </button>
+                              <button className="btn btn-danger" style={{ padding: '5px 10px', fontSize: 12 }}
+                                onClick={() => eliminarContrato(c.contrato_laboral_id_contrato)}>
+                                <Trash2 size={13} /> Eliminar
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
           </div>
         )}

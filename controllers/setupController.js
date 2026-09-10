@@ -1,3 +1,4 @@
+const { Op }           = require('sequelize');
 const EstadoProyecto   = require('../models/EstadoProyecto');
 const Especialidad     = require('../models/Especialidad');
 const Proyecto         = require('../models/Proyecto');
@@ -98,6 +99,19 @@ async function getOrdenes(req, res) {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, error: 'Error al obtener órdenes de compra' });
+  }
+}
+
+async function getContratos(req, res) {
+  try {
+    const contratos = await ContratoLaboral.findAll({
+      include: [{ model: Trabajador, attributes: ['trabajador_nombres', 'trabajador_apellidos'] }],
+      order: [['contrato_laboral_fecha_inicio', 'DESC']]
+    });
+    return res.json({ success: true, data: contratos });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al obtener contratos laborales' });
   }
 }
 
@@ -251,6 +265,21 @@ async function crearGuiaDespacho(req, res) {
   }
 }
 
+// Un trabajador no puede tener dos contratos cuyos rangos [inicio, término] se solapen.
+// Un término null se trata como "sigue vigente" (equivalente a +infinito).
+async function buscarContratoSolapado(trabajador_rut, fecha_inicio, fecha_termino, excluirId = null) {
+  const where = {
+    trabajador_rut,
+    contrato_laboral_fecha_inicio: { [Op.lte]: fecha_termino || '9999-12-31' },
+    [Op.or]: [
+      { contrato_laboral_fecha_termino: null },
+      { contrato_laboral_fecha_termino: { [Op.gte]: fecha_inicio } }
+    ]
+  };
+  if (excluirId) where.contrato_laboral_id_contrato = { [Op.ne]: excluirId };
+  return ContratoLaboral.findOne({ where });
+}
+
 async function crearContratoLaboral(req, res) {
   try {
     const { trabajador_rut, contrato_laboral_sueldo_base, contrato_laboral_leyes_sociales, contrato_laboral_fecha_inicio, contrato_laboral_fecha_termino, proyecto_codigo_correlativo } = req.body;
@@ -259,6 +288,11 @@ async function crearContratoLaboral(req, res) {
     }
     const trabajador = await Trabajador.findByPk(trabajador_rut);
     if (!trabajador) return res.status(404).json({ success: false, error: 'Trabajador no encontrado' });
+
+    const solapado = await buscarContratoSolapado(trabajador_rut, contrato_laboral_fecha_inicio, contrato_laboral_fecha_termino || null);
+    if (solapado) {
+      return res.status(409).json({ success: false, error: 'El trabajador ya tiene un contrato registrado que se solapa con ese rango de fechas' });
+    }
 
     const contrato = await ContratoLaboral.create({
       trabajador_rut,
@@ -273,6 +307,54 @@ async function crearContratoLaboral(req, res) {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, error: 'Error al crear contrato laboral' });
+  }
+}
+
+async function actualizarContratoLaboral(req, res) {
+  try {
+    const { id } = req.params;
+    const { contrato_laboral_sueldo_base, contrato_laboral_leyes_sociales, contrato_laboral_fecha_inicio, contrato_laboral_fecha_termino, proyecto_codigo_correlativo } = req.body;
+    if (!contrato_laboral_sueldo_base || !contrato_laboral_fecha_inicio) {
+      return res.status(400).json({ success: false, error: 'Sueldo base y fecha de inicio son requeridos' });
+    }
+    const contrato = await ContratoLaboral.findByPk(id);
+    if (!contrato) return res.status(404).json({ success: false, error: 'Contrato no encontrado' });
+
+    const solapado = await buscarContratoSolapado(
+      contrato.trabajador_rut, contrato_laboral_fecha_inicio, contrato_laboral_fecha_termino || null, contrato.contrato_laboral_id_contrato
+    );
+    if (solapado) {
+      return res.status(409).json({ success: false, error: 'El trabajador ya tiene otro contrato registrado que se solapa con ese rango de fechas' });
+    }
+
+    await contrato.update({
+      contrato_laboral_sueldo_base: parseFloat(contrato_laboral_sueldo_base),
+      contrato_laboral_leyes_sociales: parseFloat(contrato_laboral_leyes_sociales) || 0,
+      contrato_laboral_fecha_inicio,
+      contrato_laboral_fecha_termino: contrato_laboral_fecha_termino || null,
+      proyecto_codigo_correlativo: proyecto_codigo_correlativo || null
+    });
+    await audit(`Contrato ${id} actualizado para trabajador ${contrato.trabajador_rut}`, 'SETUP', req.user.rut);
+    return res.json({ success: true, data: contrato });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al actualizar contrato laboral' });
+  }
+}
+
+async function eliminarContratoLaboral(req, res) {
+  try {
+    const { id } = req.params;
+    const contrato = await ContratoLaboral.findByPk(id);
+    if (!contrato) return res.status(404).json({ success: false, error: 'Contrato no encontrado' });
+
+    const trabajador_rut = contrato.trabajador_rut;
+    await contrato.destroy();
+    await audit(`Contrato ${id} eliminado para trabajador ${trabajador_rut}`, 'SETUP', req.user.rut);
+    return res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al eliminar contrato laboral' });
   }
 }
 
@@ -295,7 +377,8 @@ async function actualizarCoordenadasProyecto(req, res) {
 }
 
 module.exports = {
-  getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes,
+  getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos,
   crearProyecto, crearProveedor, crearTrabajador, crearHito, crearSolicitudMaterial,
-  crearGuiaDespacho, crearContratoLaboral, actualizarCoordenadasProyecto
+  crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
+  actualizarCoordenadasProyecto
 };
