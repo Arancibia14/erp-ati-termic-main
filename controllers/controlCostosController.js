@@ -2,6 +2,7 @@ const sequelize = require('../config/database');
 const Proyecto = require('../models/Proyecto');
 const EstadoProyecto = require('../models/EstadoProyecto');
 const ParametroSistema = require('../models/ParametroSistema');
+const { fechaHoy } = require('../utils/fecha');
 
 async function getProyectosConPresupuesto(req, res) {
   try {
@@ -75,9 +76,14 @@ async function getGastosPorMes(req, res) {
       return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
     }
 
-    const anio = parseInt(year) || new Date().getFullYear();
+    // El año por defecto sale de la fecha de Chile: con el reloj del servidor en
+    // UTC, desde las 21:00 del 31 de diciembre ya sería el año siguiente.
+    const anio = parseInt(year) || parseInt(fechaHoy().slice(0, 4));
 
-    // Obtiene gastos reales agrupados por mes del año seleccionado
+    // Obtiene gastos reales agrupados por mes del año seleccionado.
+    // factura_fecha y devolucion_obra_fecha son DATE (sin hora) y se guardan con
+    // la fecha de Chile, así que agrupar con DATE_FORMAT no depende de la zona
+    // horaria del servidor ni de la de MySQL.
     const gastosMensuales = await sequelize.query(`
       SELECT
         DATE_FORMAT(f.factura_fecha, '%Y-%m') AS mes,
@@ -103,12 +109,14 @@ async function getGastosPorMes(req, res) {
 
     const presupuesto = parseFloat(proyecto.proyecto_presupuesto_asignado) || 0;
 
-    // Construye serie de los 12 meses del año seleccionado
+    // Construye serie de los 12 meses del año seleccionado. La clave se arma
+    // como texto y la etiqueta se formatea en UTC, sin pasar por la zona
+    // horaria del servidor.
     const meses = [];
     for (let i = 0; i < 12; i++) {
-      const d = new Date(anio, i, 1);
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-      const label = d.toLocaleDateString('es-CL', { month: 'short', year: '2-digit' });
+      const key = `${anio}-${String(i + 1).padStart(2, '0')}`;
+      const label = new Date(Date.UTC(anio, i, 1))
+        .toLocaleDateString('es-CL', { month: 'short', year: '2-digit', timeZone: 'UTC' });
       const encontrado = gastosMensuales.find(g => g.mes === key);
       const rebaja = rebajasMensuales.find(r => r.mes === key);
       const gastoBruto = encontrado ? parseFloat(encontrado.gasto_real) : 0;
