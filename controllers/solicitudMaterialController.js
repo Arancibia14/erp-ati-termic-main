@@ -86,6 +86,20 @@ async function getSolicitudesPendientes(req, res) {
   }
 }
 
+// El costo estimado es el total de la solicitud, pero el precio unitario solo
+// admite 2 decimales: un único precio redondeado desvía el total hasta $0,005 por
+// unidad. Se reparte en centavos y el resto de la división va en una segunda
+// línea a $0,01 más, para que la OC sume exactamente el costo aprobado.
+function repartirCosto(costoTotal, cantidad) {
+  const centavos = Math.round(costoTotal * 100);
+  const base = Math.floor(centavos / cantidad);
+  const resto = centavos - base * cantidad;
+  const lineas = [];
+  if (resto > 0) lineas.push({ cantidad: resto, precioUnitario: (base + 1) / 100 });
+  lineas.push({ cantidad: cantidad - resto, precioUnitario: base / 100 });
+  return lineas;
+}
+
 async function generarOrdenCompraDesdeSolicitud(solicitud, req, costoEstimado) {
   if (!solicitud.material_id) {
     return { oc_generada: false, motivo: 'La solicitud es una Solicitud Especial sin material de catálogo asociado; genera la Orden de Compra manualmente' };
@@ -110,18 +124,15 @@ async function generarOrdenCompraDesdeSolicitud(solicitud, req, costoEstimado) {
     solicitud_material_id: solicitud.solicitud_material_id
   });
 
-  // El costo estimado que ingresa el administrador al aprobar es el total de la
-  // solicitud; el detalle de la OC guarda el precio por unidad (redondeado a 2
-  // decimales, que es la precision de la columna).
-  const precioUnitario = Math.round((costoEstimado / solicitud.solicitud_material_cantidad) * 100) / 100;
-
-  await DetalleOrdenCompra.create({
-    detalle_orden_compra_descripcion_material: material.material_nombre,
-    detalle_orden_compra_cantidad: solicitud.solicitud_material_cantidad,
-    detalle_orden_compra_precio_unitario: precioUnitario,
-    orden_compra_id: ordenCompra.orden_compra_id,
-    material_id: material.material_id
-  });
+  for (const linea of repartirCosto(costoEstimado, solicitud.solicitud_material_cantidad)) {
+    await DetalleOrdenCompra.create({
+      detalle_orden_compra_descripcion_material: material.material_nombre,
+      detalle_orden_compra_cantidad: linea.cantidad,
+      detalle_orden_compra_precio_unitario: linea.precioUnitario,
+      orden_compra_id: ordenCompra.orden_compra_id,
+      material_id: material.material_id
+    });
+  }
 
   try {
     await LogAuditoria.create({
