@@ -53,6 +53,12 @@ async function crearGuia(req, res) {
       return res.status(400).json({ success: false, error: 'Número de guía, proveedor, material y cantidad son obligatorios' });
     }
 
+    // La OC es obligatoria: de ella sale la obra de destino, que la recepción
+    // (CU 58) necesita para verificar la ubicación y registrar el ingreso.
+    if (!orden_compra_id) {
+      return res.status(400).json({ success: false, error: 'Debes asociar la guía a una orden de compra' });
+    }
+
     const proveedor = await Proveedor.findByPk(proveedor_rut);
     if (!proveedor) {
       return res.status(404).json({ success: false, error: 'Proveedor no encontrado' });
@@ -71,39 +77,37 @@ async function crearGuia(req, res) {
     const cantidad = parseInt(cantidad_recibida);
     let alertaExceso = false;
 
-    if (orden_compra_id) {
-      const ordenCompra = await OrdenCompra.findByPk(orden_compra_id);
-      if (!ordenCompra) {
-        return res.status(404).json({ success: false, error: 'Orden de compra no encontrada' });
-      }
-
-      const detalles = await DetalleOrdenCompra.findAll({
-        where: { orden_compra_id, material_id }
-      });
-      const cantidadComprada = detalles.reduce((acc, d) => acc + d.detalle_orden_compra_cantidad, 0);
-
-      const guiasPrevias = await GuiaDespacho.findAll({
-        where: { orden_compra_id, material_id }
-      });
-      const cantidadRecibidaPrevia = guiasPrevias.reduce((acc, g) => acc + (g.guia_despacho_cantidad_recibida || 0), 0);
-
-      if (cantidadComprada > 0 && (cantidadRecibidaPrevia + cantidad) > cantidadComprada) {
-        alertaExceso = true;
-      }
+    const ordenCompra = await OrdenCompra.findByPk(orden_compra_id);
+    if (!ordenCompra) {
+      return res.status(404).json({ success: false, error: 'Orden de compra no encontrada' });
     }
 
+    const detalles = await DetalleOrdenCompra.findAll({
+      where: { orden_compra_id, material_id }
+    });
+    const cantidadComprada = detalles.reduce((acc, d) => acc + d.detalle_orden_compra_cantidad, 0);
+
+    const guiasPrevias = await GuiaDespacho.findAll({
+      where: { orden_compra_id, material_id }
+    });
+    const cantidadRecibidaPrevia = guiasPrevias.reduce((acc, g) => acc + (g.guia_despacho_cantidad_recibida || 0), 0);
+
+    if (cantidadComprada > 0 && (cantidadRecibidaPrevia + cantidad) > cantidadComprada) {
+      alertaExceso = true;
+    }
+
+    // El stock no se suma aquí: la guía recién inicia el ciclo
+    // Registrada -> En Tránsito -> Recibido, y el material ingresa al
+    // inventario cuando se confirma su recepción (recepcionController).
     const guia = await GuiaDespacho.create({
       guia_despacho_numero: numero,
       guia_despacho_fecha: fecha || new Date().toISOString().split('T')[0],
       guia_despacho_estado: 'Registrada',
       proveedor_rut,
-      orden_compra_id: orden_compra_id || null,
+      orden_compra_id,
       material_id,
       guia_despacho_cantidad_recibida: cantidad
     });
-
-    material.material_stock_minimo = (material.material_stock_minimo || 0) + cantidad;
-    await material.save();
 
     try {
       await LogAuditoria.create({

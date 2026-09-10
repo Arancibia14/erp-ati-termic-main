@@ -7,8 +7,10 @@ const LogAuditoria = require('../models/LogAuditoria');
 
 const ESTADOS_DANIO = ['Dañado', 'Defectuoso'];
 
+// Solo cuentan las guías recibidas: lo que sigue registrado o en tránsito
+// todavía no llegó a la obra, así que no puede devolverse.
 async function guiasDelProyecto(proyecto, materialId) {
-  const where = {};
+  const where = { guia_despacho_estado: 'Recibido' };
   if (materialId) where.material_id = materialId;
   return GuiaDespacho.findAll({
     where,

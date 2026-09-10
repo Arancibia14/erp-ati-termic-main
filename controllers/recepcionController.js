@@ -1,4 +1,5 @@
 const GuiaDespacho = require('../models/GuiaDespacho');
+const Material = require('../models/Material');
 const OrdenCompra = require('../models/OrdenCompra');
 const Proyecto = require('../models/Proyecto');
 const LogAuditoria = require('../models/LogAuditoria');
@@ -54,6 +55,14 @@ async function confirmarRecepcion(req, res) {
       return res.status(404).json({ success: false, error: 'Guía de despacho no encontrada' });
     }
 
+    // Solo se recibe lo que el proveedor ya despachó, y una sola vez
+    if (guia.guia_despacho_estado !== 'En Tránsito') {
+      return res.status(409).json({
+        success: false,
+        error: `La guía está en estado "${guia.guia_despacho_estado}"; solo se puede recibir una guía en tránsito`
+      });
+    }
+
     const proyecto = guia.OrdenCompra?.Proyecto;
     if (!proyecto?.proyecto_latitud || !proyecto?.proyecto_longitud) {
       return res.status(400).json({ success: false, error: 'El proyecto no tiene coordenadas GPS configuradas. El administrador debe configurarlas en Configuración → Proyectos.' });
@@ -69,16 +78,28 @@ async function confirmarRecepcion(req, res) {
     const fueraDeRango = distancia > RADIO_MAXIMO_METROS;
     const ubicacionVerificada = !fueraDeRango;
 
-    await guia.update({
+    // Actualización condicionada al estado: si dos confirmaciones llegan a la
+    // vez, solo una encuentra la guía "En Tránsito" y suma el stock.
+    const [actualizadas] = await GuiaDespacho.update({
       guia_despacho_estado: 'Recibido',
       guia_despacho_ubicacion_verificada: ubicacionVerificada,
       guia_despacho_latitud_recepcion: parseFloat(latitud_supervisor),
       guia_despacho_longitud_recepcion: parseFloat(longitud_supervisor)
-    });
+    }, { where: { guia_despacho_id: id, guia_despacho_estado: 'En Tránsito' } });
+
+    if (actualizadas === 0) {
+      return res.status(409).json({ success: false, error: 'La guía ya fue recibida' });
+    }
+
+    // El material ingresa al inventario al confirmarse la recepción
+    const cantidad = guia.guia_despacho_cantidad_recibida || 0;
+    if (guia.material_id && cantidad > 0) {
+      await Material.increment('material_stock_minimo', { by: cantidad, where: { material_id: guia.material_id } });
+    }
 
     await LogAuditoria.create({
       log_auditoria_fecha_hora: new Date(),
-      log_auditoria_accion: `Recepción de guía ${id} ${ubicacionVerificada ? 'verificada' : 'FUERA DE RANGO'} (distancia: ${Math.round(distancia)}m)`,
+      log_auditoria_accion: `Recepción de guía ${id} ${ubicacionVerificada ? 'verificada' : 'FUERA DE RANGO'} (distancia: ${Math.round(distancia)}m) — ${cantidad} unidad(es) ingresadas al inventario`,
       log_auditoria_modulo: 'RECEPCION',
       usuario_rut: req.user.rut
     });

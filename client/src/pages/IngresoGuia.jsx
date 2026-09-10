@@ -95,8 +95,8 @@ export default function IngresoGuia() {
   };
 
   const confirmarRecepcion = () => {
-    if (!numeroGuia.trim() || !proveedorSeleccionado || !materialSeleccionado || !cantidadRecibida) {
-      addToast('Número de guía, proveedor, material y cantidad son obligatorios', 'error');
+    if (!numeroGuia.trim() || !proveedorSeleccionado || !ordenCompraSeleccionada || !materialSeleccionado || !cantidadRecibida) {
+      addToast('Número de guía, proveedor, orden de compra, material y cantidad son obligatorios', 'error');
       return;
     }
 
@@ -165,13 +165,13 @@ export default function IngresoGuia() {
             </select>
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">OC Asociada (opcional)</label>
+            <label className="form-label">OC Asociada</label>
             <select
               className="form-select"
               value={ordenCompraSeleccionada}
               onChange={e => setOrdenCompraSeleccionada(e.target.value)}
             >
-              <option value="">Sin OC asociada</option>
+              <option value="">Selecciona una orden de compra...</option>
               {ordenesCompra.map(o => (
                 <option key={o.orden_compra_id} value={o.orden_compra_id}>{o.orden_compra_folio}</option>
               ))}
