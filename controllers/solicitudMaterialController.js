@@ -85,7 +85,7 @@ async function getSolicitudesPendientes(req, res) {
   }
 }
 
-async function generarOrdenCompraDesdeSolicitud(solicitud, req) {
+async function generarOrdenCompraDesdeSolicitud(solicitud, req, costoEstimado = 0) {
   if (!solicitud.material_id) {
     return { oc_generada: false, motivo: 'La solicitud es una Solicitud Especial sin material de catálogo asociado; genera la Orden de Compra manualmente' };
   }
@@ -109,10 +109,18 @@ async function generarOrdenCompraDesdeSolicitud(solicitud, req) {
     solicitud_material_id: solicitud.solicitud_material_id
   });
 
+  // El costo estimado que ingresa el administrador al aprobar es el total de la
+  // solicitud; el detalle de la OC guarda el precio por unidad (redondeado a 2
+  // decimales, que es la precision de la columna).
+  const cantidad = parseFloat(solicitud.solicitud_material_cantidad) || 0;
+  const precioUnitario = costoEstimado > 0 && cantidad > 0
+    ? Math.round((costoEstimado / cantidad) * 100) / 100
+    : 0;
+
   await DetalleOrdenCompra.create({
     detalle_orden_compra_descripcion_material: material.material_nombre,
     detalle_orden_compra_cantidad: solicitud.solicitud_material_cantidad,
-    detalle_orden_compra_precio_unitario: 0,
+    detalle_orden_compra_precio_unitario: precioUnitario,
     orden_compra_id: ordenCompra.orden_compra_id,
     material_id: material.material_id
   });
@@ -155,7 +163,7 @@ async function aprobarSolicitud(req, res) {
 
     const comprobante = `COMP-${solicitud.solicitud_material_id}-${Date.now()}`;
 
-    const resultadoOC = await generarOrdenCompraDesdeSolicitud(solicitud, req);
+    const resultadoOC = await generarOrdenCompraDesdeSolicitud(solicitud, req, costoEstimado);
 
     try {
       await LogAuditoria.create({
