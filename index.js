@@ -161,6 +161,7 @@ app.get('/api/health', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 const { DataTypes } = require('sequelize');
+const { crearMigrador } = require('./utils/migraciones');
 
 sequelize.authenticate()
   .then(() => {
@@ -169,7 +170,7 @@ sequelize.authenticate()
   })
   .then(async () => {
     // Migraciones puntuales: agregar columnas que faltan sin borrar datos
-    const qi = sequelize.queryInterface;
+    const migrar = crearMigrador(sequelize);
     const migraciones = [
       { tabla: 'PROYECTO',   columna: 'proveedor_rut',              tipo: { type: DataTypes.STRING(20),  allowNull: true } },
       { tabla: 'TRABAJADOR', columna: 'proyecto_codigo_correlativo', tipo: { type: DataTypes.STRING(50),  allowNull: true } },
@@ -181,14 +182,9 @@ sequelize.authenticate()
       { tabla: 'PROYECTO', columna: 'proyecto_ubicacion', tipo: { type: DataTypes.STRING(255), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_latitud',  tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_longitud', tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },
-      { tabla: 'CONTROL_CAMBIO_PPTO', columna: 'usuario_rut', tipo: { type: DataTypes.STRING(20), allowNull: true } },
+      { tabla: 'CONTROL_CAMBIO_PPTO', columna: 'usuario_rut', tipo: { type: DataTypes.STRING(20), allowNull: false } },
     ];
-    for (const m of migraciones) {
-      try {
-        await qi.addColumn(m.tabla, m.columna, m.tipo);
-        console.log(`Columna ${m.tabla}.${m.columna} agregada.`);
-      } catch (_) { /* ya existe, ignorar */ }
-    }
+    for (const m of migraciones) await migrar.agregarColumna(m.tabla, m.columna, m.tipo);
 
     // Quitar FKs que bloquean inserts y hacer columnas nullable
     const fkMigs = [
@@ -197,9 +193,7 @@ sequelize.authenticate()
       "ALTER TABLE SOLICITUD_MATERIAL DROP FOREIGN KEY fk_sm_usuario",
       "ALTER TABLE SOLICITUD_MATERIAL MODIFY usuario_rut VARCHAR(20) NULL",
     ];
-    for (const sql of fkMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ignorar si ya no existe */ }
-    }
+    for (const sql of fkMigs) await migrar.sql(sql);
 
     // Arreglar tabla SOLICITUD_MATERIAL: schema tiene columnas distintas al modelo
     const smMigs = [
@@ -212,9 +206,7 @@ sequelize.authenticate()
       "ALTER TABLE SOLICITUD_MATERIAL ADD COLUMN proyecto_codigo_correlativo VARCHAR(50) NULL",
       "ALTER TABLE SOLICITUD_MATERIAL ADD COLUMN usuario_rut VARCHAR(20) NULL",
     ];
-    for (const sql of smMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
-    }
+    for (const sql of smMigs) await migrar.sql(sql);
 
     // Arreglar tabla GUIA_DESPACHO: columnas distintas al modelo
     const gdMigs = [
@@ -230,9 +222,7 @@ sequelize.authenticate()
       "ALTER TABLE GUIA_DESPACHO ADD COLUMN guia_despacho_longitud_recepcion DECIMAL(10,7) NULL",
       "ALTER TABLE GUIA_DESPACHO ADD COLUMN orden_compra_id INT NULL",
     ];
-    for (const sql of gdMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
-    }
+    for (const sql of gdMigs) await migrar.sql(sql);
 
     // Arreglar tabla ORDEN_COMPRA: columnas distintas al modelo
     const ocMigs = [
@@ -243,9 +233,7 @@ sequelize.authenticate()
       "ALTER TABLE ORDEN_COMPRA ADD COLUMN orden_compra_fecha DATE NULL",
       "ALTER TABLE ORDEN_COMPRA ADD COLUMN solicitud_material_id INT NULL",
     ];
-    for (const sql of ocMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
-    }
+    for (const sql of ocMigs) await migrar.sql(sql);
 
     // Arreglar tabla DETALLE_ORDEN_COMPRA: estructura completamente distinta al modelo
     const docMigs = [
@@ -260,9 +248,7 @@ sequelize.authenticate()
       "ALTER TABLE DETALLE_ORDEN_COMPRA ADD COLUMN detalle_orden_compra_cantidad INT NULL",
       "ALTER TABLE DETALLE_ORDEN_COMPRA ADD COLUMN detalle_orden_compra_precio_unitario DECIMAL(15,2) NULL",
     ];
-    for (const sql of docMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
-    }
+    for (const sql of docMigs) await migrar.sql(sql);
 
     // Arreglar tabla FACTURA
     const facMigs = [
@@ -275,9 +261,7 @@ sequelize.authenticate()
       "ALTER TABLE FACTURA ADD COLUMN factura_monto_total DECIMAL(15,2) NULL",
       "ALTER TABLE FACTURA ADD COLUMN factura_url_pdf TEXT NULL",
     ];
-    for (const sql of facMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
-    }
+    for (const sql of facMigs) await migrar.sql(sql);
 
     // Arreglar tabla CONTRATO_LABORAL
     const clMigs = [
@@ -287,9 +271,7 @@ sequelize.authenticate()
       "ALTER TABLE CONTRATO_LABORAL ADD COLUMN contrato_laboral_leyes_sociales DECIMAL(15,2) NULL DEFAULT 0",
       "ALTER TABLE CONTRATO_LABORAL ADD COLUMN proyecto_codigo_correlativo VARCHAR(50) NULL",
     ];
-    for (const sql of clMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
-    }
+    for (const sql of clMigs) await migrar.sql(sql);
 
     // Arreglar tabla DOCUMENTO_LEGAL
     const dlMigs = [
@@ -303,9 +285,7 @@ sequelize.authenticate()
       "ALTER TABLE DOCUMENTO_LEGAL ADD COLUMN documento_legal_url_pdf TEXT NULL",
       "ALTER TABLE DOCUMENTO_LEGAL ADD COLUMN proyecto_codigo_correlativo VARCHAR(50) NULL",
     ];
-    for (const sql of dlMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
-    }
+    for (const sql of dlMigs) await migrar.sql(sql);
 
     // Arreglar tabla PROVEEDOR: schema.sql tiene columnas distintas a las del modelo
     const rawMigs = [
@@ -315,12 +295,7 @@ sequelize.authenticate()
       "ALTER TABLE PROVEEDOR ADD COLUMN proveedor_correo VARCHAR(150) NULL",
       "ALTER TABLE PROVEEDOR ADD COLUMN proveedor_telefono VARCHAR(20) NULL",
     ];
-    for (const sql of rawMigs) {
-      try {
-        await sequelize.query(sql);
-        console.log(`SQL OK: ${sql.substring(0, 60)}`);
-      } catch (e) { console.log(`SQL skip: ${e.message.substring(0, 80)}`); }
-    }
+    for (const sql of rawMigs) await migrar.sql(sql);
 
     const trabMigs = [
       "ALTER TABLE TRABAJADOR ADD COLUMN trabajador_apellidos VARCHAR(150) NULL",
@@ -329,9 +304,7 @@ sequelize.authenticate()
       "ALTER TABLE TRABAJADOR MODIFY trabajador_telefono VARCHAR(20) NULL",
       "ALTER TABLE TRABAJADOR MODIFY proyecto_codigo_correlativo VARCHAR(50) NULL",
     ];
-    for (const sql of trabMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
-    }
+    for (const sql of trabMigs) await migrar.sql(sql);
 
     // Columnas que el modelo Material espera y que el schema original no incluye
     const matMigs = [
@@ -339,9 +312,7 @@ sequelize.authenticate()
       "ALTER TABLE MATERIAL ADD COLUMN material_categoria VARCHAR(100) NULL",
       "ALTER TABLE MATERIAL ADD COLUMN material_activo TINYINT(1) NULL DEFAULT 1",
     ];
-    for (const sql of matMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
-    }
+    for (const sql of matMigs) await migrar.sql(sql);
 
 
     const guiaMigs = [
@@ -350,24 +321,18 @@ sequelize.authenticate()
       "ALTER TABLE GUIA_DESPACHO ADD COLUMN guia_despacho_cantidad_recibida INT NULL",
       "ALTER TABLE GUIA_DESPACHO MODIFY orden_compra_id INT NULL",
     ];
-    for (const sql of guiaMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
-    }
+    for (const sql of guiaMigs) await migrar.sql(sql);
 
     const docMaterialMigs = [
       "ALTER TABLE DETALLE_ORDEN_COMPRA ADD COLUMN material_id INT NULL",
     ];
-    for (const sql of docMaterialMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
-    }
+    for (const sql of docMaterialMigs) await migrar.sql(sql);
 
     const materialProveedorMigs = [
       "ALTER TABLE MATERIAL ADD COLUMN material_proveedor_rut VARCHAR(20) NULL",
       "ALTER TABLE SOLICITUD_MATERIAL ADD COLUMN material_id INT NULL",
     ];
-    for (const sql of materialProveedorMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
-    }
+    for (const sql of materialProveedorMigs) await migrar.sql(sql);
 
     // CU23 / CU24 - Firma digital y comprobante de entrega de EPP
     const eppMigs = [
@@ -386,18 +351,16 @@ sequelize.authenticate()
       "ALTER TABLE ENTREGA_EPP MODIFY entrega_epp_detalle_equipos TEXT NULL",
       "ALTER TABLE ENTREGA_EPP MODIFY entrega_epp_firma_digital TEXT NULL",
     ];
-    for (const sql of eppMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
-    }
+    for (const sql of eppMigs) await migrar.sql(sql);
 
     // CU NUEVO 4 (extensión CU32) - rebaje de costo por reingreso de materiales sobrantes
     const devolucionMigs = [
       "ALTER TABLE DEVOLUCION_OBRA ADD COLUMN devolucion_obra_precio_unitario DECIMAL(15,2) NULL DEFAULT 0",
       "ALTER TABLE DEVOLUCION_OBRA ADD COLUMN devolucion_obra_monto_rebajado DECIMAL(15,2) NULL DEFAULT 0",
     ];
-    for (const sql of devolucionMigs) {
-      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
-    }
+    for (const sql of devolucionMigs) await migrar.sql(sql);
+
+    await migrar.finalizar();
   })
   .then(() => {
     app.listen(PORT, () => {
