@@ -87,12 +87,8 @@ async function migrate() {
     await addColumn('FACTURA', 'factura_url_pdf', 'TEXT NULL');
     console.log('✓ FACTURA');
 
-    // 6. PARAMETRO_SISTEMA — el modelo usa columnas distintas a las del schema
-    await addColumn('PARAMETRO_SISTEMA', 'parametro_sistema_id', 'INT NOT NULL AUTO_INCREMENT UNIQUE');
-    await addColumn('PARAMETRO_SISTEMA', 'parametro_sistema_clave', 'VARCHAR(100) NULL');
-    await addColumn('PARAMETRO_SISTEMA', 'parametro_sistema_valor', 'VARCHAR(255) NULL');
-    await addColumn('PARAMETRO_SISTEMA', 'parametro_sistema_descripcion', 'TEXT NULL');
-    console.log('✓ PARAMETRO_SISTEMA');
+    // PARAMETRO_SISTEMA ya no necesita columnas nuevas: el modelo mapea sus
+    // atributos a las columnas reales de la tabla.
 
     await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
     console.log('\n✅ Migración completada. Reinicia el servidor Node.js.');

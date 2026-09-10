@@ -3,6 +3,7 @@ const fs = require('fs');
 const PDFDocument = require('pdfkit');
 const Proyecto = require('../models/Proyecto');
 const EquipoHVAC = require('../models/EquipoHVAC');
+const ModeloHvac = require('../models/ModeloHvac');
 const DocumentoLegal = require('../models/DocumentoLegal');
 const EstadoProyecto = require('../models/EstadoProyecto');
 const LogAuditoria = require('../models/LogAuditoria');
@@ -36,7 +37,8 @@ async function generarCertificado(req, res) {
     }
 
     const equipos = await EquipoHVAC.findAll({
-      where: { proyecto_codigo_correlativo }
+      where: { proyecto_codigo_correlativo },
+      include: [{ model: ModeloHvac, attributes: ['modelo_hvac_nombre'] }]
     });
 
     // Generar PDF real
@@ -88,7 +90,7 @@ async function generarCertificado(req, res) {
         doc.moveDown(0.3);
         doc.fontSize(10).font('Helvetica').fillColor('#000');
         equipos.forEach((eq, i) => {
-          doc.text(`  ${i + 1}.  ${eq.equipo_hvac_modelo || `Equipo ID #${eq.equipo_hvac_id}`}`);
+          doc.text(`  ${i + 1}.  ${eq.ModeloHvac?.modelo_hvac_nombre || 'Equipo HVAC'} — N° de serie: ${eq.equipo_hvac_numero_serie}`);
         });
         doc.moveDown(1);
       }

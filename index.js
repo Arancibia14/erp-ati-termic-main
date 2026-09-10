@@ -85,6 +85,9 @@ DocumentoLegal.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' }
 Proyecto.hasMany(EquipoHVAC, { foreignKey: 'proyecto_codigo_correlativo' });
 EquipoHVAC.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
 
+ModeloHvac.hasMany(EquipoHVAC, { foreignKey: 'modelo_hvac_id' });
+EquipoHVAC.belongsTo(ModeloHvac, { foreignKey: 'modelo_hvac_id' });
+
 Especialidad.hasMany(Trabajador, { foreignKey: 'especialidad_id' });
 Trabajador.belongsTo(Especialidad, { foreignKey: 'especialidad_id' });
 
@@ -178,6 +181,7 @@ sequelize.authenticate()
       { tabla: 'PROYECTO', columna: 'proyecto_ubicacion', tipo: { type: DataTypes.STRING(255), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_latitud',  tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_longitud', tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },
+      { tabla: 'CONTROL_CAMBIO_PPTO', columna: 'usuario_rut', tipo: { type: DataTypes.STRING(20), allowNull: true } },
     ];
     for (const m of migraciones) {
       try {

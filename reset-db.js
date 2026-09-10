@@ -73,13 +73,15 @@ async function reset() {
     console.log('✓ Estados de proyecto');
 
     // ── PARÁMETROS DEL SISTEMA ────────────────────────────────────────────────
+    // Porcentaje de desviación presupuestaria que activa alerta
     await ParametroSistema.findOrCreate({
       where: { parametro_sistema_clave: 'umbral_desviacion' },
-      defaults: { parametro_sistema_clave: 'umbral_desviacion', parametro_sistema_valor: '10', parametro_sistema_descripcion: 'Porcentaje de desviación presupuestaria que activa alerta (default: 10%)' }
+      defaults: { parametro_sistema_clave: 'umbral_desviacion', parametro_sistema_valor: 10 }
     });
+    // Radio máximo en metros para confirmar recepción de insumos en obra
     await ParametroSistema.findOrCreate({
       where: { parametro_sistema_clave: 'radio_recepcion_metros' },
-      defaults: { parametro_sistema_clave: 'radio_recepcion_metros', parametro_sistema_valor: '500', parametro_sistema_descripcion: 'Radio máximo en metros para confirmar recepción de insumos' }
+      defaults: { parametro_sistema_clave: 'radio_recepcion_metros', parametro_sistema_valor: 500 }
     });
     console.log('✓ Parámetros del sistema');
 
