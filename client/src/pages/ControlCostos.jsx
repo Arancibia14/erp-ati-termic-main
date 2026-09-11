@@ -36,6 +36,17 @@ const TooltipCustom = ({ active, payload, label }) => {
 const ANIO_ACTUAL = new Date().getFullYear();
 const ANIOS = Array.from({ length: 6 }, (_, i) => ANIO_ACTUAL - i);
 
+// Últimos seis años más los del plazo del proyecto: una obra que termina el
+// próximo año también debe poder revisarse en ese año.
+const aniosDisponibles = proyecto => {
+  const anios = new Set(ANIOS);
+  if (proyecto?.proyecto_fecha_inicio && proyecto?.proyecto_fecha_termino) {
+    const hasta = parseInt(proyecto.proyecto_fecha_termino.slice(0, 4));
+    for (let y = parseInt(proyecto.proyecto_fecha_inicio.slice(0, 4)); y <= hasta; y++) anios.add(y);
+  }
+  return [...anios].sort((a, b) => b - a);
+};
+
 export default function ControlCostos() {
   const { toasts, addToast, removeToast } = useToast();
   const [proyectos, setProyectos] = useState([]);
@@ -78,6 +89,7 @@ export default function ControlCostos() {
     cargarGrafico(codigoSel, y);
   };
 
+  const anios = aniosDisponibles(proyectos.find(p => p.proyecto_codigo_correlativo === codigoSel));
   const desvNegativa = datos && datos.porcentaje_desviacion > 0;
   const sinPresupuesto = datos && (!datos.presupuesto || datos.presupuesto === 0);
   const sinGastos = datos && !sinPresupuesto && datos.total_gastos === 0;
@@ -117,7 +129,7 @@ export default function ControlCostos() {
               onChange={handleYear}
               style={{ width: 110 }}
             >
-              {ANIOS.map(y => (
+              {anios.map(y => (
                 <option key={y} value={y}>{y}</option>
               ))}
             </select>
@@ -137,7 +149,25 @@ export default function ControlCostos() {
           {/* Nombre del proyecto analizado */}
           <div style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: 16 }}>
             Analizando: <strong style={{ color: 'var(--color-text-primary)' }}>{datos.proyecto}</strong> — {yearSel}
+            {!sinPresupuesto && datos.plazo && (
+              <> · Plazo de la obra: {datos.plazo.inicio} a {datos.plazo.termino} ({datos.plazo.meses} {datos.plazo.meses === 1 ? 'mes' : 'meses'})</>
+            )}
           </div>
+
+          {/* Sin plazo registrado, el presupuesto planificado es una estimación anual */}
+          {!sinPresupuesto && !datos.plazo && (
+            <div style={{
+              display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 16px',
+              background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)',
+              borderRadius: 6, marginBottom: 20, fontSize: 13, color: 'var(--color-text-secondary)'
+            }}>
+              <AlertTriangle size={16} color="var(--color-warning)" style={{ flexShrink: 0, marginTop: 1 }} />
+              <div>
+                Este proyecto no tiene plazo registrado, así que el presupuesto planificado se reparte en los 12 meses de {yearSel} como estimación.
+                Para una obra de varios años, registra su fecha de inicio y de término en Configuración → Proyectos.
+              </div>
+            </div>
+          )}
 
           {/* Excepción 1: sin presupuesto cargado */}
           {sinPresupuesto && (
@@ -253,8 +283,11 @@ export default function ControlCostos() {
                     <YAxis tickFormatter={formatPeso} tick={{ fontSize: 11, fill: '#8B949E' }} width={72} />
                     <Tooltip content={<TooltipCustom />} />
                     <Legend wrapperStyle={{ fontSize: 12, color: '#8B949E' }} />
+                    {/* extendDomain: en una obra de varios años lo planificado del año no llega al
+                        total, y sin esto el eje se corta antes y la línea no se dibuja */}
                     <ReferenceLine
                       y={datos.presupuesto}
+                      ifOverflow="extendDomain"
                       stroke="var(--color-warning)"
                       strokeDasharray="6 3"
                       label={{ value: 'Presupuesto total', fill: '#D4930A', fontSize: 11, position: 'insideTopRight' }}

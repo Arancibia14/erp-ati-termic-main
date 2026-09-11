@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Settings, FolderPlus, Building2, UserPlus, Flag,
-  ClipboardList, Truck, FileText, MapPin, Edit3, Trash2
+  ClipboardList, Truck, FileText, MapPin, Edit3, Trash2, CalendarRange
 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
@@ -19,6 +19,13 @@ const TABS = [
 
 const fieldStyle = { marginBottom: 0 };
 
+// Fuera del componente: definido dentro, React lo recrearía en cada render
+const SectionTitle = ({ children }) => (
+  <h3 style={{ marginBottom: 16, fontSize: 12, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+    {children}
+  </h3>
+);
+
 export default function Configuracion() {
   const { toasts, addToast, removeToast } = useToast();
   const [tab, setTab] = useState('proyecto');
@@ -31,9 +38,11 @@ export default function Configuracion() {
   const [editandoContrato, setEditandoContrato] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const [fProyecto,   setFProyecto]   = useState({ codigo: '', nombre: '', presupuesto: '', correo: '', estado_id: '' });
+  const [fProyecto,   setFProyecto]   = useState({ codigo: '', nombre: '', presupuesto: '', correo: '', estado_id: '', inicio: '', termino: '' });
   const [fCoords,     setFCoords]     = useState({ codigo: '', lat: '', lon: '' });
   const [loadingCoords, setLoadingCoords] = useState(false);
+  const [fPlazo,      setFPlazo]      = useState({ codigo: '', inicio: '', termino: '' });
+  const [loadingPlazo, setLoadingPlazo] = useState(false);
   const [fProveedor,  setFProveedor]  = useState({ rut: '', razon_social: '', correo: '', telefono: '' });
   const [fTrabajador, setFTrabajador] = useState({ rut: '', nombres: '', correo: '', telefono: '', especialidad_id: '', proyecto_codigo: '' });
   const [fHito,       setFHito]       = useState({ nombre: '', proyecto_codigo: '', avance: '0' });
@@ -80,13 +89,44 @@ export default function Configuracion() {
     e.preventDefault();
     if (!fProyecto.codigo || !fProyecto.nombre || !fProyecto.presupuesto || !fProyecto.correo || !fProyecto.estado_id)
       return addToast('Completa todos los campos', 'error');
+    if (!fProyecto.inicio !== !fProyecto.termino)
+      return addToast('Indica la fecha de inicio y la de término del proyecto, o deja ambas vacías', 'error');
+    if (fProyecto.termino && fProyecto.termino < fProyecto.inicio)
+      return addToast('La fecha de término no puede ser anterior a la fecha de inicio', 'error');
     send('/setup/proyecto', {
       proyecto_codigo_correlativo: fProyecto.codigo.trim().toUpperCase(),
       proyecto_nombre_obra: fProyecto.nombre,
       proyecto_presupuesto_asignado: fProyecto.presupuesto,
       proyecto_correo_contacto: fProyecto.correo,
-      estado_proyecto_id: fProyecto.estado_id
-    }, () => setFProyecto({ codigo: '', nombre: '', presupuesto: '', correo: '', estado_id: '' }));
+      estado_proyecto_id: fProyecto.estado_id,
+      proyecto_fecha_inicio: fProyecto.inicio || null,
+      proyecto_fecha_termino: fProyecto.termino || null
+    }, () => setFProyecto({ codigo: '', nombre: '', presupuesto: '', correo: '', estado_id: '', inicio: '', termino: '' }));
+  };
+
+  // Al elegir el proyecto se cargan sus fechas actuales para editarlas
+  const elegirProyectoPlazo = codigo => {
+    const p = proyectos.find(x => x.proyecto_codigo_correlativo === codigo);
+    setFPlazo({ codigo, inicio: p?.proyecto_fecha_inicio || '', termino: p?.proyecto_fecha_termino || '' });
+  };
+
+  const submitPlazo = async e => {
+    e.preventDefault();
+    if (!fPlazo.codigo || !fPlazo.inicio || !fPlazo.termino)
+      return addToast('Selecciona un proyecto e ingresa la fecha de inicio y la de término', 'error');
+    if (fPlazo.termino < fPlazo.inicio)
+      return addToast('La fecha de término no puede ser anterior a la fecha de inicio', 'error');
+    setLoadingPlazo(true);
+    try {
+      await api.put(`/setup/proyecto/${fPlazo.codigo}/plazo`, { fecha_inicio: fPlazo.inicio, fecha_termino: fPlazo.termino });
+      addToast('Plazo del proyecto guardado', 'success');
+      setFPlazo({ codigo: '', inicio: '', termino: '' });
+      cargarProyectos();
+    } catch (err) {
+      addToast(err.response?.data?.error || 'Error al guardar el plazo', 'error');
+    } finally {
+      setLoadingPlazo(false);
+    }
   };
 
   const submitCoords = async e => {
@@ -249,12 +289,6 @@ export default function Configuracion() {
     </div>
   );
 
-  const SectionTitle = ({ children }) => (
-    <h3 style={{ marginBottom: 16, fontSize: 12, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-      {children}
-    </h3>
-  );
-
   return (
     <div className="page-container">
       <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -315,6 +349,18 @@ export default function Configuracion() {
                   <label className="form-label">Correo de Contacto</label>
                   <input type="email" className="form-input" placeholder="contacto@empresa.cl" value={fProyecto.correo}
                     onChange={e => setFProyecto(f => ({ ...f, correo: e.target.value }))} />
+                </div>
+              </div>
+              <div className="form-grid-2" style={{ marginTop: 14 }}>
+                <div className="form-group" style={fieldStyle}>
+                  <label className="form-label">Fecha de Inicio <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}>(opcional)</span></label>
+                  <input type="date" className="form-input" value={fProyecto.inicio}
+                    onChange={e => setFProyecto(f => ({ ...f, inicio: e.target.value }))} />
+                </div>
+                <div className="form-group" style={fieldStyle}>
+                  <label className="form-label">Fecha de Término <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}>(opcional)</span></label>
+                  <input type="date" className="form-input" value={fProyecto.termino} min={fProyecto.inicio || undefined}
+                    onChange={e => setFProyecto(f => ({ ...f, termino: e.target.value }))} />
                 </div>
               </div>
               <button type="submit" className="btn btn-primary" style={{ marginTop: 16 }} disabled={loading}>
@@ -382,6 +428,45 @@ export default function Configuracion() {
                 </div>
                 <button type="submit" className="btn btn-primary" style={{ marginTop: 16 }} disabled={loadingCoords}>
                   <MapPin size={15} /> {loadingCoords ? 'Guardando...' : 'Guardar Coordenadas'}
+                </button>
+              </form>
+            </div>
+
+            {/* Plazo de la obra por proyecto */}
+            <div style={{ marginTop: 28, borderTop: '1px solid var(--color-border)', paddingTop: 24 }}>
+              <SectionTitle><CalendarRange size={12} style={{ marginRight: 6, display: 'inline' }} />Plazo de la Obra</SectionTitle>
+              <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 16 }}>
+                Registra la fecha de inicio y de término de cada proyecto. Control de Costos reparte el presupuesto planificado
+                en partes iguales entre los meses de la obra, aunque dure más de un año.
+              </p>
+              <form onSubmit={submitPlazo}>
+                <div className="form-group">
+                  <label className="form-label">Proyecto</label>
+                  <select className="form-select" value={fPlazo.codigo}
+                    onChange={e => elegirProyectoPlazo(e.target.value)}>
+                    <option value="">Selecciona un proyecto...</option>
+                    {proyectos.map(p => (
+                      <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
+                        {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
+                        {p.proyecto_fecha_inicio ? ' ✓' : ' (sin plazo)'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-grid-2">
+                  <div className="form-group" style={fieldStyle}>
+                    <label className="form-label">Fecha de Inicio</label>
+                    <input type="date" className="form-input" value={fPlazo.inicio}
+                      onChange={e => setFPlazo(f => ({ ...f, inicio: e.target.value }))} />
+                  </div>
+                  <div className="form-group" style={fieldStyle}>
+                    <label className="form-label">Fecha de Término</label>
+                    <input type="date" className="form-input" value={fPlazo.termino} min={fPlazo.inicio || undefined}
+                      onChange={e => setFPlazo(f => ({ ...f, termino: e.target.value }))} />
+                  </div>
+                </div>
+                <button type="submit" className="btn btn-primary" style={{ marginTop: 16 }} disabled={loadingPlazo}>
+                  <CalendarRange size={15} /> {loadingPlazo ? 'Guardando...' : 'Guardar Plazo'}
                 </button>
               </form>
             </div>

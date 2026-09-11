@@ -68,6 +68,28 @@ function costoAl(acumulados, mes) {
   return estado;
 }
 
+// Posición absoluta de un mes (año * 12 + mes) a partir de AAAA-MM o AAAA-MM-DD,
+// para contar meses sin pasar por Date ni por la zona horaria.
+const indiceMes = fecha => parseInt(fecha.slice(0, 4)) * 12 + parseInt(fecha.slice(5, 7)) - 1;
+
+// Presupuesto planificado acumulado al cierre de cada mes. Con plazo registrado
+// se reparte en partes iguales entre los meses de la obra: un proyecto de varios
+// años arrastra lo planificado en los anteriores y los meses fuera de la obra no
+// suman. Sin plazo se reparte en los 12 meses del año consultado, como
+// estimación. Se redondea el acumulado y no la cuota, para que el último mes
+// cierre exactamente en el presupuesto.
+function planPresupuesto(proyecto, anio, presupuesto) {
+  const { proyecto_fecha_inicio: inicio, proyecto_fecha_termino: termino } = proyecto;
+  const conPlazo = !!(inicio && termino);
+  const primerMes = conPlazo ? indiceMes(inicio) : anio * 12;
+  const meses = conPlazo ? indiceMes(termino) - primerMes + 1 : 12;
+  const acumuladoAl = mes => {
+    const transcurridos = Math.min(Math.max(mes - primerMes + 1, 0), meses);
+    return Math.round(presupuesto * transcurridos / meses);
+  };
+  return { plazo: conPlazo ? { inicio, termino, meses } : null, acumuladoAl };
+}
+
 async function getGastosReales(req, res) {
   try {
     const { codigo } = req.params;
@@ -119,21 +141,20 @@ async function getGastosPorMes(req, res) {
     // que un año arrastra lo facturado en los anteriores.
     const acumulados = await costoAcumuladoPorMes(codigo);
     const presupuesto = parseFloat(proyecto.proyecto_presupuesto_asignado) || 0;
+    const plan = planPresupuesto(proyecto, anio, presupuesto);
 
     // Construye serie de los 12 meses del año seleccionado. La clave se arma
     // como texto y la etiqueta se formatea en UTC, sin pasar por la zona
     // horaria del servidor.
     const serie = [];
     let acumuladoAnterior = costoAl(acumulados, `${anio - 1}-12`).acumulado;
-    let acumuladoPpto = 0;
     for (let i = 0; i < 12; i++) {
       const key = `${anio}-${String(i + 1).padStart(2, '0')}`;
       const label = new Date(Date.UTC(anio, i, 1))
         .toLocaleDateString('es-CL', { month: 'short', year: '2-digit', timeZone: 'UTC' });
       const acumuladoReal = costoAl(acumulados, key).acumulado;
-      // presupuesto mensual distribuido uniformemente
-      const presupuestoMensual = Math.round(presupuesto / 12);
-      acumuladoPpto += presupuestoMensual;
+      const acumuladoPpto = plan.acumuladoAl(anio * 12 + i);
+      const presupuestoMensual = acumuladoPpto - plan.acumuladoAl(anio * 12 + i - 1);
       serie.push({
         mes: key,
         label,
@@ -156,6 +177,8 @@ async function getGastosPorMes(req, res) {
       data: {
         proyecto: proyecto.proyecto_nombre_obra,
         presupuesto,
+        // null cuando el proyecto no tiene plazo y el plan es una estimación anual
+        plazo: plan.plazo,
         total_gastos: totalGastos,
         varianza,
         porcentaje_desviacion,

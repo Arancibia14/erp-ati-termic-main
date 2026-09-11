@@ -182,6 +182,8 @@ sequelize.authenticate()
       { tabla: 'PROYECTO', columna: 'proyecto_ubicacion', tipo: { type: DataTypes.STRING(255), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_latitud',  tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_longitud', tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },
+      { tabla: 'PROYECTO', columna: 'proyecto_fecha_inicio',  tipo: { type: DataTypes.DATEONLY, allowNull: true } },
+      { tabla: 'PROYECTO', columna: 'proyecto_fecha_termino', tipo: { type: DataTypes.DATEONLY, allowNull: true } },
       { tabla: 'CONTROL_CAMBIO_PPTO', columna: 'usuario_rut', tipo: { type: DataTypes.STRING(20), allowNull: false } },
     ];
     for (const m of migraciones) await migrar.agregarColumna(m.tabla, m.columna, m.tipo);

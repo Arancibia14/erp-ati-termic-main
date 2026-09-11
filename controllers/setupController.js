@@ -120,9 +120,14 @@ async function getContratos(req, res) {
 
 async function crearProyecto(req, res) {
   try {
-    const { proyecto_codigo_correlativo, proyecto_nombre_obra, proyecto_presupuesto_asignado, proyecto_correo_contacto, estado_proyecto_id } = req.body;
+    const { proyecto_codigo_correlativo, proyecto_nombre_obra, proyecto_presupuesto_asignado, proyecto_correo_contacto, estado_proyecto_id, proyecto_fecha_inicio, proyecto_fecha_termino } = req.body;
     if (!proyecto_codigo_correlativo || !proyecto_nombre_obra || !proyecto_presupuesto_asignado || !proyecto_correo_contacto || !estado_proyecto_id) {
       return res.status(400).json({ success: false, error: 'Todos los campos son requeridos' });
+    }
+    // El plazo es opcional al crear, pero si se indica debe venir completo
+    if (proyecto_fecha_inicio || proyecto_fecha_termino) {
+      const errorPlazo = errorPlazoProyecto(proyecto_fecha_inicio, proyecto_fecha_termino);
+      if (errorPlazo) return res.status(400).json({ success: false, error: errorPlazo });
     }
     const existe = await Proyecto.findByPk(proyecto_codigo_correlativo);
     if (existe) return res.status(400).json({ success: false, error: 'Ya existe un proyecto con ese código' });
@@ -133,7 +138,9 @@ async function crearProyecto(req, res) {
       proyecto_presupuesto_asignado: parseFloat(proyecto_presupuesto_asignado),
       proyecto_correo_contacto,
       proyecto_porcentaje_avance: 0,
-      estado_proyecto_id: parseInt(estado_proyecto_id)
+      estado_proyecto_id: parseInt(estado_proyecto_id),
+      proyecto_fecha_inicio: proyecto_fecha_inicio || null,
+      proyecto_fecha_termino: proyecto_fecha_termino || null
     });
 
     await audit(`Proyecto ${proyecto_codigo_correlativo} creado`, 'SETUP', req.user.rut);
@@ -291,6 +298,21 @@ function errorRangoContrato(fecha_inicio, fecha_termino) {
   return null;
 }
 
+// El plazo de la obra reparte el presupuesto planificado mes a mes, así que se
+// necesitan ambas fechas: sin término no se sabe en cuántos meses repartirlo.
+function errorPlazoProyecto(fecha_inicio, fecha_termino) {
+  if (!fecha_inicio || !fecha_termino) {
+    return 'Indica la fecha de inicio y la de término del proyecto';
+  }
+  if (!esFechaValida(fecha_inicio) || !esFechaValida(fecha_termino)) {
+    return 'Las fechas del proyecto no son válidas';
+  }
+  if (fecha_termino < fecha_inicio) {
+    return 'La fecha de término no puede ser anterior a la fecha de inicio';
+  }
+  return null;
+}
+
 // Un trabajador no puede tener dos contratos cuyos rangos [inicio, término] se solapen.
 // Un término null se trata como "sigue vigente" (equivalente a +infinito).
 async function buscarContratoSolapado(trabajador_rut, fecha_inicio, fecha_termino, excluirId = null) {
@@ -408,9 +430,28 @@ async function actualizarCoordenadasProyecto(req, res) {
   }
 }
 
+async function actualizarPlazoProyecto(req, res) {
+  try {
+    const { codigo } = req.params;
+    const { fecha_inicio, fecha_termino } = req.body;
+    const errorPlazo = errorPlazoProyecto(fecha_inicio, fecha_termino);
+    if (errorPlazo) return res.status(400).json({ success: false, error: errorPlazo });
+
+    const proyecto = await Proyecto.findByPk(codigo);
+    if (!proyecto)
+      return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
+    await proyecto.update({ proyecto_fecha_inicio: fecha_inicio, proyecto_fecha_termino: fecha_termino });
+    await audit(`Plazo del proyecto ${codigo} actualizado (${fecha_inicio} a ${fecha_termino})`, 'SETUP', req.user.rut);
+    return res.json({ success: true, data: proyecto });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al actualizar el plazo del proyecto' });
+  }
+}
+
 module.exports = {
   getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos,
   crearProyecto, crearProveedor, crearTrabajador, crearHito, crearSolicitudMaterial,
   crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
-  actualizarCoordenadasProyecto
+  actualizarCoordenadasProyecto, actualizarPlazoProyecto
 };
