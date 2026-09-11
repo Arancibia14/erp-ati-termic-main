@@ -217,7 +217,10 @@ export default function CertificadoTecnico() {
                       }}
                     >
                       <Wrench size={13} color="var(--color-text-muted)" />
-                      <span>{eq.equipo_hvac_modelo || eq.equipo_hvac_id}</span>
+                      <span>
+                        {eq.ModeloHvac?.modelo_hvac_nombre || 'Equipo HVAC'}
+                        <span style={{ color: 'var(--color-text-muted)' }}> — N° de serie: {eq.equipo_hvac_numero_serie}</span>
+                      </span>
                     </div>
                   ))}
                 </div>
