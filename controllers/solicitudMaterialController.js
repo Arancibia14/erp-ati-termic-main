@@ -29,6 +29,14 @@ async function crearSolicitud(req, res) {
       return res.status(400).json({ success: false, error: 'Descripción, cantidad y proyecto son obligatorios' });
     }
 
+    // Misma regla que al aprobar: un entero mayor a cero, como número o como
+    // texto de solo dígitos. Sin esto se guardaban cantidades negativas o en cero,
+    // y los decimales se truncaban en silencio.
+    const cantidadEntera = typeof cantidad === 'string' && /^\s*\d+\s*$/.test(cantidad) ? Number(cantidad) : cantidad;
+    if (!Number.isInteger(cantidadEntera) || cantidadEntera < 1) {
+      return res.status(400).json({ success: false, error: 'La cantidad debe ser un número entero mayor a cero' });
+    }
+
     const proyecto = await Proyecto.findByPk(proyecto_codigo_correlativo);
     if (!proyecto) {
       return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
@@ -36,7 +44,7 @@ async function crearSolicitud(req, res) {
 
     const solicitud = await SolicitudMaterial.create({
       solicitud_material_descripcion: descripcion,
-      solicitud_material_cantidad: cantidad,
+      solicitud_material_cantidad: cantidadEntera,
       solicitud_material_estado: 'pendiente',
       solicitud_material_fecha: fechaHoy(),
       proyecto_codigo_correlativo,
