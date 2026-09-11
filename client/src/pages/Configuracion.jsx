@@ -277,7 +277,8 @@ export default function Configuracion() {
         ))}
       </div>
 
-      <div style={{ maxWidth: 620 }}>
+      {/* La tabla de contratos necesita más ancho que los formularios */}
+      <div style={{ maxWidth: tab === 'contrato' ? 960 : 620 }}>
 
         {/* ── PROYECTOS ─────────────────────────────────────────── */}
         {tab === 'proyecto' && (
@@ -585,7 +586,7 @@ export default function Configuracion() {
                 No hay trabajadores registrados. Primero créalos en la pestaña "Trabajadores".
               </div>
             ) : (
-              <form onSubmit={submitContrato}>
+              <form onSubmit={submitContrato} style={{ maxWidth: 568 }}>
                 <div className="form-group">
                   <label className="form-label">Trabajador</label>
                   <select className="form-select" value={fContrato.rut} disabled={!!editandoContrato}
@@ -663,12 +664,12 @@ export default function Configuracion() {
                             {c.Trabajador ? `${c.Trabajador.trabajador_nombres} ${c.Trabajador.trabajador_apellidos || ''}`.trim() : c.trabajador_rut}
                             <span style={{ display: 'block', fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'monospace' }}>{c.trabajador_rut}</span>
                           </td>
-                          <td style={{ fontSize: 13 }}>${parseFloat(c.contrato_laboral_sueldo_base).toLocaleString('es-CL')}</td>
-                          <td style={{ fontSize: 13 }}>${parseFloat(c.contrato_laboral_leyes_sociales).toLocaleString('es-CL')}</td>
-                          <td style={{ fontSize: 13 }}>{c.contrato_laboral_fecha_inicio}</td>
-                          <td style={{ fontSize: 13 }}>{c.contrato_laboral_fecha_termino || '—'}</td>
+                          <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>${parseFloat(c.contrato_laboral_sueldo_base).toLocaleString('es-CL')}</td>
+                          <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>${parseFloat(c.contrato_laboral_leyes_sociales).toLocaleString('es-CL')}</td>
+                          <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>{c.contrato_laboral_fecha_inicio}</td>
+                          <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>{c.contrato_laboral_fecha_termino || '—'}</td>
                           <td>
-                            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: 6, flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
                               <button className="btn btn-secondary" style={{ padding: '5px 10px', fontSize: 12 }}
                                 onClick={() => editarContrato(c)}>
                                 <Edit3 size={13} /> Editar
