@@ -41,6 +41,13 @@ export default function Configuracion() {
   const [fGuia,       setFGuia]       = useState({ numero: '', fecha: '', orden_id: '' });
   const [fContrato,   setFContrato]   = useState({ rut: '', sueldo: '', leyes: '', inicio: '', termino: '', proyecto_codigo: '' });
 
+  // Se declaran antes de los efectos que las llaman
+  const cargarProyectos = () =>
+    api.get('/setup/proyectos').then(r => setProyectos(r.data.data)).catch(() => {});
+
+  const cargarContratos = () =>
+    api.get('/setup/contratos').then(r => setContratos(r.data.data)).catch(() => {});
+
   useEffect(() => {
     api.get('/setup/estados').then(r => setEstados(r.data.data)).catch(() => {});
     api.get('/setup/especialidades').then(r => setEspecialidades(r.data.data)).catch(() => {});
@@ -54,12 +61,6 @@ export default function Configuracion() {
       cargarContratos();
     }
   }, [tab]);
-
-  const cargarProyectos = () =>
-    api.get('/setup/proyectos').then(r => setProyectos(r.data.data)).catch(() => {});
-
-  const cargarContratos = () =>
-    api.get('/setup/contratos').then(r => setContratos(r.data.data)).catch(() => {});
 
   const send = async (endpoint, body, onSuccess) => {
     setLoading(true);
