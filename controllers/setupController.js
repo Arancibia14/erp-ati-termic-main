@@ -270,6 +270,27 @@ async function crearGuiaDespacho(req, res) {
   }
 }
 
+// Fecha real en formato AAAA-MM-DD (el que envía <input type="date">). Se exige
+// ese formato porque el término se compara con el inicio como texto.
+function esFechaValida(fecha) {
+  if (typeof fecha !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(fecha)) return false;
+  const [a, m, d] = fecha.split('-').map(Number);
+  const f = new Date(Date.UTC(a, m - 1, d));
+  return f.getUTCFullYear() === a && f.getUTCMonth() === m - 1 && f.getUTCDate() === d;
+}
+
+// Devuelve el mensaje de error del rango de fechas, o null si es válido.
+// Un término anterior al inicio también esquivaría la validación de solapamiento.
+function errorRangoContrato(fecha_inicio, fecha_termino) {
+  if (!esFechaValida(fecha_inicio) || (fecha_termino && !esFechaValida(fecha_termino))) {
+    return 'Las fechas del contrato no son válidas';
+  }
+  if (fecha_termino && fecha_termino < fecha_inicio) {
+    return 'La fecha de término no puede ser anterior a la fecha de inicio';
+  }
+  return null;
+}
+
 // Un trabajador no puede tener dos contratos cuyos rangos [inicio, término] se solapen.
 // Un término null se trata como "sigue vigente" (equivalente a +infinito).
 async function buscarContratoSolapado(trabajador_rut, fecha_inicio, fecha_termino, excluirId = null) {
@@ -291,6 +312,9 @@ async function crearContratoLaboral(req, res) {
     if (!trabajador_rut || !contrato_laboral_sueldo_base || !contrato_laboral_fecha_inicio) {
       return res.status(400).json({ success: false, error: 'Trabajador, sueldo base y fecha de inicio son requeridos' });
     }
+    const errorRango = errorRangoContrato(contrato_laboral_fecha_inicio, contrato_laboral_fecha_termino || null);
+    if (errorRango) return res.status(400).json({ success: false, error: errorRango });
+
     const trabajador = await Trabajador.findByPk(trabajador_rut);
     if (!trabajador) return res.status(404).json({ success: false, error: 'Trabajador no encontrado' });
 
@@ -322,6 +346,9 @@ async function actualizarContratoLaboral(req, res) {
     if (!contrato_laboral_sueldo_base || !contrato_laboral_fecha_inicio) {
       return res.status(400).json({ success: false, error: 'Sueldo base y fecha de inicio son requeridos' });
     }
+    const errorRango = errorRangoContrato(contrato_laboral_fecha_inicio, contrato_laboral_fecha_termino || null);
+    if (errorRango) return res.status(400).json({ success: false, error: errorRango });
+
     const contrato = await ContratoLaboral.findByPk(id);
     if (!contrato) return res.status(404).json({ success: false, error: 'Contrato no encontrado' });
 

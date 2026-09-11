@@ -177,6 +177,8 @@ export default function Configuracion() {
     e.preventDefault();
     if (!fContrato.rut || !fContrato.sueldo || !fContrato.inicio)
       return addToast('Trabajador, sueldo base y fecha de inicio son requeridos', 'error');
+    if (fContrato.termino && fContrato.termino < fContrato.inicio)
+      return addToast('La fecha de término no puede ser anterior a la fecha de inicio', 'error');
     const body = {
       trabajador_rut: fContrato.rut,
       contrato_laboral_sueldo_base: fContrato.sueldo,
@@ -620,7 +622,7 @@ export default function Configuracion() {
                   </div>
                   <div className="form-group" style={fieldStyle}>
                     <label className="form-label">Fecha Término <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}>(opcional)</span></label>
-                    <input type="date" className="form-input" value={fContrato.termino}
+                    <input type="date" className="form-input" value={fContrato.termino} min={fContrato.inicio || undefined}
                       onChange={e => setFContrato(f => ({ ...f, termino: e.target.value }))} />
                   </div>
                 </div>
