@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Camera, MapPin, Send, Image, X, Circle, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Camera, MapPin, Send, Image, X, Circle, CheckCircle2, AlertTriangle, WifiOff, RefreshCw, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import { encolarEvidencia, listarCola, quitarDeCola, vaciarColaLocal } from '../utils/colaEvidencias';
 
 export default function Evidencia() {
   const { toasts, addToast, removeToast } = useToast();
@@ -18,6 +19,10 @@ export default function Evidencia() {
   const [loading, setLoading] = useState(false);
   const [hasCamera, setHasCamera] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
+  const [pendientes, setPendientes] = useState(0);
+  const [enviandoCola, setEnviandoCola] = useState(false);
+  // El guardia va en un ref para que el listener de 'online' no lea un estado viejo
+  const enviandoRef = useRef(false);
 
   useEffect(() => {
     api.get('/bitacora/proyectos')
@@ -42,6 +47,68 @@ export default function Evidencia() {
   // Cleanup stream on unmount
   useEffect(() => {
     return () => streamRef.current?.getTracks().forEach(t => t.stop());
+  }, []);
+
+  const refrescarCola = async () => {
+    try { setPendientes((await listarCola()).length); } catch { setPendientes(0); }
+  };
+
+  const subirEvidencia = ({ hito_tecnico_id, latitud, longitud, foto: archivo, nombre }) => {
+    const data = new FormData();
+    data.append('hito_tecnico_id', hito_tecnico_id);
+    data.append('evidencia_fotografica_latitud', latitud);
+    data.append('evidencia_fotografica_longitud', longitud);
+    data.append('foto', archivo, nombre);
+    return api.post('/evidencia', data, { headers: { 'Content-Type': 'multipart/form-data' } });
+  };
+
+  // Sube lo que haya en cola. Si sigue sin conexión se detiene y lo deja para el
+  // próximo intento; si el servidor rechaza una foto, la conserva en la cola y lo
+  // informa, para que el actor decida descartarla.
+  const procesarCola = async (manual = false) => {
+    if (enviandoRef.current) return;
+    let cola;
+    try { cola = await listarCola(); } catch { return; }
+    if (cola.length === 0) { if (manual) addToast('No hay evidencias en cola', 'warning'); return; }
+
+    enviandoRef.current = true;
+    setEnviandoCola(true);
+    let subidas = 0, rechazo = null;
+    for (const item of cola) {
+      try {
+        await subirEvidencia(item);
+        await quitarDeCola(item.id);
+        subidas++;
+      } catch (err) {
+        if (!err.response) break; // sigue sin conexión: se conserva la cola
+        rechazo = err.response?.data?.error || 'el servidor rechazó la evidencia';
+      }
+    }
+    enviandoRef.current = false;
+    setEnviandoCola(false);
+    await refrescarCola();
+
+    if (subidas > 0) addToast(`${subidas} evidencia${subidas > 1 ? 's' : ''} de la cola subida${subidas > 1 ? 's' : ''} con éxito`, 'success');
+    if (rechazo) addToast(`Una evidencia en cola no pudo subirse: ${rechazo}`, 'error');
+    if (manual && subidas === 0 && !rechazo) addToast('Aún sin conexión — las fotos siguen en cola', 'warning');
+  };
+
+  const descartarCola = async () => {
+    try {
+      await vaciarColaLocal();
+      await refrescarCola();
+      addToast('Cola de evidencias descartada', 'warning');
+    } catch {
+      addToast('No se pudo descartar la cola', 'error');
+    }
+  };
+
+  // Al entrar y cada vez que vuelve la conexión se intenta subir lo encolado
+  useEffect(() => {
+    refrescarCola();
+    const alVolverLaRed = () => procesarCola();
+    window.addEventListener('online', alVolverLaRed);
+    return () => window.removeEventListener('online', alVolverLaRed);
   }, []);
 
   const getLocation = () => {
@@ -117,21 +184,40 @@ export default function Evidencia() {
     if (!form.hito_tecnico_id) { addToast('Selecciona un hito técnico', 'error'); return; }
     if (!foto) { addToast('Selecciona una fotografía', 'error'); return; }
 
-    const data = new FormData();
-    data.append('hito_tecnico_id', form.hito_tecnico_id);
-    data.append('evidencia_fotografica_latitud', coords.lat ?? 0);
-    data.append('evidencia_fotografica_longitud', coords.lng ?? 0);
-    data.append('foto', foto);
+    const evidencia = {
+      hito_tecnico_id: form.hito_tecnico_id,
+      latitud: coords.lat ?? 0,
+      longitud: coords.lng ?? 0,
+      foto,
+      nombre: foto.name
+    };
 
-    setLoading(true);
-    try {
-      await api.post('/evidencia', data, { headers: { 'Content-Type': 'multipart/form-data' } });
-      addToast('Evidencia cargada con éxito', 'success');
+    const limpiarFormulario = () => {
       setFoto(null);
       setPreview(null);
       setForm(f => ({ ...f, hito_tecnico_id: '' }));
+    };
+
+    setLoading(true);
+    try {
+      await subirEvidencia(evidencia);
+      addToast('Evidencia cargada con éxito', 'success');
+      limpiarFormulario();
     } catch (err) {
-      addToast(err.response?.data?.error || 'Error al subir evidencia', 'error');
+      // Que no haya respuesta del servidor significa que no hubo conexión: la
+      // foto se guarda en cola en lugar de perderse (Excepción 2).
+      if (err.response) {
+        addToast(err.response?.data?.error || 'Error al subir evidencia', 'error');
+      } else {
+        try {
+          await encolarEvidencia(evidencia);
+          await refrescarCola();
+          addToast('Sin conexión: la foto quedó en cola y se subirá al recuperar la señal', 'warning');
+          limpiarFormulario();
+        } catch {
+          addToast('Sin conexión y no se pudo guardar la foto en cola. Reintenta la subida.', 'error');
+        }
+      }
     } finally {
       setLoading(false);
     }
@@ -143,6 +229,30 @@ export default function Evidencia() {
         <Camera size={20} />
         Cargar Evidencias Fotográficas
       </h1>
+
+      {pendientes > 0 && (
+        <div className="card" style={{ maxWidth: 680, marginBottom: 16, borderColor: 'var(--color-warning)', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+          <WifiOff size={18} color="var(--color-warning)" style={{ flexShrink: 0, marginTop: 2 }} />
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 700, color: 'var(--color-warning)', marginBottom: 4 }}>
+              {pendientes} evidencia{pendientes > 1 ? 's' : ''} en cola
+            </div>
+            <div style={{ fontSize: 13, color: 'var(--color-text-secondary)', marginBottom: 10 }}>
+              Se guardaron en este dispositivo porque no había conexión. Se subirán solas al recuperar la señal.
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <button type="button" className="btn btn-secondary" onClick={() => procesarCola(true)} disabled={enviandoCola}>
+                <RefreshCw size={14} />
+                {enviandoCola ? 'Subiendo...' : 'Reintentar ahora'}
+              </button>
+              <button type="button" className="btn btn-secondary" onClick={descartarCola} disabled={enviandoCola}>
+                <Trash2 size={14} />
+                Descartar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="card" style={{ maxWidth: 680 }}>
         <form onSubmit={handleSubmit}>
