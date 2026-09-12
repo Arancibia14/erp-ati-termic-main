@@ -57,13 +57,23 @@ DocumentoLegal.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' }
 Proyecto.hasMany(EquipoHVAC, { foreignKey: 'proyecto_codigo_correlativo' });
 EquipoHVAC.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
 
+// sync() solo crea las tablas de los modelos cargados, y este archivo importa 26
+// de los 36. Se cargan todos para que la base quede completa al recrearla.
+require('fs').readdirSync(require('path').join(__dirname, 'models'))
+  .filter(f => f.endsWith('.js'))
+  .forEach(f => require('./models/' + f));
+
 async function reset() {
   try {
     await sequelize.authenticate();
     console.log('Conectado a MySQL.');
 
     console.log('Recreando tablas desde modelos...');
-    await sequelize.sync({ force: true });
+    // sync({ force: true }) borra tabla por tabla y falla con las llaves foráneas
+    // del schema, dejando la base a medio destruir. dropAllTables quita primero
+    // las llaves foráneas y después las tablas.
+    await sequelize.getQueryInterface().dropAllTables();
+    await sequelize.sync();
     console.log('Tablas recreadas.\n');
 
     // ── ESTADOS ──────────────────────────────────────────────────────────────
