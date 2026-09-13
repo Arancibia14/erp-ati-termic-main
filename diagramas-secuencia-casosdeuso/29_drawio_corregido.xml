@@ -1,119 +1,426 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <mxfile host="app.diagrams.net">
   <diagram name="Página-1" id="CU29-corregido">
-    <mxGraphModel dx="1645" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1825" pageHeight="1600" math="0" shadow="0">
+    <mxGraphModel dx="3489" dy="874" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1825" pageHeight="1600" math="0" shadow="0">
       <root>
-        <mxCell id="0" /><mxCell id="1" parent="0" />
-
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
         <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU29: Registrando Asignación y Trazabilidad de Herramientas" vertex="1">
           <mxGeometry height="25" width="1725" x="50" y="10" as="geometry" />
         </mxCell>
-
-        <mxCell id="h_a" parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="Administrador/Supervisor" vertex="1"><mxGeometry height="55" width="50" x="30" y="50" as="geometry"/></mxCell>
-        <mxCell id="h_v" parent="1" style="html=1;whiteSpace=wrap;" value="V_Herramientas" vertex="1"><mxGeometry x="145" y="90" width="130" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_c" parent="1" style="html=1;whiteSpace=wrap;" value="C_Herramienta" vertex="1"><mxGeometry x="330" y="90" width="120" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_db" parent="1" style="html=1;whiteSpace=wrap;" value="C_MySQL" vertex="1"><mxGeometry x="515" y="90" width="110" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_herr" parent="1" style="html=1;whiteSpace=wrap;" value="Herramienta" vertex="1"><mxGeometry x="710" y="90" width="120" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_trab" parent="1" style="html=1;whiteSpace=wrap;" value="Trabajador" vertex="1"><mxGeometry x="910" y="90" width="120" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_contr" parent="1" style="html=1;whiteSpace=wrap;" value="ContratoLaboral" vertex="1"><mxGeometry x="1100" y="90" width="140" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_asig" parent="1" style="html=1;whiteSpace=wrap;" value="AsignacionHerramienta" vertex="1"><mxGeometry x="1310" y="90" width="160" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_log" parent="1" style="html=1;whiteSpace=wrap;" value="LogAuditoria" vertex="1"><mxGeometry x="1565" y="90" width="130" height="50" as="geometry"/></mxCell>
-
-        <mxCell id="ll_a" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="55" y="105" width="10" height="1445" as="geometry"/></mxCell>
-        <mxCell id="ll_v" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="205" y="140" width="10" height="1410" as="geometry"/></mxCell>
-        <mxCell id="ll_c" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="385" y="140" width="10" height="1410" as="geometry"/></mxCell>
-        <mxCell id="ll_db" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="565" y="140" width="10" height="1410" as="geometry"/></mxCell>
-        <mxCell id="ll_herr" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="765" y="140" width="10" height="1410" as="geometry"/></mxCell>
-        <mxCell id="ll_trab" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="965" y="140" width="10" height="1410" as="geometry"/></mxCell>
-        <mxCell id="ll_contr" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1165" y="140" width="10" height="1410" as="geometry"/></mxCell>
-        <mxCell id="ll_asig" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1385" y="140" width="10" height="1410" as="geometry"/></mxCell>
-        <mxCell id="ll_log" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1625" y="140" width="10" height="1410" as="geometry"/></mxCell>
-
-        <mxCell id="m1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="180" as="sourcePoint"/><mxPoint x="205" y="180" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m1l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="1: abrirAsignacionHerramientas()" vertex="1" connectable="0" parent="m1"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m2" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="210" as="sourcePoint"/><mxPoint x="385" y="210" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m2l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="2: GET /api/herramienta → getHerramientas()" vertex="1" connectable="0" parent="m2"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m3" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="240" as="sourcePoint"/><mxPoint x="565" y="240" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m3l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="3: QUERY()" vertex="1" connectable="0" parent="m3"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m4" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="270" as="sourcePoint"/><mxPoint x="765" y="270" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m4l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="4: SELECT * FROM herramienta ORDER BY herramienta_nombre ASC" vertex="1" connectable="0" parent="m4"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m5" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="300" as="sourcePoint"/><mxPoint x="575" y="300" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m5l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="5: return resultado" vertex="1" connectable="0" parent="m5"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m6" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="330" as="sourcePoint"/><mxPoint x="395" y="330" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m6l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="6: return herramientas" vertex="1" connectable="0" parent="m6"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m7" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="385" y="360" as="sourcePoint"/><mxPoint x="215" y="360" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m7l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="7: return herramientas" vertex="1" connectable="0" parent="m7"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m8" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="205" y="390" as="sourcePoint"/><mxPoint x="65" y="390" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m8l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="8: mostrarListaHerramientas(herramientas)" vertex="1" connectable="0" parent="m8"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m9" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="420" as="sourcePoint"/><mxPoint x="205" y="420" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m9l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="9: asignarHerramienta(herramienta_codigo, tecnico_rut, estado_herramienta)" vertex="1" connectable="0" parent="m9"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m10" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="450" as="sourcePoint"/><mxPoint x="385" y="450" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m10l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="10: POST /api/herramienta/asignar → asignar()" vertex="1" connectable="0" parent="m10"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m11" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="480" as="sourcePoint"/><mxPoint x="565" y="480" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m11l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="11: QUERY()" vertex="1" connectable="0" parent="m11"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m12" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="510" as="sourcePoint"/><mxPoint x="765" y="510" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m12l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="12: SELECT * FROM herramienta WHERE herramienta_codigo=?" vertex="1" connectable="0" parent="m12"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m13" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="540" as="sourcePoint"/><mxPoint x="575" y="540" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m13l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="13: return resultado" vertex="1" connectable="0" parent="m13"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m14" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="570" as="sourcePoint"/><mxPoint x="395" y="570" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m14l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="14: return herramienta" vertex="1" connectable="0" parent="m14"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[Excepción 1: herramienta no disponible → si herramienta_estado es 'Asignada' o 'Mantención', HTTP 409 'El equipo no está disponible']" vertex="1">
+        <mxCell id="h_a" parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="Administrador/Supervisor" vertex="1">
+          <mxGeometry height="55" width="50" x="30" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h_v" parent="1" style="html=1;whiteSpace=wrap;fillColor=#b1ddf0;strokeColor=#10739e;" value="V_Herramientas" vertex="1">
+          <mxGeometry height="50" width="130" x="145" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="h_c" parent="1" style="html=1;whiteSpace=wrap;fillColor=#fad9d5;strokeColor=#ae4132;" value="C_Herramienta" vertex="1">
+          <mxGeometry height="50" width="120" x="330" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="h_db" parent="1" style="html=1;whiteSpace=wrap;fillColor=#fad7ac;strokeColor=#b46504;" value="C_MySQL" vertex="1">
+          <mxGeometry height="50" width="110" x="515" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="h_herr" parent="1" style="html=1;whiteSpace=wrap;fillColor=#cdeb8b;strokeColor=#36393d;" value="Herramienta" vertex="1">
+          <mxGeometry height="50" width="120" x="710" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="h_trab" parent="1" style="html=1;whiteSpace=wrap;fillColor=#cdeb8b;strokeColor=#36393d;" value="Trabajador" vertex="1">
+          <mxGeometry height="50" width="120" x="910" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="h_contr" parent="1" style="html=1;whiteSpace=wrap;fillColor=#cdeb8b;strokeColor=#36393d;" value="ContratoLaboral" vertex="1">
+          <mxGeometry height="50" width="140" x="1100" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="h_asig" parent="1" style="html=1;whiteSpace=wrap;fillColor=#cdeb8b;strokeColor=#36393d;" value="AsignacionHerramienta" vertex="1">
+          <mxGeometry height="50" width="160" x="1310" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="h_log" parent="1" style="html=1;whiteSpace=wrap;fillColor=#cdeb8b;strokeColor=#36393d;" value="LogAuditoria" vertex="1">
+          <mxGeometry height="50" width="130" x="1565" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_a" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry height="1445" width="10" x="55" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_v" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry height="1410" width="10" x="205" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_c" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry height="1410" width="10" x="385" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_db" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry height="1410" width="10" x="565" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_herr" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry height="1410" width="10" x="765" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_trab" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry height="1410" width="10" x="965" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_contr" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry height="1410" width="10" x="1165" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_asig" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry height="1410" width="10" x="1385" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_log" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1">
+          <mxGeometry height="1410" width="10" x="1625" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="65" y="180" as="sourcePoint" />
+            <mxPoint x="205" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m1l" connectable="0" parent="m1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="1: abrirAsignacionHerramientas()" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="215" y="210" as="sourcePoint" />
+            <mxPoint x="385" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2l" connectable="0" parent="m2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="2: GET /api/herramienta → getHerramientas()" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="395" y="240" as="sourcePoint" />
+            <mxPoint x="565" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3l" connectable="0" parent="m3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="3: QUERY()" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m4" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="575" y="270" as="sourcePoint" />
+            <mxPoint x="765" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4l" connectable="0" parent="m4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="4: SELECT * FROM herramienta ORDER BY herramienta_nombre ASC" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="765" y="300" as="sourcePoint" />
+            <mxPoint x="575" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5l" connectable="0" parent="m5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="5: return resultado" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m6" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="565" y="330" as="sourcePoint" />
+            <mxPoint x="395" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6l" connectable="0" parent="m6" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="6: return herramientas" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="385" y="360" as="sourcePoint" />
+            <mxPoint x="215" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7l" connectable="0" parent="m7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="7: return herramientas" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m8" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="205" y="390" as="sourcePoint" />
+            <mxPoint x="65" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m8l" connectable="0" parent="m8" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="8: mostrarListaHerramientas(herramientas)" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m9" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="65" y="420" as="sourcePoint" />
+            <mxPoint x="205" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m9l" connectable="0" parent="m9" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="9: asignarHerramienta(herramienta_codigo, tecnico_rut, estado_herramienta)" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m10" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="215" y="450" as="sourcePoint" />
+            <mxPoint x="385" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m10l" connectable="0" parent="m10" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="10: POST /api/herramienta/asignar → asignar()" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="395" y="480" as="sourcePoint" />
+            <mxPoint x="565" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11l" connectable="0" parent="m11" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="11: QUERY()" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m12" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="575" y="510" as="sourcePoint" />
+            <mxPoint x="765" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m12l" connectable="0" parent="m12" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="12: SELECT * FROM herramienta WHERE herramienta_codigo=?" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m13" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="765" y="540" as="sourcePoint" />
+            <mxPoint x="575" y="540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m13l" connectable="0" parent="m13" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="13: return resultado" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m14" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="565" y="570" as="sourcePoint" />
+            <mxPoint x="395" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m14l" connectable="0" parent="m14" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="14: return herramienta" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[Excepción 1: herramienta no disponible → si herramienta_estado es &#39;Asignada&#39; o &#39;Mantención&#39;, HTTP 409 &#39;El equipo no está disponible&#39;]" vertex="1">
           <mxGeometry height="30" width="900" x="405" y="600" as="geometry" />
         </mxCell>
-        <mxCell id="m15" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="655" as="sourcePoint"/><mxPoint x="565" y="655" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m15l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="15: QUERY()" vertex="1" connectable="0" parent="m15"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m16" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="685" as="sourcePoint"/><mxPoint x="965" y="685" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m16l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="16: SELECT * FROM trabajador WHERE trabajador_rut=?" vertex="1" connectable="0" parent="m16"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m17" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="965" y="715" as="sourcePoint"/><mxPoint x="575" y="715" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m17l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="17: return resultado" vertex="1" connectable="0" parent="m17"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m18" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="745" as="sourcePoint"/><mxPoint x="395" y="745" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m18l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="18: return trabajador" vertex="1" connectable="0" parent="m18"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m15" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="395" y="655" as="sourcePoint" />
+            <mxPoint x="565" y="655" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m15l" connectable="0" parent="m15" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="15: QUERY()" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m16" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="575" y="685" as="sourcePoint" />
+            <mxPoint x="965" y="685" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m16l" connectable="0" parent="m16" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="16: SELECT * FROM trabajador WHERE trabajador_rut=?" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m17" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="965" y="715" as="sourcePoint" />
+            <mxPoint x="575" y="715" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m17l" connectable="0" parent="m17" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="17: return resultado" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m18" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="565" y="745" as="sourcePoint" />
+            <mxPoint x="395" y="745" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m18l" connectable="0" parent="m18" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="18: return trabajador" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="nota2" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[Excepción 2: error de validación de identidad → si el RUT no corresponde a un trabajador activo, HTTP 400, asignación bloqueada]" vertex="1">
           <mxGeometry height="30" width="900" x="405" y="775" as="geometry" />
         </mxCell>
-        <mxCell id="m19" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="830" as="sourcePoint"/><mxPoint x="565" y="830" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m19l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="19: QUERY()" vertex="1" connectable="0" parent="m19"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m20" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="860" as="sourcePoint"/><mxPoint x="1165" y="860" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m20l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="20: SELECT * FROM contrato_laboral WHERE trabajador_rut=? ORDER BY contrato_laboral_fecha_inicio DESC" vertex="1" connectable="0" parent="m20"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m21" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1165" y="890" as="sourcePoint"/><mxPoint x="575" y="890" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m21l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="21: return resultado" vertex="1" connectable="0" parent="m21"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m22" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="920" as="sourcePoint"/><mxPoint x="395" y="920" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m22l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="22: return contrato" vertex="1" connectable="0" parent="m22"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m19" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="395" y="830" as="sourcePoint" />
+            <mxPoint x="565" y="830" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m19l" connectable="0" parent="m19" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="19: QUERY()" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m20" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="575" y="860" as="sourcePoint" />
+            <mxPoint x="1165" y="860" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m20l" connectable="0" parent="m20" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="20: SELECT * FROM contrato_laboral WHERE trabajador_rut=? ORDER BY contrato_laboral_fecha_inicio DESC" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m21" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1165" y="890" as="sourcePoint" />
+            <mxPoint x="575" y="890" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m21l" connectable="0" parent="m21" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="21: return resultado" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m22" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="565" y="920" as="sourcePoint" />
+            <mxPoint x="395" y="920" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m22l" connectable="0" parent="m22" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="22: return contrato" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="nota3" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[Validación de vigencia: sin contrato registrado, o contrato_laboral_fecha_termino ya vencida → HTTP 400, bloquea la asignación]" vertex="1">
           <mxGeometry height="30" width="900" x="405" y="950" as="geometry" />
         </mxCell>
-        <mxCell id="m23" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="1005" as="sourcePoint"/><mxPoint x="565" y="1005" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m23l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="23: QUERY() → AsignacionHerramienta.create(...)" vertex="1" connectable="0" parent="m23"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m24" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="1035" as="sourcePoint"/><mxPoint x="1385" y="1035" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m24l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="24: INSERT INTO asignacion_herramienta(herramienta_id, trabajador_rut, fecha_entrega, estado_entrega, usuario_rut)" vertex="1" connectable="0" parent="m24"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m25" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1385" y="1065" as="sourcePoint"/><mxPoint x="575" y="1065" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m25l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="25: return asignacion_herramienta_id" vertex="1" connectable="0" parent="m25"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m26" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="1095" as="sourcePoint"/><mxPoint x="395" y="1095" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m26l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="26: return asignacion" vertex="1" connectable="0" parent="m26"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m27" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="1125" as="sourcePoint"/><mxPoint x="565" y="1125" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m27l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="27: QUERY()" vertex="1" connectable="0" parent="m27"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m28" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="1155" as="sourcePoint"/><mxPoint x="765" y="1155" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m28l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="28: UPDATE herramienta SET herramienta_estado='Asignada', herramienta_tecnico_rut WHERE herramienta_id=?" vertex="1" connectable="0" parent="m28"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m29" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="1185" as="sourcePoint"/><mxPoint x="575" y="1185" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m29l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="29: return resultado" vertex="1" connectable="0" parent="m29"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m30" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="1215" as="sourcePoint"/><mxPoint x="395" y="1215" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m30l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="30: return confirmación" vertex="1" connectable="0" parent="m30"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m31" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="1245" as="sourcePoint"/><mxPoint x="565" y="1245" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m31l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="31: QUERY() → LogAuditoria.create(...)" vertex="1" connectable="0" parent="m31"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m32" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="1275" as="sourcePoint"/><mxPoint x="1625" y="1275" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m32l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="32: INSERT INTO log_auditoria(fecha_hora, accion, modulo='HERRAMIENTA', usuario_rut)" vertex="1" connectable="0" parent="m32"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m33" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1625" y="1305" as="sourcePoint"/><mxPoint x="575" y="1305" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m33l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="33: return log_auditoria_id" vertex="1" connectable="0" parent="m33"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m34" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="1335" as="sourcePoint"/><mxPoint x="395" y="1335" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m34l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="34: return log creado" vertex="1" connectable="0" parent="m34"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m35" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="385" y="1365" as="sourcePoint"/><mxPoint x="215" y="1365" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m35l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="35: return { mensaje: 'Asignación registrada exitosamente', asignacion, herramienta }" vertex="1" connectable="0" parent="m35"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="m36" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="205" y="1395" as="sourcePoint"/><mxPoint x="65" y="1395" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m36l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="36: mostrarMensaje(&quot;Asignación registrada exitosamente&quot;)" vertex="1" connectable="0" parent="m36"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="nota4" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="Trazabilidad y devolución: GET /api/herramienta/historial (getHistorial, consulta AsignacionHerramienta) y POST /api/herramienta/:id/devolver (devolver, cierra la asignación abierta y vuelve la herramienta a 'Disponible') son flujos complementarios del mismo módulo, no detallados aquí." vertex="1">
+        <mxCell id="m23" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="395" y="1005" as="sourcePoint" />
+            <mxPoint x="565" y="1005" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m23l" connectable="0" parent="m23" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="23: QUERY() → AsignacionHerramienta.create(...)" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m24" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="575" y="1035" as="sourcePoint" />
+            <mxPoint x="1385" y="1035" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m24l" connectable="0" parent="m24" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="24: INSERT INTO asignacion_herramienta(herramienta_id, trabajador_rut, fecha_entrega, estado_entrega, usuario_rut)" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m25" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1385" y="1065" as="sourcePoint" />
+            <mxPoint x="575" y="1065" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m25l" connectable="0" parent="m25" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="25: return asignacion_herramienta_id" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m26" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="565" y="1095" as="sourcePoint" />
+            <mxPoint x="395" y="1095" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m26l" connectable="0" parent="m26" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="26: return asignacion" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m27" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="395" y="1125" as="sourcePoint" />
+            <mxPoint x="565" y="1125" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m27l" connectable="0" parent="m27" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="27: QUERY()" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m28" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="575" y="1155" as="sourcePoint" />
+            <mxPoint x="765" y="1155" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m28l" connectable="0" parent="m28" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="28: UPDATE herramienta SET herramienta_estado=&#39;Asignada&#39;, herramienta_tecnico_rut WHERE herramienta_id=?" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m29" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="765" y="1185" as="sourcePoint" />
+            <mxPoint x="575" y="1185" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m29l" connectable="0" parent="m29" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="29: return resultado" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m30" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="565" y="1215" as="sourcePoint" />
+            <mxPoint x="395" y="1215" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m30l" connectable="0" parent="m30" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="30: return confirmación" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m31" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="395" y="1245" as="sourcePoint" />
+            <mxPoint x="565" y="1245" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m31l" connectable="0" parent="m31" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="31: QUERY() → LogAuditoria.create(...)" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m32" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="575" y="1275" as="sourcePoint" />
+            <mxPoint x="1625" y="1275" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m32l" connectable="0" parent="m32" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="32: INSERT INTO log_auditoria(fecha_hora, accion, modulo=&#39;HERRAMIENTA&#39;, usuario_rut)" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m33" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1625" y="1305" as="sourcePoint" />
+            <mxPoint x="575" y="1305" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m33l" connectable="0" parent="m33" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="33: return log_auditoria_id" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m34" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="565" y="1335" as="sourcePoint" />
+            <mxPoint x="395" y="1335" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m34l" connectable="0" parent="m34" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="34: return log creado" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m35" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="385" y="1365" as="sourcePoint" />
+            <mxPoint x="215" y="1365" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m35l" connectable="0" parent="m35" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="35: return { mensaje: &#39;Asignación registrada exitosamente&#39;, asignacion, herramienta }" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-13" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m36" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="205" y="1395" as="sourcePoint" />
+            <mxPoint x="65" y="1395" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m36l" connectable="0" parent="m36" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="36: mostrarMensaje(&quot;Asignación registrada exitosamente&quot;)" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nota4" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="Trazabilidad y devolución: GET /api/herramienta/historial (getHistorial, consulta AsignacionHerramienta) y POST /api/herramienta/:id/devolver (devolver, cierra la asignación abierta y vuelve la herramienta a &#39;Disponible&#39;)&amp;nbsp;&lt;div&gt;son flujos complementarios del mismo módulo, no detallados aquí.&lt;/div&gt;" vertex="1">
           <mxGeometry height="40" width="900" x="405" y="1425" as="geometry" />
         </mxCell>
-
       </root>
     </mxGraphModel>
   </diagram>
