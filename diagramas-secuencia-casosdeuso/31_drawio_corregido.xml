@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="CU31-corregido">
+    <mxGraphModel dx="1645" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1150" pageHeight="530" math="0" shadow="0">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+
+        <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU31: Monitoreando Materiales en Tránsito" vertex="1">
+          <mxGeometry height="25" width="1050" x="50" y="10" as="geometry" />
+        </mxCell>
+
+        <mxCell id="h_a" parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="Administrador/Supervisor" vertex="1"><mxGeometry height="55" width="50" x="30" y="50" as="geometry"/></mxCell>
+        <mxCell id="h_v" parent="1" style="html=1;whiteSpace=wrap;" value="V_MaterialesTransito" vertex="1"><mxGeometry x="135" y="90" width="150" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_c" parent="1" style="html=1;whiteSpace=wrap;" value="C_Transito" vertex="1"><mxGeometry x="330" y="90" width="120" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_db" parent="1" style="html=1;whiteSpace=wrap;" value="C_MySQL" vertex="1"><mxGeometry x="515" y="90" width="110" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_guia" parent="1" style="html=1;whiteSpace=wrap;" value="GuiaDespacho" vertex="1"><mxGeometry x="705" y="90" width="130" height="50" as="geometry"/></mxCell>
+
+        <mxCell id="ll_a" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="55" y="105" width="10" height="375" as="geometry"/></mxCell>
+        <mxCell id="ll_v" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="205" y="140" width="10" height="340" as="geometry"/></mxCell>
+        <mxCell id="ll_c" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="385" y="140" width="10" height="340" as="geometry"/></mxCell>
+        <mxCell id="ll_db" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="565" y="140" width="10" height="340" as="geometry"/></mxCell>
+        <mxCell id="ll_guia" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="765" y="140" width="10" height="340" as="geometry"/></mxCell>
+
+        <mxCell id="m1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="180" as="sourcePoint"/><mxPoint x="205" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m1l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="1: abrirMaterialesTransito(proyecto?)" vertex="1" connectable="0" parent="m1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m2" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="210" as="sourcePoint"/><mxPoint x="385" y="210" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m2l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="2: GET /api/transito?proyecto=... → getEnTransito()" vertex="1" connectable="0" parent="m2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m3" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="240" as="sourcePoint"/><mxPoint x="565" y="240" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m3l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="3: QUERY()" vertex="1" connectable="0" parent="m3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m4" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="270" as="sourcePoint"/><mxPoint x="765" y="270" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m4l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="4: SELECT guia_despacho.*, orden_compra.orden_compra_folio, material.material_nombre, proveedor.proveedor_razon_social FROM guia_despacho INNER JOIN orden_compra ... INNER JOIN material ... INNER JOIN proveedor ... WHERE guia_despacho_estado='En Tránsito' [AND orden_compra.proyecto_codigo_correlativo=?] ORDER BY guia_despacho_id DESC" vertex="1" connectable="0" parent="m4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m5" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="300" as="sourcePoint"/><mxPoint x="575" y="300" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m5l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="5: return resultado" vertex="1" connectable="0" parent="m5"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m6" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="330" as="sourcePoint"/><mxPoint x="395" y="330" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m6l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="6: return guias" vertex="1" connectable="0" parent="m6"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m7" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="385" y="360" as="sourcePoint"/><mxPoint x="215" y="360" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m7l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="7: return materiales en tránsito" vertex="1" connectable="0" parent="m7"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m8" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="205" y="390" as="sourcePoint"/><mxPoint x="65" y="390" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m8l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="8: mostrarTablaTransito(datos)" vertex="1" connectable="0" parent="m8"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

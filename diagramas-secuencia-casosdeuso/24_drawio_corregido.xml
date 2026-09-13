@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="CU24-corregido">
+    <mxGraphModel dx="1645" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1165" pageHeight="880" math="0" shadow="0">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+
+        <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU24: Validando Recepción de EPP mediante Firma Digital" vertex="1">
+          <mxGeometry height="25" width="1065" x="50" y="10" as="geometry" />
+        </mxCell>
+
+        <mxCell id="h_a" parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="Administrador/Supervisor" vertex="1"><mxGeometry height="55" width="50" x="30" y="50" as="geometry"/></mxCell>
+        <mxCell id="h_v" parent="1" style="html=1;whiteSpace=wrap;" value="V_HistorialEpp" vertex="1"><mxGeometry x="145" y="90" width="130" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_c" parent="1" style="html=1;whiteSpace=wrap;" value="C_EntregaEpp" vertex="1"><mxGeometry x="330" y="90" width="120" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_db" parent="1" style="html=1;whiteSpace=wrap;" value="C_MySQL" vertex="1"><mxGeometry x="515" y="90" width="110" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_entrega" parent="1" style="html=1;whiteSpace=wrap;" value="EntregaEpp" vertex="1"><mxGeometry x="710" y="90" width="120" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_log" parent="1" style="html=1;whiteSpace=wrap;" value="LogAuditoria" vertex="1"><mxGeometry x="905" y="90" width="130" height="50" as="geometry"/></mxCell>
+
+        <mxCell id="ll_a" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="55" y="105" width="10" height="725" as="geometry"/></mxCell>
+        <mxCell id="ll_v" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="205" y="140" width="10" height="690" as="geometry"/></mxCell>
+        <mxCell id="ll_c" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="385" y="140" width="10" height="690" as="geometry"/></mxCell>
+        <mxCell id="ll_db" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="565" y="140" width="10" height="690" as="geometry"/></mxCell>
+        <mxCell id="ll_entrega" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="765" y="140" width="10" height="690" as="geometry"/></mxCell>
+        <mxCell id="ll_log" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="965" y="140" width="10" height="690" as="geometry"/></mxCell>
+
+        <mxCell id="m1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="180" as="sourcePoint"/><mxPoint x="205" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m1l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="1: abrirValidacionEntrega(lote)" vertex="1" connectable="0" parent="m1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m2" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="210" as="sourcePoint"/><mxPoint x="385" y="210" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m2l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="2: POST /api/entrega-epp/:lote/validar → validarEntrega({ firma })" vertex="1" connectable="0" parent="m2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[Excepción 1: panel de firma vacío o formato inválido (no inicia con 'data:image/') → HTTP 400 'El panel de firma está vacío. Registra el trazo antes de validar.']" vertex="1">
+          <mxGeometry height="30" width="700" x="405" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="m3" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="295" as="sourcePoint"/><mxPoint x="565" y="295" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m3l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="3: QUERY()" vertex="1" connectable="0" parent="m3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m4" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="325" as="sourcePoint"/><mxPoint x="765" y="325" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m4l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="4: SELECT * FROM entrega_epp WHERE entrega_epp_lote=?" vertex="1" connectable="0" parent="m4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m5" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="355" as="sourcePoint"/><mxPoint x="575" y="355" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m5l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="5: return resultado" vertex="1" connectable="0" parent="m5"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m6" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="385" as="sourcePoint"/><mxPoint x="395" y="385" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m6l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="6: return filas" vertex="1" connectable="0" parent="m6"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="nota2" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[Excepción 2: entrega ya validada → si todas las filas tienen entrega_epp_estado='Validado', HTTP 409 'La entrega ya fue validada por el receptor']" vertex="1">
+          <mxGeometry height="30" width="700" x="405" y="415" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="470" as="sourcePoint"/><mxPoint x="565" y="470" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m7l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="7: QUERY()" vertex="1" connectable="0" parent="m7"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m8" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="500" as="sourcePoint"/><mxPoint x="765" y="500" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m8l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="8: UPDATE entrega_epp SET entrega_epp_estado='Validado', entrega_epp_firma, entrega_epp_fecha_hora_validacion WHERE entrega_epp_lote=?" vertex="1" connectable="0" parent="m8"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m9" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="530" as="sourcePoint"/><mxPoint x="575" y="530" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m9l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="9: return resultado" vertex="1" connectable="0" parent="m9"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m10" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="560" as="sourcePoint"/><mxPoint x="395" y="560" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m10l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="10: return confirmación" vertex="1" connectable="0" parent="m10"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m11" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="590" as="sourcePoint"/><mxPoint x="565" y="590" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m11l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="11: QUERY() → LogAuditoria.create(...)" vertex="1" connectable="0" parent="m11"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m12" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="620" as="sourcePoint"/><mxPoint x="965" y="620" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m12l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="12: INSERT INTO log_auditoria(fecha_hora, accion, modulo='ENTREGA_EPP', usuario_rut)" vertex="1" connectable="0" parent="m12"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m13" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="965" y="650" as="sourcePoint"/><mxPoint x="575" y="650" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m13l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="13: return log_auditoria_id" vertex="1" connectable="0" parent="m13"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m14" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="680" as="sourcePoint"/><mxPoint x="395" y="680" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m14l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="14: return log creado" vertex="1" connectable="0" parent="m14"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m15" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="385" y="710" as="sourcePoint"/><mxPoint x="215" y="710" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m15l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="15: return { mensaje: 'Entrega Registrada con Éxito', lote, fecha_hora_validacion }" vertex="1" connectable="0" parent="m15"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m16" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="205" y="740" as="sourcePoint"/><mxPoint x="65" y="740" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m16l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="16: mostrarMensaje(&quot;Entrega Registrada con Éxito&quot;)" vertex="1" connectable="0" parent="m16"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

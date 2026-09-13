@@ -1,73 +1,146 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mxfile host="app.diagrams.net">
   <diagram name="Página-1" id="CU35-corregido">
-    <mxGraphModel dx="1645" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1645" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1400" math="0" shadow="0">
       <root>
         <mxCell id="0" /><mxCell id="1" parent="0" />
 
         <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU35: Generando Orden de Compra Automáticamente" vertex="1">
-          <mxGeometry height="25" width="1300" x="50" y="10" as="geometry" />
+          <mxGeometry height="25" width="1250" x="50" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="sub" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=9;fontStyle=2;" value="Flujo real: la generación automática de la OC ocurre como efecto de aprobar una Solicitud de Materiales (pantalla Aprobaciones Pendientes), no en la pantalla Órdenes de Compra." vertex="1">
+          <mxGeometry height="20" width="900" x="55" y="32" as="geometry" />
         </mxCell>
 
-        <mxCell id="h_a"  parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="AdministradorTotal" vertex="1"><mxGeometry height="55" width="50" x="30" y="50" as="geometry"/></mxCell>
-        <mxCell id="h_v"  parent="1" style="html=1;whiteSpace=wrap;" value="V_OrdenCompra"   vertex="1"><mxGeometry x="155" y="90" width="120" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_c"  parent="1" style="html=1;whiteSpace=wrap;" value="C_OrdenCompra"   vertex="1"><mxGeometry x="345" y="90" width="120" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_db" parent="1" style="html=1;whiteSpace=wrap;" value="C_MySQL"         vertex="1"><mxGeometry x="535" y="90" width="110" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_sm" parent="1" style="html=1;whiteSpace=wrap;" value="SolicitudMaterial" vertex="1"><mxGeometry x="720" y="90" width="130" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_oc" parent="1" style="html=1;whiteSpace=wrap;" value="OrdenCompra"     vertex="1"><mxGeometry x="925" y="90" width="120" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_a"   parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="Administrador" vertex="1"><mxGeometry height="55" width="50" x="30" y="55" as="geometry"/></mxCell>
+        <mxCell id="h_v"   parent="1" style="html=1;whiteSpace=wrap;" value="V_Aprobaciones"      vertex="1"><mxGeometry x="155" y="95" width="110" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_c"   parent="1" style="html=1;whiteSpace=wrap;" value="C_SolicitudMaterial" vertex="1"><mxGeometry x="330" y="95" width="120" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_db"  parent="1" style="html=1;whiteSpace=wrap;" value="C_MySQL"             vertex="1"><mxGeometry x="515" y="95" width="110" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_s"   parent="1" style="html=1;whiteSpace=wrap;" value="SolicitudMaterial"   vertex="1"><mxGeometry x="695" y="95" width="150" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_p"   parent="1" style="html=1;whiteSpace=wrap;" value="Proyecto"            vertex="1"><mxGeometry x="905" y="95" width="130" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_m"   parent="1" style="html=1;whiteSpace=wrap;" value="Material"            vertex="1"><mxGeometry x="1105" y="95" width="130" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_o"   parent="1" style="html=1;whiteSpace=wrap;" value="OrdenCompra"         vertex="1"><mxGeometry x="1300" y="95" width="140" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_d"   parent="1" style="html=1;whiteSpace=wrap;" value="DetalleOrdenCompra"  vertex="1"><mxGeometry x="1495" y="95" width="150" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_log" parent="1" style="html=1;whiteSpace=wrap;" value="LogAuditoria"        vertex="1"><mxGeometry x="1695" y="95" width="150" height="50" as="geometry"/></mxCell>
 
-        <mxCell id="ll_a"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="55"  y="105" width="10" height="660" as="geometry"/></mxCell>
-        <mxCell id="ll_v"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="210" y="140" width="10" height="630" as="geometry"/></mxCell>
-        <mxCell id="ll_c"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="400" y="140" width="10" height="630" as="geometry"/></mxCell>
-        <mxCell id="ll_db" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="590" y="140" width="10" height="630" as="geometry"/></mxCell>
-        <mxCell id="ll_sm" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="784" y="140" width="10" height="630" as="geometry"/></mxCell>
-        <mxCell id="ll_oc" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="984" y="140" width="10" height="630" as="geometry"/></mxCell>
+        <mxCell id="ll_a"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="55"   y="110" width="10" height="1225" as="geometry"/></mxCell>
+        <mxCell id="ll_v"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="205"  y="145" width="10" height="1190" as="geometry"/></mxCell>
+        <mxCell id="ll_c"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="385"  y="145" width="10" height="1190" as="geometry"/></mxCell>
+        <mxCell id="ll_db"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="565"  y="145" width="10" height="1190" as="geometry"/></mxCell>
+        <mxCell id="ll_s"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="765"  y="145" width="10" height="1190" as="geometry"/></mxCell>
+        <mxCell id="ll_p"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="965"  y="145" width="10" height="1190" as="geometry"/></mxCell>
+        <mxCell id="ll_m"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1165" y="145" width="10" height="1190" as="geometry"/></mxCell>
+        <mxCell id="ll_o"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1365" y="145" width="10" height="1190" as="geometry"/></mxCell>
+        <mxCell id="ll_d"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1565" y="145" width="10" height="1190" as="geometry"/></mxCell>
+        <mxCell id="ll_log" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1765" y="145" width="10" height="1190" as="geometry"/></mxCell>
 
-        <mxCell id="m1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="180" as="sourcePoint"/><mxPoint x="210" y="180" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m1l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="1: aprobarSolicitudMaterial(solicitud_material_id)" vertex="1" connectable="0" parent="m1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="185" as="sourcePoint"/><mxPoint x="205" y="185" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m1l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="1: seleccionarSolicitudPendiente(solicitud_material_id)" vertex="1" connectable="0" parent="m1"><mxGeometry relative="1" as="geometry"/></mxCell>
 
-        <mxCell id="m2" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="220" y="210" as="sourcePoint"/><mxPoint x="400" y="210" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m2l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="2: procesarAprobacion(solicitud_material_id)" vertex="1" connectable="0" parent="m2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m2" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="215" as="sourcePoint"/><mxPoint x="205" y="215" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m2l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="2: ingresarCantidadYMontoEstimado(cantidad, monto_estimado)" vertex="1" connectable="0" parent="m2"><mxGeometry relative="1" as="geometry"/></mxCell>
 
-        <mxCell id="m3" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="410" y="240" as="sourcePoint"/><mxPoint x="590" y="240" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m3l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="3: QUERY()" vertex="1" connectable="0" parent="m3"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m4" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="600" y="270" as="sourcePoint"/><mxPoint x="784" y="270" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m4l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="4: UPDATE SolicitudMaterial SET estado = 'Aprobada'" vertex="1" connectable="0" parent="m4"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m5" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="600" y="305" as="sourcePoint"/><mxPoint x="784" y="305" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m5l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="5: SELECT materiales, cantidades, precios, proveedor_rut FROM SolicitudMaterial" vertex="1" connectable="0" parent="m5"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m6" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="784" y="340" as="sourcePoint"/><mxPoint x="600" y="340" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m6l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="6: return datos solicitud" vertex="1" connectable="0" parent="m6"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[falta proveedor → pausar generación y solicitar completar información]&#xa;[proveedor OK → continuar]" vertex="1">
-          <mxGeometry height="34" width="380" x="418" y="348" as="geometry" />
+        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[monto_estimado obligatorio y &gt; 0 → si no, bloquear envío]&#xa;[cantidad, si se edita, debe ser entero &gt; 0]" vertex="1">
+          <mxGeometry height="40" width="480" x="225" y="225" as="geometry" />
         </mxCell>
 
-        <mxCell id="m7" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="590" y="400" as="sourcePoint"/><mxPoint x="410" y="400" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m7l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="7: return datos solicitud" vertex="1" connectable="0" parent="m7"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m3" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="295" as="sourcePoint"/><mxPoint x="385" y="295" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m3l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="3: PUT /api/solicitud-material/:id/aprobar → aprobarSolicitud()" vertex="1" connectable="0" parent="m3"><mxGeometry relative="1" as="geometry"/></mxCell>
 
-        <mxCell id="m8" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="410" y="435" as="sourcePoint"/><mxPoint x="590" y="435" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m4" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="325" as="sourcePoint"/><mxPoint x="565" y="325" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m4l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="4: QUERY()" vertex="1" connectable="0" parent="m4"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m5" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="355" as="sourcePoint"/><mxPoint x="765" y="355" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m5l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="5: SELECT * FROM solicitud_material WHERE solicitud_material_id" vertex="1" connectable="0" parent="m5"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m6" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="385" as="sourcePoint"/><mxPoint x="575" y="385" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m6l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="6: return resultado" vertex="1" connectable="0" parent="m6"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m7" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="415" as="sourcePoint"/><mxPoint x="395" y="415" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m7l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="7: return solicitud" vertex="1" connectable="0" parent="m7"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="nota2" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[solicitud no encontrada → HTTP 404]&#xa;[solicitud_material_estado ≠ 'pendiente' → HTTP 400 'La solicitud ya fue validada']" vertex="1">
+          <mxGeometry height="40" width="480" x="405" y="425" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m8" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="495" as="sourcePoint"/><mxPoint x="565" y="495" as="targetPoint"/></mxGeometry></mxCell>
         <mxCell id="m8l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="8: QUERY()" vertex="1" connectable="0" parent="m8"><mxGeometry relative="1" as="geometry"/></mxCell>
 
-        <mxCell id="m9" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="600" y="465" as="sourcePoint"/><mxPoint x="984" y="465" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m9l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="9: INSERT INTO OrdenCompra(folio, fecha, estado, proveedor_rut, proyecto_codigo, solicitud_material_id)" vertex="1" connectable="0" parent="m9"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m9" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="525" as="sourcePoint"/><mxPoint x="965" y="525" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m9l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="9: SELECT * FROM proyecto WHERE proyecto_codigo_correlativo" vertex="1" connectable="0" parent="m9"><mxGeometry relative="1" as="geometry"/></mxCell>
 
-        <mxCell id="m10" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="600" y="500" as="sourcePoint"/><mxPoint x="984" y="500" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m10l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="10: INSERT INTO DetalleOrdenCompra(material_id, cantidad, precio_unitario)" vertex="1" connectable="0" parent="m10"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m10" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="965" y="555" as="sourcePoint"/><mxPoint x="575" y="555" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m10l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="10: return resultado" vertex="1" connectable="0" parent="m10"><mxGeometry relative="1" as="geometry"/></mxCell>
 
-        <mxCell id="m11" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="984" y="540" as="sourcePoint"/><mxPoint x="600" y="540" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m11l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="11: return orden_compra_id" vertex="1" connectable="0" parent="m11"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m11" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="585" as="sourcePoint"/><mxPoint x="395" y="585" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m11l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="11: return proyecto [monto_estimado &gt; presupuesto_asignado → marca alerta_presupuesto, no bloquea]" vertex="1" connectable="0" parent="m11"><mxGeometry relative="1" as="geometry"/></mxCell>
 
-        <mxCell id="m12" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="590" y="575" as="sourcePoint"/><mxPoint x="410" y="575" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m12l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="12: return orden_compra_id" vertex="1" connectable="0" parent="m12"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m12" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="615" as="sourcePoint"/><mxPoint x="565" y="615" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m12l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="12: QUERY()" vertex="1" connectable="0" parent="m12"><mxGeometry relative="1" as="geometry"/></mxCell>
 
-        <mxCell id="m13" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="400" y="610" as="sourcePoint"/><mxPoint x="220" y="610" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m13l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="13: mostrarMensaje(&quot;Orden de compra generada con éxito&quot;)" vertex="1" connectable="0" parent="m13"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m13" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="645" as="sourcePoint"/><mxPoint x="765" y="645" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m13l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="13: UPDATE solicitud_material SET solicitud_material_estado='aprobada', solicitud_material_cantidad WHERE solicitud_material_id" vertex="1" connectable="0" parent="m13"><mxGeometry relative="1" as="geometry"/></mxCell>
 
-        <mxCell id="m14" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="210" y="645" as="sourcePoint"/><mxPoint x="65" y="645" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m14l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="14: &quot;Orden de compra generada con éxito&quot;" vertex="1" connectable="0" parent="m14"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m14" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="675" as="sourcePoint"/><mxPoint x="575" y="675" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m14l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="14: return resultado" vertex="1" connectable="0" parent="m14"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m15" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="705" as="sourcePoint"/><mxPoint x="395" y="705" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m15l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="15: return confirmación (solicitud aprobada)" vertex="1" connectable="0" parent="m15"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m16" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="735" as="sourcePoint"/><mxPoint x="565" y="735" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m16l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="16: QUERY() → generarOrdenCompraDesdeSolicitud()" vertex="1" connectable="0" parent="m16"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m17" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="765" as="sourcePoint"/><mxPoint x="1165" y="765" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m17l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="17: SELECT * FROM material WHERE material_id" vertex="1" connectable="0" parent="m17"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m18" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1165" y="795" as="sourcePoint"/><mxPoint x="575" y="795" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m18l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="18: return resultado" vertex="1" connectable="0" parent="m18"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="nota3" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[solicitud sin material_id (Solicitud Especial) → oc_generada=false, detiene aquí: 'genera la OC manualmente' en pantalla Órdenes de Compra]&#xa;[material sin material_proveedor_rut asignado en catálogo → oc_generada=false, mismo aviso]" vertex="1">
+          <mxGeometry height="45" width="700" x="595" y="805" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m19" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="880" as="sourcePoint"/><mxPoint x="565" y="880" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m19l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="19: QUERY() [continúa solo si el material tiene proveedor asignado]" vertex="1" connectable="0" parent="m19"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m20" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="910" as="sourcePoint"/><mxPoint x="1365" y="910" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m20l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="20: INSERT INTO orden_compra(folio, fecha, estado='Emitida', proveedor_rut=material.material_proveedor_rut, proyecto_codigo_correlativo, solicitud_material_id)" vertex="1" connectable="0" parent="m20"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m21" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1365" y="940" as="sourcePoint"/><mxPoint x="575" y="940" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m21l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="21: return orden_compra_id" vertex="1" connectable="0" parent="m21"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m22" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="970" as="sourcePoint"/><mxPoint x="395" y="970" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m22l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="22: return orden creada" vertex="1" connectable="0" parent="m22"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m23" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="1000" as="sourcePoint"/><mxPoint x="565" y="1000" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m23l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="23: QUERY() [una vez por línea de costo repartido — repartirCosto()]" vertex="1" connectable="0" parent="m23"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m24" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="1030" as="sourcePoint"/><mxPoint x="1565" y="1030" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m24l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="24: INSERT INTO detalle_orden_compra(descripcion_material, cantidad, precio_unitario, orden_compra_id, material_id)" vertex="1" connectable="0" parent="m24"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m25" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1565" y="1060" as="sourcePoint"/><mxPoint x="575" y="1060" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m25l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="25: return detalle_orden_compra_id" vertex="1" connectable="0" parent="m25"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m26" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="1090" as="sourcePoint"/><mxPoint x="395" y="1090" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m26l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="26: return detalle(s) creado(s)" vertex="1" connectable="0" parent="m26"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m27" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="1120" as="sourcePoint"/><mxPoint x="565" y="1120" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m27l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="27: QUERY() → LogAuditoria.create()" vertex="1" connectable="0" parent="m27"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m28" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="1150" as="sourcePoint"/><mxPoint x="1765" y="1150" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m28l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="28: INSERT INTO log_auditoria(accion:'Orden de compra '+folio+' generada automáticamente desde solicitud '+id+' (CU35)', modulo:'ORDEN_COMPRA')" vertex="1" connectable="0" parent="m28"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m29" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1765" y="1180" as="sourcePoint"/><mxPoint x="575" y="1180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m29l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="29: return log_auditoria_id" vertex="1" connectable="0" parent="m29"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m30" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="1210" as="sourcePoint"/><mxPoint x="395" y="1210" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m30l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="30: return log creado" vertex="1" connectable="0" parent="m30"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m31" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="385" y="1240" as="sourcePoint"/><mxPoint x="215" y="1240" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m31l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="31: return 200 { success:true, data:{ alerta_presupuesto, oc_generada:true, orden_compra } }" vertex="1" connectable="0" parent="m31"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m32" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="205" y="1270" as="sourcePoint"/><mxPoint x="65" y="1270" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m32l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="32: mostrarMensaje(&quot;Solicitud aprobada — Orden de Compra &quot;+folio+&quot; generada automáticamente&quot;)" vertex="1" connectable="0" parent="m32"><mxGeometry relative="1" as="geometry"/></mxCell>
 
       </root>
     </mxGraphModel>

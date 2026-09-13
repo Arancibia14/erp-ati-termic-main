@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="CU21-corregido">
+    <mxGraphModel dx="1645" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1840" math="0" shadow="0">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+
+        <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU21: Generando Anexo de Contrato por Traslado" vertex="1">
+          <mxGeometry height="25" width="1350" x="50" y="10" as="geometry" />
+        </mxCell>
+
+        <mxCell id="h_a"   parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="Administrador" vertex="1"><mxGeometry height="55" width="50" x="30" y="50" as="geometry"/></mxCell>
+        <mxCell id="h_v"   parent="1" style="html=1;whiteSpace=wrap;" value="V_AnexoContrato"   vertex="1"><mxGeometry x="150" y="90" width="120" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_c"   parent="1" style="html=1;whiteSpace=wrap;" value="C_AnexoContrato"   vertex="1"><mxGeometry x="330" y="90" width="120" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_db"  parent="1" style="html=1;whiteSpace=wrap;" value="C_MySQL"           vertex="1"><mxGeometry x="515" y="90" width="110" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_t"   parent="1" style="html=1;whiteSpace=wrap;" value="Trabajador"        vertex="1"><mxGeometry x="705" y="90" width="130" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_cl"  parent="1" style="html=1;whiteSpace=wrap;" value="ContratoLaboral"   vertex="1"><mxGeometry x="900" y="90" width="150" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_p"   parent="1" style="html=1;whiteSpace=wrap;" value="Proyecto"          vertex="1"><mxGeometry x="1100" y="90" width="130" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_dl"  parent="1" style="html=1;whiteSpace=wrap;" value="DocumentoLegal"    vertex="1"><mxGeometry x="1300" y="90" width="150" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_log" parent="1" style="html=1;whiteSpace=wrap;" value="LogAuditoria"      vertex="1"><mxGeometry x="1500" y="90" width="150" height="50" as="geometry"/></mxCell>
+
+        <mxCell id="ll_a"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="55"   y="105" width="10" height="1675" as="geometry"/></mxCell>
+        <mxCell id="ll_v"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="205"  y="140" width="10" height="1640" as="geometry"/></mxCell>
+        <mxCell id="ll_c"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="385"  y="140" width="10" height="1640" as="geometry"/></mxCell>
+        <mxCell id="ll_db"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="565"  y="140" width="10" height="1640" as="geometry"/></mxCell>
+        <mxCell id="ll_t"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="765"  y="140" width="10" height="1640" as="geometry"/></mxCell>
+        <mxCell id="ll_cl"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="965"  y="140" width="10" height="1640" as="geometry"/></mxCell>
+        <mxCell id="ll_p"   parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1165" y="140" width="10" height="1640" as="geometry"/></mxCell>
+        <mxCell id="ll_dl"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1365" y="140" width="10" height="1640" as="geometry"/></mxCell>
+        <mxCell id="ll_log" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1565" y="140" width="10" height="1640" as="geometry"/></mxCell>
+
+        <mxCell id="m1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="180" as="sourcePoint"/><mxPoint x="205" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m1l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="1: buscarTrabajador(rut)" vertex="1" connectable="0" parent="m1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m2" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="210" as="sourcePoint"/><mxPoint x="385" y="210" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m2l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="2: GET /api/anexo-contrato/trabajador/:rut → getInfoContractual()" vertex="1" connectable="0" parent="m2"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m3" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="240" as="sourcePoint"/><mxPoint x="565" y="240" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m3l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="3: QUERY()" vertex="1" connectable="0" parent="m3"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m4" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="270" as="sourcePoint"/><mxPoint x="765" y="270" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m4l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="4: SELECT * FROM trabajador WHERE trabajador_rut" vertex="1" connectable="0" parent="m4"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m5" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="300" as="sourcePoint"/><mxPoint x="575" y="300" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m5l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="5: return resultado [no existe → 404]" vertex="1" connectable="0" parent="m5"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m6" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="330" as="sourcePoint"/><mxPoint x="395" y="330" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m6l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="6: return trabajador" vertex="1" connectable="0" parent="m6"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m7" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="360" as="sourcePoint"/><mxPoint x="565" y="360" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m7l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="7: QUERY()" vertex="1" connectable="0" parent="m7"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m8" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="390" as="sourcePoint"/><mxPoint x="965" y="390" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m8l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="8: SELECT * FROM contrato_laboral WHERE trabajador_rut ORDER BY contrato_laboral_fecha_inicio DESC LIMIT 1" vertex="1" connectable="0" parent="m8"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m9" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="965" y="420" as="sourcePoint"/><mxPoint x="575" y="420" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m9l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="9: return resultado" vertex="1" connectable="0" parent="m9"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m10" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="450" as="sourcePoint"/><mxPoint x="395" y="450" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m10l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="10: return contrato vigente" vertex="1" connectable="0" parent="m10"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m11" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="480" as="sourcePoint"/><mxPoint x="565" y="480" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m11l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="11: QUERY() [solo si el trabajador tiene proyecto_codigo_correlativo asignado]" vertex="1" connectable="0" parent="m11"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m12" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="510" as="sourcePoint"/><mxPoint x="1165" y="510" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m12l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="12: SELECT * FROM proyecto WHERE proyecto_codigo_correlativo (obra actual del trabajador)" vertex="1" connectable="0" parent="m12"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m13" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1165" y="540" as="sourcePoint"/><mxPoint x="575" y="540" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m13l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="13: return resultado" vertex="1" connectable="0" parent="m13"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m14" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="570" as="sourcePoint"/><mxPoint x="395" y="570" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m14l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="14: return proyecto actual (u origen)" vertex="1" connectable="0" parent="m14"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m15" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="385" y="600" as="sourcePoint"/><mxPoint x="215" y="600" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m15l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="15: return { trabajador, contrato_vigente, proyecto_actual }" vertex="1" connectable="0" parent="m15"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m16" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="205" y="630" as="sourcePoint"/><mxPoint x="65" y="630" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m16l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="16: mostrarInfoContractual(trabajador, contrato_vigente, proyecto_actual)" vertex="1" connectable="0" parent="m16"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m17" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="660" as="sourcePoint"/><mxPoint x="205" y="660" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m17l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="17: seleccionarProyectoDestinoYFecha(proyecto_destino_codigo, fecha_inicio)" vertex="1" connectable="0" parent="m17"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[trabajador_rut, proyecto_destino_codigo o fecha_inicio faltantes → HTTP 400]" vertex="1">
+          <mxGeometry height="30" width="520" x="225" y="670" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m18" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="730" as="sourcePoint"/><mxPoint x="385" y="730" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m18l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="18: POST /api/anexo-contrato → generarAnexoTraslado()" vertex="1" connectable="0" parent="m18"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m19" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="760" as="sourcePoint"/><mxPoint x="565" y="760" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m19l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="19: QUERY()" vertex="1" connectable="0" parent="m19"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m20" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="790" as="sourcePoint"/><mxPoint x="765" y="790" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m20l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="20: SELECT * FROM trabajador WHERE trabajador_rut" vertex="1" connectable="0" parent="m20"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m21" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="820" as="sourcePoint"/><mxPoint x="575" y="820" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m21l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="21: return resultado [no existe → 404]" vertex="1" connectable="0" parent="m21"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m22" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="850" as="sourcePoint"/><mxPoint x="395" y="850" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m22l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="22: return trabajador" vertex="1" connectable="0" parent="m22"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m23" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="880" as="sourcePoint"/><mxPoint x="565" y="880" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m23l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="23: QUERY()" vertex="1" connectable="0" parent="m23"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m24" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="910" as="sourcePoint"/><mxPoint x="965" y="910" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m24l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="24: SELECT * FROM contrato_laboral WHERE trabajador_rut ORDER BY contrato_laboral_fecha_inicio DESC LIMIT 1" vertex="1" connectable="0" parent="m24"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m25" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="965" y="940" as="sourcePoint"/><mxPoint x="575" y="940" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m25l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="25: return resultado" vertex="1" connectable="0" parent="m25"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="nota2" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[sin contrato vigente registrado → HTTP 400 'El trabajador no tiene un contrato vigente registrado']" vertex="1">
+          <mxGeometry height="30" width="600" x="595" y="950" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m26" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="1010" as="sourcePoint"/><mxPoint x="395" y="1010" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m26l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="26: return contrato vigente" vertex="1" connectable="0" parent="m26"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m27" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="1040" as="sourcePoint"/><mxPoint x="565" y="1040" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m27l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="27: QUERY()" vertex="1" connectable="0" parent="m27"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m28" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="1070" as="sourcePoint"/><mxPoint x="1165" y="1070" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m28l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="28: SELECT * FROM proyecto WHERE proyecto_codigo_correlativo (destino)" vertex="1" connectable="0" parent="m28"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m29" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1165" y="1100" as="sourcePoint"/><mxPoint x="575" y="1100" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m29l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="29: return resultado [no existe → 404]" vertex="1" connectable="0" parent="m29"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="nota3" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[proyecto destino sin proyecto_ubicacion registrada → HTTP 400 'completa los datos del proyecto antes de generar el anexo']" vertex="1">
+          <mxGeometry height="30" width="680" x="595" y="1110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m30" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="1170" as="sourcePoint"/><mxPoint x="395" y="1170" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m30l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="30: return proyecto destino" vertex="1" connectable="0" parent="m30"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="nota4" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[C_AnexoContrato genera el PDF en memoria con PDFKit y lo guarda en /uploads/documentos antes de insertar el registro]" vertex="1">
+          <mxGeometry height="30" width="620" x="225" y="1180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m31" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="1240" as="sourcePoint"/><mxPoint x="565" y="1240" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m31l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="31: QUERY()" vertex="1" connectable="0" parent="m31"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m32" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="1270" as="sourcePoint"/><mxPoint x="1365" y="1270" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m32l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="32: INSERT INTO documento_legal(tipo='AnexoTraslado', url_pdf, fecha_emision, estado='PendienteFirma', trabajador_rut, proyecto_codigo_correlativo=destino)" vertex="1" connectable="0" parent="m32"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m33" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1365" y="1300" as="sourcePoint"/><mxPoint x="575" y="1300" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m33l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="33: return documento_legal_id" vertex="1" connectable="0" parent="m33"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m34" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="1330" as="sourcePoint"/><mxPoint x="395" y="1330" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m34l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="34: return documento creado" vertex="1" connectable="0" parent="m34"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m35" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="1360" as="sourcePoint"/><mxPoint x="565" y="1360" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m35l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="35: QUERY()" vertex="1" connectable="0" parent="m35"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m36" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="1390" as="sourcePoint"/><mxPoint x="965" y="1390" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m36l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="36: UPDATE contrato_laboral SET proyecto_codigo_correlativo=destino WHERE contrato_laboral_id_contrato" vertex="1" connectable="0" parent="m36"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m37" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="965" y="1420" as="sourcePoint"/><mxPoint x="575" y="1420" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m37l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="37: return resultado" vertex="1" connectable="0" parent="m37"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m38" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="1450" as="sourcePoint"/><mxPoint x="395" y="1450" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m38l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="38: return contrato actualizado (reasignado al proyecto destino)" vertex="1" connectable="0" parent="m38"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m39" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="1480" as="sourcePoint"/><mxPoint x="565" y="1480" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m39l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="39: QUERY()" vertex="1" connectable="0" parent="m39"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m40" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="1510" as="sourcePoint"/><mxPoint x="765" y="1510" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m40l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="40: UPDATE trabajador SET proyecto_codigo_correlativo=destino WHERE trabajador_rut" vertex="1" connectable="0" parent="m40"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m41" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="1540" as="sourcePoint"/><mxPoint x="575" y="1540" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m41l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="41: return resultado" vertex="1" connectable="0" parent="m41"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m42" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="1570" as="sourcePoint"/><mxPoint x="395" y="1570" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m42l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="42: return trabajador actualizado" vertex="1" connectable="0" parent="m42"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m43" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="1600" as="sourcePoint"/><mxPoint x="565" y="1600" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m43l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="43: QUERY() → LogAuditoria.create()" vertex="1" connectable="0" parent="m43"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m44" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="1630" as="sourcePoint"/><mxPoint x="1565" y="1630" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m44l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="44: INSERT INTO log_auditoria(accion:'Anexo de contrato por traslado generado para trabajador '+rut+' — de '+origen+' a '+destino, modulo:'ANEXO_CONTRATO')" vertex="1" connectable="0" parent="m44"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m45" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1565" y="1660" as="sourcePoint"/><mxPoint x="575" y="1660" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m45l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="45: return log_auditoria_id" vertex="1" connectable="0" parent="m45"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m46" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="1690" as="sourcePoint"/><mxPoint x="395" y="1690" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m46l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="46: return log creado" vertex="1" connectable="0" parent="m46"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m47" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="385" y="1720" as="sourcePoint"/><mxPoint x="215" y="1720" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m47l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="47: return 201 { success:true, data:{ documento, trabajador, proyecto_origen, proyecto_destino } }" vertex="1" connectable="0" parent="m47"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="m48" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="205" y="1750" as="sourcePoint"/><mxPoint x="65" y="1750" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m48l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="48: mostrarMensaje(&quot;Anexo de traslado generado — Pendiente de Firma&quot;) + ofrecerDescargaPdf()" vertex="1" connectable="0" parent="m48"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

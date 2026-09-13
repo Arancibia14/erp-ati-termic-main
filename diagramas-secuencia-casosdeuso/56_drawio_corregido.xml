@@ -1,90 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mxfile host="app.diagrams.net">
   <diagram name="Página-1" id="CU56-corregido">
-    <mxGraphModel dx="1645" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1645" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1585" pageHeight="1060" math="0" shadow="0">
       <root>
         <mxCell id="0" /><mxCell id="1" parent="0" />
 
         <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU56: Emitiendo Certificado de Instalación Técnica" vertex="1">
-          <mxGeometry height="25" width="1300" x="50" y="10" as="geometry" />
+          <mxGeometry height="25" width="1485" x="50" y="10" as="geometry" />
         </mxCell>
 
-        <mxCell id="h_a"  parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="Actor&#xa;(Supervisor/Admin)" vertex="1"><mxGeometry height="55" width="55" x="20" y="50" as="geometry"/></mxCell>
-        <mxCell id="h_v"  parent="1" style="html=1;whiteSpace=wrap;" value="V_Certificado"   vertex="1"><mxGeometry x="150" y="90" width="120" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_c"  parent="1" style="html=1;whiteSpace=wrap;" value="C_Certificado"   vertex="1"><mxGeometry x="340" y="90" width="120" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_db" parent="1" style="html=1;whiteSpace=wrap;" value="C_MySQL"          vertex="1"><mxGeometry x="530" y="90" width="110" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_p"  parent="1" style="html=1;whiteSpace=wrap;" value="Proyecto"         vertex="1"><mxGeometry x="710" y="90" width="110" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_eq" parent="1" style="html=1;whiteSpace=wrap;" value="EquipoHVAC"       vertex="1"><mxGeometry x="890" y="90" width="110" height="50" as="geometry"/></mxCell>
-        <mxCell id="h_dl" parent="1" style="html=1;whiteSpace=wrap;" value="DocumentoLegal"  vertex="1"><mxGeometry x="1070" y="90" width="120" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_a" parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="Supervisor/Administrador" vertex="1"><mxGeometry height="55" width="50" x="30" y="50" as="geometry"/></mxCell>
+        <mxCell id="h_v" parent="1" style="html=1;whiteSpace=wrap;" value="V_CertificadoTecnico" vertex="1"><mxGeometry x="140" y="90" width="140" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_c" parent="1" style="html=1;whiteSpace=wrap;" value="C_Certificado" vertex="1"><mxGeometry x="330" y="90" width="120" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_db" parent="1" style="html=1;whiteSpace=wrap;" value="C_MySQL" vertex="1"><mxGeometry x="515" y="90" width="110" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_p" parent="1" style="html=1;whiteSpace=wrap;" value="Proyecto" vertex="1"><mxGeometry x="705" y="90" width="130" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_eq" parent="1" style="html=1;whiteSpace=wrap;" value="EquipoHVAC" vertex="1"><mxGeometry x="905" y="90" width="130" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_dl" parent="1" style="html=1;whiteSpace=wrap;" value="DocumentoLegal" vertex="1"><mxGeometry x="1095" y="90" width="150" height="50" as="geometry"/></mxCell>
+        <mxCell id="h_log" parent="1" style="html=1;whiteSpace=wrap;" value="LogAuditoria" vertex="1"><mxGeometry x="1315" y="90" width="150" height="50" as="geometry"/></mxCell>
 
-        <mxCell id="ll_a"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="47"   y="105" width="10" height="720" as="geometry"/></mxCell>
-        <mxCell id="ll_v"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="205"  y="140" width="10" height="690" as="geometry"/></mxCell>
-        <mxCell id="ll_c"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="395"  y="140" width="10" height="690" as="geometry"/></mxCell>
-        <mxCell id="ll_db" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="585"  y="140" width="10" height="690" as="geometry"/></mxCell>
-        <mxCell id="ll_p"  parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="765"  y="140" width="10" height="690" as="geometry"/></mxCell>
-        <mxCell id="ll_eq" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="945"  y="140" width="10" height="690" as="geometry"/></mxCell>
-        <mxCell id="ll_dl" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1130" y="140" width="10" height="690" as="geometry"/></mxCell>
+        <mxCell id="ll_a" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="55" y="105" width="10" height="905" as="geometry"/></mxCell>
+        <mxCell id="ll_v" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="205" y="140" width="10" height="870" as="geometry"/></mxCell>
+        <mxCell id="ll_c" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="385" y="140" width="10" height="870" as="geometry"/></mxCell>
+        <mxCell id="ll_db" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="565" y="140" width="10" height="870" as="geometry"/></mxCell>
+        <mxCell id="ll_p" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="765" y="140" width="10" height="870" as="geometry"/></mxCell>
+        <mxCell id="ll_eq" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="965" y="140" width="10" height="870" as="geometry"/></mxCell>
+        <mxCell id="ll_dl" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1165" y="140" width="10" height="870" as="geometry"/></mxCell>
+        <mxCell id="ll_log" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;" vertex="1"><mxGeometry x="1385" y="140" width="10" height="870" as="geometry"/></mxCell>
 
-        <mxCell id="m1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="57" y="180" as="sourcePoint"/><mxPoint x="205" y="180" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m1l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="1: seleccionarProyectoFinalizado(proyecto_codigo)" vertex="1" connectable="0" parent="m1"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m2" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="210" as="sourcePoint"/><mxPoint x="395" y="210" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m2l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="2: getDatosProyecto(proyecto_codigo)" vertex="1" connectable="0" parent="m2"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m3" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="405" y="240" as="sourcePoint"/><mxPoint x="585" y="240" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m1" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="65" y="180" as="sourcePoint"/><mxPoint x="205" y="180" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m1l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="1: seleccionarProyectoYCompletarDatos(proyecto_codigo_correlativo, tecnico_nombre, fecha_instalacion, observaciones)" vertex="1" connectable="0" parent="m1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[proyecto_codigo_correlativo o datos_certificado faltantes → 400] [tecnico_nombre o fecha_instalacion faltantes → 400]" vertex="1">
+          <mxGeometry height="30" width="620" x="225" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="m2" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="265" as="sourcePoint"/><mxPoint x="385" y="265" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m2l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="2: POST /api/certificado → generarCertificado()" vertex="1" connectable="0" parent="m2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m3" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="295" as="sourcePoint"/><mxPoint x="565" y="295" as="targetPoint"/></mxGeometry></mxCell>
         <mxCell id="m3l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="3: QUERY()" vertex="1" connectable="0" parent="m3"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m4" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="595" y="270" as="sourcePoint"/><mxPoint x="765" y="270" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m4l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="4: SELECT nombre_obra, correo_contacto, porcentaje_avance FROM Proyecto" vertex="1" connectable="0" parent="m4"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m5" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="305" as="sourcePoint"/><mxPoint x="595" y="305" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m5l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="5: return datos cliente y ubicacion" vertex="1" connectable="0" parent="m5"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m6" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="595" y="338" as="sourcePoint"/><mxPoint x="945" y="338" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m6l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="6: SELECT numero_serie, modelo_hvac_id FROM EquipoHVAC WHERE proyecto_codigo" vertex="1" connectable="0" parent="m6"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m7" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="945" y="373" as="sourcePoint"/><mxPoint x="595" y="373" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m7l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="7: return equipos instalados con modelo y serie" vertex="1" connectable="0" parent="m7"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m8" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="585" y="408" as="sourcePoint"/><mxPoint x="405" y="408" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m8l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="8: return resultado" vertex="1" connectable="0" parent="m8"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m9" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="438" as="sourcePoint"/><mxPoint x="215" y="438" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m9l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="9: desplegarBorradorCertificado(datos proyecto, equipos)" vertex="1" connectable="0" parent="m9"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m10" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="57" y="473" as="sourcePoint"/><mxPoint x="205" y="473" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m10l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="10: completarDetallesTecnicos(campos_finales)" vertex="1" connectable="0" parent="m10"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m11" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="503" as="sourcePoint"/><mxPoint x="395" y="503" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m11l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="11: validarCamposObligatorios(certificado)" vertex="1" connectable="0" parent="m11"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[datos incompletos → informar campos faltantes, bloquear emisión]&#xa;[campos completos → continuar]" vertex="1">
-          <mxGeometry height="34" width="340" x="413" y="511" as="geometry" />
+        <mxCell id="m4" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="325" as="sourcePoint"/><mxPoint x="765" y="325" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m4l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="4: SELECT * FROM proyecto INNER JOIN estado_proyecto WHERE proyecto_codigo_correlativo" vertex="1" connectable="0" parent="m4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m5" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="765" y="355" as="sourcePoint"/><mxPoint x="575" y="355" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m5l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="5: return resultado" vertex="1" connectable="0" parent="m5"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="nota2" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[proyecto no encontrado → 404] [estado_proyecto ≠ 'Finalizado' → 400 'Solo se puede emitir certificado para proyectos en estado Finalizado']" vertex="1">
+          <mxGeometry height="35" width="640" x="425" y="385" as="geometry" />
         </mxCell>
-
-        <mxCell id="m12" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="57" y="563" as="sourcePoint"/><mxPoint x="205" y="563" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m12l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="12: confirmarGeneracion()" vertex="1" connectable="0" parent="m12"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m13" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="215" y="593" as="sourcePoint"/><mxPoint x="395" y="593" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m13l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="13: generarPDF(datos_certificado)" vertex="1" connectable="0" parent="m13"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m14" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="405" y="623" as="sourcePoint"/><mxPoint x="585" y="623" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m14l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="14: QUERY()" vertex="1" connectable="0" parent="m14"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m15" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="595" y="653" as="sourcePoint"/><mxPoint x="1130" y="653" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m15l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="15: INSERT INTO DocumentoLegal(tipo=certificado, url_pdf, estado=PendienteFirma, proyecto_codigo)" vertex="1" connectable="0" parent="m15"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m16" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1130" y="688" as="sourcePoint"/><mxPoint x="595" y="688" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m16l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="16: return documento_legal_id" vertex="1" connectable="0" parent="m16"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m17" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="585" y="718" as="sourcePoint"/><mxPoint x="405" y="718" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m17l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="17: return documento_legal_id" vertex="1" connectable="0" parent="m17"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m18" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="678" as="sourcePoint"/><mxPoint x="215" y="678" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m18l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="18: mostrarMensaje(&quot;Certificado generado. Estado: Pendiente de Firma&quot;)" vertex="1" connectable="0" parent="m18"><mxGeometry relative="1" as="geometry"/></mxCell>
-
-        <mxCell id="m19" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="205" y="750" as="sourcePoint"/><mxPoint x="57" y="750" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="m19l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="19: &quot;Certificado generado. Estado: Pendiente de Firma&quot;" vertex="1" connectable="0" parent="m19"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m6" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="445" as="sourcePoint"/><mxPoint x="395" y="445" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m6l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="6: return proyecto" vertex="1" connectable="0" parent="m6"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m7" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="475" as="sourcePoint"/><mxPoint x="565" y="475" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m7l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="7: QUERY()" vertex="1" connectable="0" parent="m7"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m8" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="505" as="sourcePoint"/><mxPoint x="965" y="505" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m8l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="8: SELECT * FROM equipo_hvac INNER JOIN modelo_hvac ON modelo_hvac_id WHERE proyecto_codigo_correlativo" vertex="1" connectable="0" parent="m8"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m9" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="965" y="535" as="sourcePoint"/><mxPoint x="575" y="535" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m9l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="9: return resultado" vertex="1" connectable="0" parent="m9"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m10" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="565" as="sourcePoint"/><mxPoint x="395" y="565" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m10l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="10: return equipos instalados (equipo_hvac_numero_serie + modelo_hvac_nombre)" vertex="1" connectable="0" parent="m10"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="nota3" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[C_Certificado genera el PDF en memoria con PDFKit y lo guarda en /uploads/documentos antes de insertar el registro]" vertex="1">
+          <mxGeometry height="30" width="600" x="405" y="595" as="geometry" />
+        </mxCell>
+        <mxCell id="m11" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="650" as="sourcePoint"/><mxPoint x="565" y="650" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m11l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="11: QUERY()" vertex="1" connectable="0" parent="m11"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m12" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="680" as="sourcePoint"/><mxPoint x="1165" y="680" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m12l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="12: INSERT INTO documento_legal(tipo='certificado', url_pdf, fecha_emision, estado='PendienteFirma', proyecto_codigo_correlativo)" vertex="1" connectable="0" parent="m12"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m13" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1165" y="710" as="sourcePoint"/><mxPoint x="575" y="710" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m13l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="13: return documento_legal_id" vertex="1" connectable="0" parent="m13"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m14" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="740" as="sourcePoint"/><mxPoint x="395" y="740" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m14l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="14: return certificado creado" vertex="1" connectable="0" parent="m14"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m15" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="395" y="770" as="sourcePoint"/><mxPoint x="565" y="770" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m15l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="15: QUERY() → LogAuditoria.create()" vertex="1" connectable="0" parent="m15"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m16" parent="1" style="endArrow=block;endFill=1;html=1;align=left;verticalAlign=top;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="575" y="800" as="sourcePoint"/><mxPoint x="1385" y="800" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m16l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="16: INSERT INTO log_auditoria(accion:'Certificado de instalación generado para proyecto '+codigo, modulo:'CERTIFICADO')" vertex="1" connectable="0" parent="m16"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m17" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1385" y="830" as="sourcePoint"/><mxPoint x="575" y="830" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m17l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="17: return log_auditoria_id" vertex="1" connectable="0" parent="m17"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m18" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="860" as="sourcePoint"/><mxPoint x="395" y="860" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m18l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="18: return log creado" vertex="1" connectable="0" parent="m18"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m19" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="385" y="890" as="sourcePoint"/><mxPoint x="215" y="890" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m19l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="19: return 201 { success:true, data:{ certificado, proyecto, equipos, datos_certificado } }" vertex="1" connectable="0" parent="m19"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="m20" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="205" y="920" as="sourcePoint"/><mxPoint x="65" y="920" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="m20l" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;" value="20: mostrarMensaje(&quot;Certificado generado — Pendiente de Firma&quot;) + ofrecerDescargaPdf()" vertex="1" connectable="0" parent="m20"><mxGeometry relative="1" as="geometry"/></mxCell>
 
       </root>
     </mxGraphModel>
