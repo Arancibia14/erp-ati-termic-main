@@ -13,6 +13,7 @@ const ContratoLaboral  = require('../models/ContratoLaboral');
 const LogAuditoria     = require('../models/LogAuditoria');
 const { fechaHoy } = require('../utils/fecha');
 const { validarRutChileno } = require('../utils/rut');
+const { geocodificarDireccion, ErrorGeocodificacion } = require('../utils/geocodificar');
 
 const audit = async (accion, modulo, rut) => {
   try {
@@ -420,21 +421,55 @@ async function eliminarContratoLaboral(req, res) {
   }
 }
 
+// Acepta la dirección de la obra, que es lo cómodo de escribir, y la convierte en
+// coordenadas. Si el servicio de mapas no está disponible o no reconoce la dirección,
+// el actor todavía puede mandar la latitud y la longitud a mano.
 async function actualizarCoordenadasProyecto(req, res) {
   try {
     const { codigo } = req.params;
-    const { latitud, longitud } = req.body;
-    if (latitud === undefined || longitud === undefined)
-      return res.status(400).json({ success: false, error: 'Latitud y longitud son requeridas' });
+    const { direccion, latitud, longitud } = req.body;
+    const hayCoordenadas = latitud !== undefined && longitud !== undefined;
+
+    if (!direccion && !hayCoordenadas)
+      return res.status(400).json({ success: false, error: 'Indica la dirección de la obra o su latitud y longitud' });
+
     const proyecto = await Proyecto.findByPk(codigo);
     if (!proyecto)
       return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
-    await proyecto.update({ proyecto_latitud: parseFloat(latitud), proyecto_longitud: parseFloat(longitud) });
-    await audit(`Coordenadas GPS del proyecto ${codigo} actualizadas`, 'SETUP', req.user.rut);
-    return res.json({ success: true });
+
+    // Modo manual: las coordenadas mandan y la dirección, si viene, se guarda igual.
+    if (hayCoordenadas) {
+      const lat = parseFloat(latitud), lon = parseFloat(longitud);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180)
+        return res.status(400).json({ success: false, error: 'Coordenadas inválidas. Latitud entre -90 y 90, longitud entre -180 y 180' });
+
+      const cambios = { proyecto_latitud: lat, proyecto_longitud: lon };
+      if (direccion) cambios.proyecto_ubicacion = String(direccion).trim();
+      await proyecto.update(cambios);
+      await audit(`Coordenadas GPS del proyecto ${codigo} actualizadas manualmente`, 'SETUP', req.user.rut);
+      return res.json({ success: true, data: { latitud: lat, longitud: lon, origen: 'manual' } });
+    }
+
+    // Modo dirección: se consulta el servicio de mapas.
+    let ubicacion;
+    try {
+      ubicacion = await geocodificarDireccion(direccion);
+    } catch (err) {
+      if (!(err instanceof ErrorGeocodificacion)) throw err;
+      const estado = err.causa === 'NO_ENCONTRADA' ? 404 : err.causa === 'DIRECCION_CORTA' ? 400 : 503;
+      return res.status(estado).json({ success: false, error: err.message, sugerir_manual: err.causa !== 'DIRECCION_CORTA' });
+    }
+
+    await proyecto.update({
+      proyecto_ubicacion: String(direccion).trim(),
+      proyecto_latitud: ubicacion.latitud,
+      proyecto_longitud: ubicacion.longitud
+    });
+    await audit(`Ubicación del proyecto ${codigo} actualizada desde la dirección "${String(direccion).trim()}"`, 'SETUP', req.user.rut);
+    return res.json({ success: true, data: { ...ubicacion, origen: 'direccion' } });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, error: 'Error al actualizar coordenadas' });
+    return res.status(500).json({ success: false, error: 'Error al actualizar la ubicación del proyecto' });
   }
 }
 
