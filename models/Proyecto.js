@@ -10,6 +10,9 @@ const Proyecto = sequelize.define('Proyecto', {
   estado_proyecto_id: { type: DataTypes.INTEGER, allowNull: false },
   proveedor_rut: { type: DataTypes.STRING(20), allowNull: true },
   proyecto_descripcion_tecnica: { type: DataTypes.TEXT, allowNull: true },
+  // CU08 - Tipo de sistema de climatización declarado al crear la obra.
+  // Nullable porque las obras creadas antes de CU08 no lo tienen registrado.
+  proyecto_tipo_sistema: { type: DataTypes.STRING(100), allowNull: true },
   proyecto_ubicacion: { type: DataTypes.STRING(255), allowNull: true },
   proyecto_latitud: { type: DataTypes.DECIMAL(10, 7), allowNull: true },
   proyecto_longitud: { type: DataTypes.DECIMAL(10, 7), allowNull: true },

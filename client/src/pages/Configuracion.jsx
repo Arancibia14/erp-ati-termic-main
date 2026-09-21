@@ -29,7 +29,6 @@ const SectionTitle = ({ children }) => (
 export default function Configuracion() {
   const { toasts, addToast, removeToast } = useToast();
   const [tab, setTab] = useState('proyecto');
-  const [estados,       setEstados]       = useState([]);
   const [especialidades,setEspecialidades] = useState([]);
   const [proyectos,     setProyectos]     = useState([]);
   const [trabajadores,  setTrabajadores]  = useState([]);
@@ -38,7 +37,10 @@ export default function Configuracion() {
   const [editandoContrato, setEditandoContrato] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const [fProyecto,   setFProyecto]   = useState({ codigo: '', nombre: '', presupuesto: '', correo: '', estado_id: '', inicio: '', termino: '' });
+  // CU08 - El código lo asigna el sistema y el estado inicial es fijo: no se piden en el formulario
+  const [fProyecto,   setFProyecto]   = useState({ nombre: '', presupuesto: '', correo: '', ubicacion: '', tipo_sistema: '', inicio: '', termino: '' });
+  // CU08 Excepción 1 - Campos a resaltar cuando el alta queda incompleta
+  const [errProyecto, setErrProyecto] = useState([]);
   const [fCoords,     setFCoords]     = useState({ codigo: '', direccion: '', lat: '', lon: '' });
   const [coordsManual, setCoordsManual] = useState(false);
   const [loadingCoords, setLoadingCoords] = useState(false);
@@ -59,7 +61,6 @@ export default function Configuracion() {
     api.get('/setup/contratos').then(r => setContratos(r.data.data)).catch(() => {});
 
   useEffect(() => {
-    api.get('/setup/estados').then(r => setEstados(r.data.data)).catch(() => {});
     api.get('/setup/especialidades').then(r => setEspecialidades(r.data.data)).catch(() => {});
     cargarProyectos();
   }, []);
@@ -72,15 +73,17 @@ export default function Configuracion() {
     }
   }, [tab]);
 
-  const send = async (endpoint, body, onSuccess) => {
+  // onError recibe los campos que el backend marcó como faltantes, para resaltarlos
+  const send = async (endpoint, body, onSuccess, onError) => {
     setLoading(true);
     try {
-      await api.post(endpoint, body);
-      addToast('Registrado correctamente', 'success');
+      const r = await api.post(endpoint, body);
+      addToast(r.data?.mensaje || 'Registrado correctamente', 'success');
       onSuccess();
       cargarProyectos();
     } catch (err) {
       addToast(err.response?.data?.error || 'Error al guardar', 'error');
+      if (onError) onError(err.response?.data?.campos || []);
     } finally {
       setLoading(false);
     }
@@ -88,22 +91,43 @@ export default function Configuracion() {
 
   const submitProyecto = e => {
     e.preventDefault();
-    if (!fProyecto.codigo || !fProyecto.nombre || !fProyecto.presupuesto || !fProyecto.correo || !fProyecto.estado_id)
-      return addToast('Completa todos los campos', 'error');
-    if (!fProyecto.inicio !== !fProyecto.termino)
+
+    // CU08 Excepción 1 - Se marcan todos los campos faltantes de una vez
+    const faltantes = [];
+    if (!fProyecto.nombre.trim())       faltantes.push('proyecto_nombre_obra');
+    if (!fProyecto.presupuesto)         faltantes.push('proyecto_presupuesto_asignado');
+    if (!fProyecto.correo.trim())       faltantes.push('proyecto_correo_contacto');
+    if (!fProyecto.ubicacion.trim())    faltantes.push('proyecto_ubicacion');
+    if (!fProyecto.tipo_sistema.trim()) faltantes.push('proyecto_tipo_sistema');
+    if (faltantes.length) {
+      setErrProyecto(faltantes);
+      return addToast('Completa los campos obligatorios resaltados', 'error');
+    }
+    if (!fProyecto.inicio !== !fProyecto.termino) {
+      setErrProyecto(['proyecto_fecha_inicio', 'proyecto_fecha_termino']);
       return addToast('Indica la fecha de inicio y la de término del proyecto, o deja ambas vacías', 'error');
-    if (fProyecto.termino && fProyecto.termino < fProyecto.inicio)
+    }
+    if (fProyecto.termino && fProyecto.termino < fProyecto.inicio) {
+      setErrProyecto(['proyecto_fecha_termino']);
       return addToast('La fecha de término no puede ser anterior a la fecha de inicio', 'error');
+    }
+
+    setErrProyecto([]);
     send('/setup/proyecto', {
-      proyecto_codigo_correlativo: fProyecto.codigo.trim().toUpperCase(),
-      proyecto_nombre_obra: fProyecto.nombre,
+      proyecto_nombre_obra: fProyecto.nombre.trim(),
       proyecto_presupuesto_asignado: fProyecto.presupuesto,
-      proyecto_correo_contacto: fProyecto.correo,
-      estado_proyecto_id: fProyecto.estado_id,
+      proyecto_correo_contacto: fProyecto.correo.trim(),
+      proyecto_ubicacion: fProyecto.ubicacion.trim(),
+      proyecto_tipo_sistema: fProyecto.tipo_sistema.trim(),
       proyecto_fecha_inicio: fProyecto.inicio || null,
       proyecto_fecha_termino: fProyecto.termino || null
-    }, () => setFProyecto({ codigo: '', nombre: '', presupuesto: '', correo: '', estado_id: '', inicio: '', termino: '' }));
+    },
+    () => setFProyecto({ nombre: '', presupuesto: '', correo: '', ubicacion: '', tipo_sistema: '', inicio: '', termino: '' }),
+    campos => setErrProyecto(campos));
   };
+
+  // Devuelve la clase del input según si el campo quedó marcado como faltante
+  const claseProyecto = campo => 'form-input' + (errProyecto.includes(campo) ? ' is-invalid' : '');
 
   // Al elegir el proyecto se cargan sus fechas actuales para editarlas
   const elegirProyectoPlazo = codigo => {
@@ -334,47 +358,47 @@ export default function Configuracion() {
           <div className="card">
             <SectionTitle>Nuevo Proyecto</SectionTitle>
             <form onSubmit={submitProyecto}>
-              <div className="form-grid-2">
-                <div className="form-group" style={fieldStyle}>
-                  <label className="form-label">Código (ej: OBR-2024-001)</label>
-                  <input className="form-input" placeholder="OBR-2024-001" value={fProyecto.codigo}
-                    onChange={e => setFProyecto(f => ({ ...f, codigo: e.target.value }))} />
-                </div>
-                <div className="form-group" style={fieldStyle}>
-                  <label className="form-label">Estado</label>
-                  <select className="form-select" value={fProyecto.estado_id}
-                    onChange={e => setFProyecto(f => ({ ...f, estado_id: e.target.value }))}>
-                    <option value="">Seleccionar...</option>
-                    {estados.map(s => <option key={s.estado_proyecto_id} value={s.estado_proyecto_id}>{s.estado_proyecto_nombre}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div className="form-group" style={{ marginTop: 14 }}>
+              <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: -6, marginBottom: 16 }}>
+                El código correlativo y el estado inicial los asigna el sistema al guardar.
+              </p>
+              <div className="form-group">
                 <label className="form-label">Nombre de la Obra</label>
-                <input className="form-input" placeholder="Nombre descriptivo..." value={fProyecto.nombre}
+                <input className={claseProyecto('proyecto_nombre_obra')} placeholder="Nombre descriptivo..." value={fProyecto.nombre}
                   onChange={e => setFProyecto(f => ({ ...f, nombre: e.target.value }))} />
               </div>
               <div className="form-grid-2">
                 <div className="form-group" style={fieldStyle}>
                   <label className="form-label">Presupuesto ($)</label>
-                  <input type="number" className="form-input" placeholder="0" min="1" value={fProyecto.presupuesto}
+                  <input type="number" className={claseProyecto('proyecto_presupuesto_asignado')} placeholder="0" min="1" value={fProyecto.presupuesto}
                     onChange={e => setFProyecto(f => ({ ...f, presupuesto: e.target.value }))} />
                 </div>
                 <div className="form-group" style={fieldStyle}>
                   <label className="form-label">Correo de Contacto</label>
-                  <input type="email" className="form-input" placeholder="contacto@empresa.cl" value={fProyecto.correo}
+                  <input type="email" className={claseProyecto('proyecto_correo_contacto')} placeholder="contacto@empresa.cl" value={fProyecto.correo}
                     onChange={e => setFProyecto(f => ({ ...f, correo: e.target.value }))} />
                 </div>
               </div>
               <div className="form-grid-2" style={{ marginTop: 14 }}>
                 <div className="form-group" style={fieldStyle}>
+                  <label className="form-label">Ubicación</label>
+                  <input className={claseProyecto('proyecto_ubicacion')} placeholder="Av. Principal 1234, Comuna" value={fProyecto.ubicacion}
+                    onChange={e => setFProyecto(f => ({ ...f, ubicacion: e.target.value }))} />
+                </div>
+                <div className="form-group" style={fieldStyle}>
+                  <label className="form-label">Tipo de Sistema</label>
+                  <input className={claseProyecto('proyecto_tipo_sistema')} placeholder="Ej: Split, VRF, Chiller..." value={fProyecto.tipo_sistema}
+                    onChange={e => setFProyecto(f => ({ ...f, tipo_sistema: e.target.value }))} />
+                </div>
+              </div>
+              <div className="form-grid-2" style={{ marginTop: 14 }}>
+                <div className="form-group" style={fieldStyle}>
                   <label className="form-label">Fecha de Inicio <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}>(opcional)</span></label>
-                  <input type="date" className="form-input" value={fProyecto.inicio}
+                  <input type="date" className={claseProyecto('proyecto_fecha_inicio')} value={fProyecto.inicio}
                     onChange={e => setFProyecto(f => ({ ...f, inicio: e.target.value }))} />
                 </div>
                 <div className="form-group" style={fieldStyle}>
                   <label className="form-label">Fecha de Término <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}>(opcional)</span></label>
-                  <input type="date" className="form-input" value={fProyecto.termino} min={fProyecto.inicio || undefined}
+                  <input type="date" className={claseProyecto('proyecto_fecha_termino')} value={fProyecto.termino} min={fProyecto.inicio || undefined}
                     onChange={e => setFProyecto(f => ({ ...f, termino: e.target.value }))} />
                 </div>
               </div>

@@ -179,6 +179,8 @@ sequelize.authenticate()
       { tabla: 'INCIDENTE_SSO', columna: 'incidente_sso_tipo', tipo: { type: DataTypes.STRING(50), allowNull: true } },
       { tabla: 'INCIDENTE_SSO', columna: 'incidente_sso_lugar', tipo: { type: DataTypes.STRING(255), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_descripcion_tecnica', tipo: { type: DataTypes.TEXT, allowNull: true } },
+      // CU08 - Tipo de sistema de climatización pedido en el alta de la obra
+      { tabla: 'PROYECTO', columna: 'proyecto_tipo_sistema', tipo: { type: DataTypes.STRING(100), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_ubicacion', tipo: { type: DataTypes.STRING(255), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_latitud',  tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_longitud', tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },
