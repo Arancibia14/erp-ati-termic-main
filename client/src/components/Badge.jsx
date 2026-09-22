@@ -2,6 +2,7 @@ const TONOS = {
   'En Ejecución': 'green',
   'Planificación': 'amber',
   'Finalizado': 'blue',
+  'Detenido': 'red',
   'pendiente': 'amber',
   'Pendiente': 'amber',
   'aprobado': 'green',

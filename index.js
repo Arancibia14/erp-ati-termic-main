@@ -29,6 +29,7 @@ const ParametroSistema = require('./models/ParametroSistema');
 const ContratoLaboral = require('./models/ContratoLaboral');
 const BitacoraComunicacion = require('./models/BitacoraComunicacion');
 const ControlCambioPpto = require('./models/ControlCambioPpto');
+const DetencionProyecto = require('./models/DetencionProyecto');
 const DocumentoLegal = require('./models/DocumentoLegal');
 const EquipoHVAC = require('./models/EquipoHVAC');
 const Material = require('./models/Material');
@@ -78,6 +79,10 @@ BitacoraComunicacion.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlat
 
 Proyecto.hasMany(ControlCambioPpto, { foreignKey: 'proyecto_codigo_correlativo' });
 ControlCambioPpto.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
+
+// CU12 - Historial de detenciones del proyecto (motivo obligatorio por detención)
+Proyecto.hasMany(DetencionProyecto, { foreignKey: 'proyecto_codigo_correlativo' });
+DetencionProyecto.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
 
 Proyecto.hasMany(DocumentoLegal, { foreignKey: 'proyecto_codigo_correlativo' });
 DocumentoLegal.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });

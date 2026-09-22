@@ -1,6 +1,6 @@
 import {
   BookOpen, Flag, MapPin, FileStack, Camera, ScanSearch, MessagesSquare, TriangleAlert, PackageCheck,
-  Award, Images, Handshake, ShieldCheck, IdCard, FolderCheck, ReceiptText,
+  Award, Images, Handshake, ShieldCheck, IdCard, FolderCheck, ReceiptText, PauseCircle,
   ArrowRightLeft, HardHat, History, ClipboardPlus, ClipboardCheck, ShoppingCart,
   FileClock, FileInput, Truck, BadgeCheck, Undo2, Warehouse, AirVent, Wrench,
   Wallet, Paperclip, ChartLine, Calculator, HandCoins, FolderSearch, UserCog,
@@ -23,6 +23,7 @@ export const MODULOS = [
       { to: '/sso', icon: TriangleAlert, label: 'Incidentes SSO', short: 'SSO' },
       { to: '/recepcion-insumos', icon: PackageCheck, label: 'Recepción Insumos', short: 'Recepción' },
       { to: '/certificado', icon: Award, label: 'Certificado Técnico', short: 'Certificado' },
+      { to: '/estado-proyecto', icon: PauseCircle, label: 'Estado del Proyecto', short: 'Estado' },
       { to: '/portafolio', icon: Images, label: 'Portafolio de Obras', short: 'Portafolio', admin: true },
       { to: '/subcontratistas', icon: Handshake, label: 'Subcontratistas', short: 'Subcontratistas', admin: true },
       { to: '/polizas', icon: ShieldCheck, label: 'Pólizas de Seguro', short: 'Pólizas', admin: true }

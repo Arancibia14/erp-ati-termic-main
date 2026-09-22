@@ -24,6 +24,7 @@ const RecepcionInsumos = lazy(() => import('./pages/RecepcionInsumos'));
 const SubcontratistasProyecto = lazy(() => import('./pages/SubcontratistasProyecto'));
 const ManoObra = lazy(() => import('./pages/ManoObra'));
 const Portafolio = lazy(() => import('./pages/Portafolio'));
+const EstadoProyecto = lazy(() => import('./pages/EstadoProyecto'));
 const BuscadorDocumentos = lazy(() => import('./pages/BuscadorDocumentos'));
 const ControlPresupuesto = lazy(() => import('./pages/ControlPresupuesto'));
 const Polizas = lazy(() => import('./pages/Polizas'));
@@ -96,6 +97,7 @@ export default function App() {
         <Route path="/materiales-transito" element={<PrivateLayout><MaterialesTransito /></PrivateLayout>} />
         <Route path="/certificados-calidad" element={<PrivateLayout><CertificadosCalidad /></PrivateLayout>} />
         <Route path="/devolucion-obra" element={<PrivateLayout><DevolucionObra /></PrivateLayout>} />
+        <Route path="/estado-proyecto" element={<PrivateLayout><EstadoProyecto /></PrivateLayout>} />
 
         {/* Rutas solo para administrador */}
         <Route path="/validar" element={<PrivateLayout><AdminRoute><ValidarEvidencias /></AdminRoute></PrivateLayout>} />
