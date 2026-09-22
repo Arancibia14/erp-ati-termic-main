@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Settings, FolderPlus, Building2, UserPlus,
-  ClipboardList, Truck, FileText, MapPin, Edit3, Trash2, CalendarRange, DollarSign
+  ClipboardList, Truck, FileText, Edit3, Trash2, CalendarRange, DollarSign
 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
@@ -40,9 +40,6 @@ export default function Configuracion() {
   const [fProyecto,   setFProyecto]   = useState({ nombre: '', presupuesto: '', correo: '', ubicacion: '', tipo_sistema: '', inicio: '', termino: '' });
   // CU08 Excepción 1 - Campos a resaltar cuando el alta queda incompleta
   const [errProyecto, setErrProyecto] = useState([]);
-  const [fCoords,     setFCoords]     = useState({ codigo: '', direccion: '', lat: '', lon: '' });
-  const [coordsManual, setCoordsManual] = useState(false);
-  const [loadingCoords, setLoadingCoords] = useState(false);
   const [fPlazo,      setFPlazo]      = useState({ codigo: '', inicio: '', termino: '' });
   const [loadingPlazo, setLoadingPlazo] = useState(false);
   const [fCaja,       setFCaja]       = useState({ codigo: '', monto: '' });
@@ -177,41 +174,6 @@ export default function Configuracion() {
       addToast(err.response?.data?.error || 'Error al guardar el fondo de caja chica', 'error');
     } finally {
       setLoadingCaja(false);
-    }
-  };
-
-  const submitCoords = async e => {
-    e.preventDefault();
-    if (!fCoords.codigo) return addToast('Selecciona un proyecto', 'error');
-
-    let cuerpo;
-    if (coordsManual) {
-      const lat = parseFloat(fCoords.lat);
-      const lon = parseFloat(fCoords.lon);
-      if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180)
-        return addToast('Coordenadas inválidas. Latitud: -90 a 90 / Longitud: -180 a 180', 'error');
-      cuerpo = { latitud: lat, longitud: lon, direccion: fCoords.direccion.trim() || undefined };
-    } else {
-      if (!fCoords.direccion.trim()) return addToast('Escribe la dirección de la obra', 'error');
-      cuerpo = { direccion: fCoords.direccion.trim() };
-    }
-
-    setLoadingCoords(true);
-    try {
-      const { data } = await api.put(`/setup/proyecto/${fCoords.codigo}/coordenadas`, cuerpo);
-      const c = data.data;
-      addToast(c?.origen === 'direccion'
-        ? `Ubicación guardada — ${c.latitud.toFixed(5)}, ${c.longitud.toFixed(5)}`
-        : 'Coordenadas GPS del proyecto guardadas', 'success');
-      setFCoords({ codigo: '', direccion: '', lat: '', lon: '' });
-      setCoordsManual(false);
-      cargarProyectos();
-    } catch (err) {
-      addToast(err.response?.data?.error || 'Error al guardar la ubicación', 'error');
-      // Si el servicio de mapas falló o no reconoció la dirección, se ofrece el modo manual
-      if (err.response?.data?.sugerir_manual) setCoordsManual(true);
-    } finally {
-      setLoadingCoords(false);
     }
   };
 
@@ -447,63 +409,8 @@ export default function Configuracion() {
               </div>
             )}
 
-            {/* Coordenadas GPS por proyecto */}
-            <div style={{ marginTop: 28, borderTop: '1px solid var(--color-border)', paddingTop: 24 }}>
-              <SectionTitle><MapPin size={12} style={{ marginRight: 6, display: 'inline' }} />Ubicación de la Obra</SectionTitle>
-              <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 16 }}>
-                Escribe la dirección del sitio y el sistema obtiene sus coordenadas. Las usa para verificar la recepción de insumos en obra.
-              </p>
-              <form onSubmit={submitCoords}>
-                <div className="form-group">
-                  <label className="form-label">Proyecto</label>
-                  <select className="form-select" value={fCoords.codigo}
-                    onChange={e => setFCoords(f => ({ ...f, codigo: e.target.value }))}>
-                    <option value="">Selecciona un proyecto...</option>
-                    {proyectos.map(p => (
-                      <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
-                        {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
-                        {p.proyecto_latitud ? ' ✓' : ' (sin coords)'}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group" style={fieldStyle}>
-                  <label className="form-label">Dirección de la Obra</label>
-                  <input className="form-input" placeholder="Av. Américo Vespucio 1737, Huechuraba, Santiago"
-                    value={fCoords.direccion}
-                    onChange={e => setFCoords(f => ({ ...f, direccion: e.target.value }))} />
-                </div>
-
-                {coordsManual && (
-                  <>
-                    <p style={{ fontSize: 12, color: 'var(--color-warning)', margin: '4px 0 12px' }}>
-                      Ingreso manual: obtén las coordenadas desde Google Maps (clic derecho sobre el punto → copiar coordenadas).
-                    </p>
-                    <div className="form-grid-2">
-                      <div className="form-group" style={fieldStyle}>
-                        <label className="form-label">Latitud</label>
-                        <input className="form-input" placeholder="-33.456789" value={fCoords.lat}
-                          onChange={e => setFCoords(f => ({ ...f, lat: e.target.value }))} />
-                      </div>
-                      <div className="form-group" style={fieldStyle}>
-                        <label className="form-label">Longitud</label>
-                        <input className="form-input" placeholder="-70.648300" value={fCoords.lon}
-                          onChange={e => setFCoords(f => ({ ...f, lon: e.target.value }))} />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginTop: 16 }}>
-                  <button type="submit" className="btn btn-primary" disabled={loadingCoords}>
-                    <MapPin size={15} /> {loadingCoords ? 'Guardando...' : coordsManual ? 'Guardar Coordenadas' : 'Buscar Dirección y Guardar'}
-                  </button>
-                  <button type="button" className="btn btn-secondary" onClick={() => setCoordsManual(v => !v)} disabled={loadingCoords}>
-                    {coordsManual ? 'Volver a buscar por dirección' : 'Ingresar coordenadas a mano'}
-                  </button>
-                </div>
-              </form>
-            </div>
+            {/* La ubicacion de la obra se registra en "Ubicacion de la Obra" (CU10),
+                porque tambien la gestiona el Supervisor de Obra. */}
 
             {/* Plazo de la obra por proyecto */}
             <div style={{ marginTop: 28, borderTop: '1px solid var(--color-border)', paddingTop: 24 }}>

@@ -9,6 +9,7 @@ import Login from './pages/Login';
 const Inicio = lazy(() => import('./pages/Inicio'));
 const Bitacora = lazy(() => import('./pages/Bitacora'));
 const PlanificacionHitos = lazy(() => import('./pages/PlanificacionHitos'));
+const UbicacionObra = lazy(() => import('./pages/UbicacionObra'));
 const CajaChica = lazy(() => import('./pages/CajaChica'));
 const SSO = lazy(() => import('./pages/SSO'));
 const Evidencia = lazy(() => import('./pages/Evidencia'));
@@ -76,6 +77,7 @@ export default function App() {
         <Route path="/inicio" element={<PrivateLayout><Inicio /></PrivateLayout>} />
         <Route path="/bitacora" element={<PrivateLayout><Bitacora /></PrivateLayout>} />
         <Route path="/hitos" element={<PrivateLayout><PlanificacionHitos /></PrivateLayout>} />
+        <Route path="/ubicacion" element={<PrivateLayout><UbicacionObra /></PrivateLayout>} />
         <Route path="/caja-chica" element={<PrivateLayout><CajaChica /></PrivateLayout>} />
         <Route path="/sso" element={<PrivateLayout><SSO /></PrivateLayout>} />
         <Route path="/evidencia" element={<PrivateLayout><Evidencia /></PrivateLayout>} />

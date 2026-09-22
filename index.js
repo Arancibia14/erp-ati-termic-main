@@ -139,6 +139,7 @@ app.use('/api/presupuesto', require('./routes/presupuesto'));
 app.use('/api/recepcion', require('./routes/recepcion'));
 app.use('/api/setup',    require('./routes/setup'));
 app.use('/api/hito',     require('./routes/hito'));
+app.use('/api/ubicacion', require('./routes/ubicacion'));
 app.use('/api/material', require('./routes/material'));
 app.use('/api/solicitud-material', require('./routes/solicitudMaterial'));
 app.use('/api/trabajador', require('./routes/trabajador'));

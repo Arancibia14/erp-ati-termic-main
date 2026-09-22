@@ -1,5 +1,5 @@
 import {
-  BookOpen, Flag, Camera, ScanSearch, MessagesSquare, TriangleAlert, PackageCheck,
+  BookOpen, Flag, MapPin, Camera, ScanSearch, MessagesSquare, TriangleAlert, PackageCheck,
   Award, Images, Handshake, ShieldCheck, IdCard, FolderCheck, ReceiptText,
   ArrowRightLeft, HardHat, History, ClipboardPlus, ClipboardCheck, ShoppingCart,
   FileClock, FileInput, Truck, BadgeCheck, Undo2, Warehouse, AirVent, Wrench,
@@ -15,6 +15,7 @@ export const MODULOS = [
     items: [
       { to: '/bitacora', icon: BookOpen, label: 'Bitácora Diaria', short: 'Bitácora' },
       { to: '/hitos', icon: Flag, label: 'Planificación de Hitos', short: 'Hitos' },
+      { to: '/ubicacion', icon: MapPin, label: 'Ubicación de la Obra', short: 'Ubicación' },
       { to: '/evidencia', icon: Camera, label: 'Evidencias', short: 'Evidencias' },
       { to: '/validar', icon: ScanSearch, label: 'Revisiones Pendientes', short: 'Revisiones', admin: true },
       { to: '/comunicacion', icon: MessagesSquare, label: 'Comunicaciones', short: 'Comunicaciones' },

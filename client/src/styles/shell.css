@@ -1904,3 +1904,40 @@ kbd {
     transition: none;
   }
 }
+
+/* ──────────────────────────────
+   CU10 - MAPA DE UBICACIÓN DE OBRA
+────────────────────────────── */
+.mapa-obra {
+  height: 420px;
+  width: 100%;
+  background: var(--color-bg-elevated);
+}
+
+@media (max-width: 640px) {
+  .mapa-obra {
+    height: 320px;
+  }
+}
+
+/* Marcador propio: el icono por defecto de Leaflet depende de imágenes externas */
+.marcador-obra-punto {
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: 4px;
+  border-radius: 50%;
+  background: var(--color-blue);
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.45), 0 2px 6px rgba(0, 0, 0, 0.4);
+  cursor: grab;
+}
+
+.marcador-obra-punto:active {
+  cursor: grabbing;
+}
+
+/* Los controles de Leaflet traen su propio tema claro: se atenúan en modo oscuro */
+.leaflet-control-attribution {
+  font-size: 10px;
+}
