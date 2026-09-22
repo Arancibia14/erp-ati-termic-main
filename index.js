@@ -138,6 +138,7 @@ app.use('/api/certificado', require('./routes/certificado'));
 app.use('/api/presupuesto', require('./routes/presupuesto'));
 app.use('/api/recepcion', require('./routes/recepcion'));
 app.use('/api/setup',    require('./routes/setup'));
+app.use('/api/hito',     require('./routes/hito'));
 app.use('/api/material', require('./routes/material'));
 app.use('/api/solicitud-material', require('./routes/solicitudMaterial'));
 app.use('/api/trabajador', require('./routes/trabajador'));
@@ -181,6 +182,9 @@ sequelize.authenticate()
       { tabla: 'PROYECTO', columna: 'proyecto_descripcion_tecnica', tipo: { type: DataTypes.TEXT, allowNull: true } },
       // CU08 - Tipo de sistema de climatización pedido en el alta de la obra
       { tabla: 'PROYECTO', columna: 'proyecto_tipo_sistema', tipo: { type: DataTypes.STRING(100), allowNull: true } },
+      // CU09 - Cronograma estimado de cada hito técnico
+      { tabla: 'HITO_TECNICO', columna: 'hito_tecnico_fecha_inicio_estimada',  tipo: { type: DataTypes.DATEONLY, allowNull: true } },
+      { tabla: 'HITO_TECNICO', columna: 'hito_tecnico_fecha_termino_estimada', tipo: { type: DataTypes.DATEONLY, allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_ubicacion', tipo: { type: DataTypes.STRING(255), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_latitud',  tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_longitud', tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },

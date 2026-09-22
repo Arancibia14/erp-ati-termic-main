@@ -4,7 +4,6 @@ const Especialidad     = require('../models/Especialidad');
 const Proyecto         = require('../models/Proyecto');
 const Proveedor        = require('../models/Proveedor');
 const Trabajador       = require('../models/Trabajador');
-const HitoTecnico      = require('../models/HitoTecnico');
 const SolicitudMaterial = require('../models/SolicitudMaterial');
 const OrdenCompra      = require('../models/OrdenCompra');
 const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
@@ -272,28 +271,6 @@ async function crearTrabajador(req, res) {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, error: 'Error al crear trabajador' });
-  }
-}
-
-async function crearHito(req, res) {
-  try {
-    const { hito_tecnico_nombre_hito, proyecto_codigo_correlativo, hito_tecnico_avance_fisico } = req.body;
-    if (!hito_tecnico_nombre_hito || !proyecto_codigo_correlativo) {
-      return res.status(400).json({ success: false, error: 'Nombre del hito y proyecto son requeridos' });
-    }
-    const proyecto = await Proyecto.findByPk(proyecto_codigo_correlativo);
-    if (!proyecto) return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
-
-    const hito = await HitoTecnico.create({
-      hito_tecnico_nombre_hito,
-      proyecto_codigo_correlativo,
-      hito_tecnico_avance_fisico: parseFloat(hito_tecnico_avance_fisico) || 0
-    });
-    await audit(`Hito "${hito_tecnico_nombre_hito}" creado en proyecto ${proyecto_codigo_correlativo}`, 'SETUP', req.user.rut);
-    return res.status(201).json({ success: true, data: hito });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ success: false, error: 'Error al crear hito técnico' });
   }
 }
 
@@ -608,7 +585,7 @@ async function actualizarCajaChicaProyecto(req, res) {
 
 module.exports = {
   getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos,
-  crearProyecto, crearProveedor, crearTrabajador, crearHito, crearSolicitudMaterial,
+  crearProyecto, crearProveedor, crearTrabajador, crearSolicitudMaterial,
   crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
   actualizarCoordenadasProyecto, actualizarPlazoProyecto, actualizarCajaChicaProyecto
 };

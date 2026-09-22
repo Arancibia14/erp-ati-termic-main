@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  Settings, FolderPlus, Building2, UserPlus, Flag,
+  Settings, FolderPlus, Building2, UserPlus,
   ClipboardList, Truck, FileText, MapPin, Edit3, Trash2, CalendarRange, DollarSign
 } from 'lucide-react';
 import api from '../api/axios';
@@ -11,7 +11,6 @@ const TABS = [
   { id: 'proyecto',   label: 'Proyectos',       icon: FolderPlus },
   { id: 'proveedor',  label: 'Proveedores',      icon: Building2 },
   { id: 'trabajador', label: 'Trabajadores',     icon: UserPlus },
-  { id: 'hito',       label: 'Hitos Técnicos',   icon: Flag },
   { id: 'sm',         label: 'Solicitudes Mat.', icon: ClipboardList },
   { id: 'guia',       label: 'Guías Despacho',   icon: Truck },
   { id: 'contrato',   label: 'Contratos',        icon: FileText },
@@ -50,7 +49,6 @@ export default function Configuracion() {
   const [loadingCaja, setLoadingCaja] = useState(false);
   const [fProveedor,  setFProveedor]  = useState({ rut: '', razon_social: '', correo: '', telefono: '' });
   const [fTrabajador, setFTrabajador] = useState({ rut: '', nombres: '', correo: '', telefono: '', especialidad_id: '', proyecto_codigo: '' });
-  const [fHito,       setFHito]       = useState({ nombre: '', proyecto_codigo: '', avance: '0' });
   const [fSM,         setFSM]         = useState({ descripcion: '', cantidad: '', proyecto_codigo: '' });
   const [fGuia,       setFGuia]       = useState({ numero: '', fecha: '', orden_id: '' });
   const [fContrato,   setFContrato]   = useState({ rut: '', sueldo: '', leyes: '', inicio: '', termino: '', proyecto_codigo: '' });
@@ -241,17 +239,6 @@ export default function Configuracion() {
       especialidad_id: fTrabajador.especialidad_id,
       proyecto_codigo_correlativo: fTrabajador.proyecto_codigo || null
     }, () => setFTrabajador({ rut: '', nombres: '', correo: '', telefono: '', especialidad_id: '', proyecto_codigo: '' }));
-  };
-
-  const submitHito = e => {
-    e.preventDefault();
-    if (!fHito.nombre || !fHito.proyecto_codigo)
-      return addToast('Nombre del hito y proyecto son requeridos', 'error');
-    send('/setup/hito', {
-      hito_tecnico_nombre_hito: fHito.nombre,
-      proyecto_codigo_correlativo: fHito.proyecto_codigo,
-      hito_tecnico_avance_fisico: fHito.avance || 0
-    }, () => setFHito({ nombre: '', proyecto_codigo: '', avance: '0' }));
   };
 
   const submitSM = e => {
@@ -676,34 +663,8 @@ export default function Configuracion() {
           </div>
         )}
 
-        {/* ── HITOS ─────────────────────────────────────────────── */}
-        {tab === 'hito' && (
-          <div className="card">
-            <SectionTitle>Nuevo Hito Técnico</SectionTitle>
-            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 14 }}>
-              Los hitos son etapas del proyecto. Las evidencias fotográficas se asocian a un hito.
-            </p>
-            <form onSubmit={submitHito}>
-              <div className="form-group">
-                <label className="form-label">Nombre del Hito</label>
-                <input className="form-input" placeholder="Ej: Instalación de ductos, Prueba final..." value={fHito.nombre}
-                  onChange={e => setFHito(f => ({ ...f, nombre: e.target.value }))} />
-              </div>
-              <div className="form-grid-2">
-                <ProyectoSelect value={fHito.proyecto_codigo} required
-                  onChange={e => setFHito(f => ({ ...f, proyecto_codigo: e.target.value }))} />
-                <div className="form-group" style={fieldStyle}>
-                  <label className="form-label">Avance Físico (%)</label>
-                  <input type="number" className="form-input" placeholder="0" min="0" max="100" value={fHito.avance}
-                    onChange={e => setFHito(f => ({ ...f, avance: e.target.value }))} />
-                </div>
-              </div>
-              <button type="submit" className="btn btn-primary" style={{ marginTop: 16 }} disabled={loading}>
-                <Flag size={15} /> {loading ? 'Creando...' : 'Crear Hito'}
-              </button>
-            </form>
-          </div>
-        )}
+        {/* Los hitos técnicos se definen en "Planificación de Hitos" (CU09),
+            porque también los gestiona el Supervisor de Obra. */}
 
         {/* ── SOLICITUDES DE MATERIAL ───────────────────────────── */}
         {tab === 'sm' && (

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos,
-  crearProyecto, crearProveedor, crearTrabajador, crearHito, crearSolicitudMaterial,
+  crearProyecto, crearProveedor, crearTrabajador, crearSolicitudMaterial,
   crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
   actualizarCoordenadasProyecto, actualizarPlazoProyecto, actualizarCajaChicaProyecto
 } = require('../controllers/setupController');
@@ -19,7 +19,6 @@ router.get('/contratos',         verifyToken, requireAdmin, getContratos);
 router.post('/proyecto',         verifyToken, requireAdmin, crearProyecto);
 router.post('/proveedor',        verifyToken, requireAdmin, crearProveedor);
 router.post('/trabajador',       verifyToken, requireAdmin, crearTrabajador);
-router.post('/hito',             verifyToken, requireAdmin, crearHito);
 router.post('/solicitud-material', verifyToken, requireAdmin, crearSolicitudMaterial);
 router.post('/guia-despacho',    verifyToken, requireAdmin, crearGuiaDespacho);
 router.post('/contrato',         verifyToken, requireAdmin, crearContratoLaboral);
