@@ -1,319 +1,496 @@
-import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
-  BookOpen, DollarSign, AlertTriangle, Camera, CheckSquare,
-  ShoppingCart, FileText, BarChart2, LogOut, Menu, X,
-  MessageSquare, Package, Award, Users, Briefcase, Image,
-  Search, TrendingUp, Shield, Settings, ChevronDown, ChevronRight,
-  ClipboardList, Truck, FileCheck, Receipt, HardHat, ArrowRightLeft, Wrench,
-  Undo2, History, BadgeCheck, UserCog
+  Home, Search, ChevronDown, ChevronRight, LogOut, Sun, Moon, Menu, X,
+  ArrowLeft, CornerDownLeft
 } from 'lucide-react';
 import logo from '../assets/logo.png';
+import {
+  modulosVisibles, buscarItem, moduloDeRuta, normalizar,
+  registrarReciente, BARRA_ADMIN, BARRA_SUPERVISOR
+} from '../navigation';
+import { obtenerTema, aplicarTema } from '../utils/tema';
+import { activarTablasMoviles } from '../utils/tablasMoviles';
+import IndicadorCarga from './IndicadorCarga';
+import '../styles/shell.css';
 
-const NAV_ITEMS = [
-  { to: '/bitacora',          icon: BookOpen,       label: 'Bitácora Diaria' },
-  { to: '/caja-chica',        icon: DollarSign,     label: 'Caja Chica' },
-  { to: '/sso',               icon: AlertTriangle,  label: 'Incidentes SSO' },
-  { to: '/evidencia',         icon: Camera,         label: 'Evidencias' },
-  { to: '/comunicacion',      icon: MessageSquare,  label: 'Comunicaciones' },
-  { to: '/recepcion-insumos', icon: Package,        label: 'Recepción Insumos' },
-  { to: '/certificado',       icon: Award,          label: 'Certificado Técnico' },
-  { to: '/solicitud-materiales', icon: ClipboardList, label: 'Nueva Solicitud de Materiales' },
-  { to: '/ingreso-guia',      icon: Truck,          label: 'Ingreso por Guía' },
-  { to: '/documentacion-laboral', icon: FileCheck,  label: 'Documentación Laboral' },
-  { to: '/entrega-epp',       icon: HardHat,        label: 'Entrega de EPP' },
-  { to: '/historial-epp',     icon: ClipboardList,  label: 'Historial Entregas EPP' },
-  { to: '/herramientas',      icon: Wrench,         label: 'Herramientas' },
-  { to: '/materiales-transito', icon: Truck,        label: 'Materiales en Tránsito' },
-  { to: '/certificados-calidad', icon: BadgeCheck,  label: 'Certificados de Calidad' },
-  { to: '/devolucion-obra',   icon: Undo2,          label: 'Devolución de Obra' }
-];
-
-const ADMIN_ITEMS = [
-  { to: '/validar',             icon: CheckSquare,  label: 'Revisiones Pendientes' },
-  { to: '/orden-compra',        icon: ShoppingCart, label: 'Órdenes de Compra' },
-  { to: '/vincular-factura',    icon: FileText,     label: 'Vincular Facturas' },
-  { to: '/control-costos',      icon: BarChart2,    label: 'Control de Costos' },
-  { to: '/subcontratistas',     icon: Users,        label: 'Subcontratistas' },
-  { to: '/mano-obra',           icon: Briefcase,    label: 'Mano de Obra' },
-  { to: '/portafolio',          icon: Image,        label: 'Portafolio de Obras' },
-  { to: '/documentos',          icon: Search,       label: 'Buscador Documentos' },
-  { to: '/control-presupuesto', icon: TrendingUp,   label: 'Control Presupuesto' },
-  { to: '/polizas',             icon: Shield,       label: 'Pólizas de Seguro' },
-  { to: '/configuracion',       icon: Settings,     label: 'Configuración' },
-  { to: '/catalogo',            icon: Package,      label: 'Catálogo Maestro' },
-  { to: '/aprobaciones',        icon: CheckSquare,  label: 'Aprobaciones Pendientes' },
-  { to: '/trabajadores',        icon: Users,        label: 'Trabajadores' },
-  { to: '/liquidaciones',       icon: Receipt,      label: 'Liquidaciones de Sueldo' },
-  { to: '/anexo-contrato',      icon: ArrowRightLeft, label: 'Anexo de Contrato' },
-  { to: '/catalogo-equipos',    icon: Package,        label: 'Catálogo de Equipos' },
-  { to: '/historial-oc',        icon: History,        label: 'Historial Órdenes de Compra' },
-  { to: '/usuarios',            icon: UserCog,        label: 'Usuarios del Sistema' }
-];
-
-function NavItem({ to, icon: Icon, label, onClick }) {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <NavLink
-      to={to}
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={({ isActive }) => ({
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        padding: '8px 14px 8px 16px',
-        marginInline: 8,
-        borderRadius: 7,
-        color: isActive ? '#E8EFFE' : hovered ? '#C8D8F0' : '#8B9FBB',
-        background: isActive
-          ? 'linear-gradient(90deg, rgba(37,99,235,0.20) 0%, rgba(37,99,235,0.05) 100%)'
-          : hovered ? 'rgba(30,46,74,0.7)' : 'transparent',
-        borderLeft: isActive ? '2px solid #2563EB' : '2px solid transparent',
-        textDecoration: 'none',
-        fontSize: 13.5,
-        fontWeight: isActive ? 600 : 400,
-        transition: 'background 0.15s, color 0.15s',
-        userSelect: 'none',
-      })}
-    >
-      <Icon size={15} strokeWidth={1.8} style={{ flexShrink: 0 }} />
-      <span style={{ flex: 1 }}>{label}</span>
-    </NavLink>
-  );
+function useTema() {
+  const [tema, setTema] = useState(obtenerTema);
+  const alternar = () => {
+    const siguiente = tema === 'dark' ? 'light' : 'dark';
+    aplicarTema(siguiente);
+    setTema(siguiente);
+  };
+  return [tema, alternar];
 }
 
-function Section({ label, open, onToggle, children }) {
+function Paleta({ modulos, onClose }) {
+  const navigate = useNavigate();
+  const [consulta, setConsulta] = useState('');
+  const [indice, setIndice] = useState(0);
+
+  const todos = useMemo(
+    () => modulos.flatMap(m => m.items.map(i => ({ ...i, modulo: m.label }))),
+    [modulos]
+  );
+
+  const resultados = useMemo(() => {
+    const t = normalizar(consulta.trim());
+    if (!t) return todos;
+    return todos.filter(i => normalizar(i.label).includes(t) || normalizar(i.modulo).includes(t));
+  }, [consulta, todos]);
+
+  useEffect(() => {
+    document.querySelector('.cmd-item.active')?.scrollIntoView({ block: 'nearest' });
+  }, [indice]);
+
+  const ir = item => {
+    onClose();
+    navigate(item.to);
+  };
+
+  const alTeclear = e => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setIndice(i => Math.min(i + 1, resultados.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setIndice(i => Math.max(i - 1, 0));
+    } else if (e.key === 'Enter' && resultados[indice]) {
+      e.preventDefault();
+      ir(resultados[indice]);
+    } else if (e.key === 'Escape') {
+      onClose();
+    }
+  };
+
   return (
-    <div>
-      <button
-        onClick={onToggle}
-        style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '10px 20px 5px',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          color: '#4B5E78',
-        }}
-      >
-        <span style={{
-          fontSize: 10,
-          fontWeight: 700,
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-        }}>
-          {label}
-        </span>
-        {open
-          ? <ChevronDown size={12} strokeWidth={2.5} />
-          : <ChevronRight size={12} strokeWidth={2.5} />
-        }
-      </button>
-      {open && (
-        <div style={{ paddingBottom: 4 }}>
-          {children}
+    <div className="cmd-backdrop" onClick={onClose}>
+      <div className="cmd" role="dialog" aria-label="Buscar función" onClick={e => e.stopPropagation()}>
+        <div className="cmd-input">
+          <Search size={17} strokeWidth={2} />
+          <input
+            autoFocus
+            type="text"
+            placeholder="Buscar función..."
+            value={consulta}
+            onChange={e => {
+              setConsulta(e.target.value);
+              setIndice(0);
+            }}
+            onKeyDown={alTeclear}
+            aria-label="Buscar función"
+          />
+          <kbd>Esc</kbd>
         </div>
-      )}
+        <div className="cmd-list">
+          {resultados.length === 0 ? (
+            <div className="sb-empty">Sin resultados para "{consulta}"</div>
+          ) : (
+            resultados.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.to}
+                  type="button"
+                  className={`cmd-item${i === indice ? ' active' : ''}`}
+                  onMouseEnter={() => setIndice(i)}
+                  onClick={() => ir(item)}
+                >
+                  <span className="cmd-icon"><Icon size={16} strokeWidth={1.7} /></span>
+                  <span className="cmd-label">{item.label}</span>
+                  <span className="cmd-module">{item.modulo}</span>
+                  {i === indice && <CornerDownLeft size={14} className="cmd-enter" />}
+                </button>
+              );
+            })
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function Sidebar() {
   const navigate = useNavigate();
-  const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [operOpen, setOperOpen] = useState(true);
-  const [adminOpen, setAdminOpen] = useState(true);
+  const { pathname } = useLocation();
+  const usuario = useMemo(() => JSON.parse(localStorage.getItem('usuario') || '{}'), []);
+  const esAdmin = usuario.rol === 'admin';
+  const modulos = useMemo(() => modulosVisibles(esAdmin), [esAdmin]);
+  const [tema, alternarTema] = useTema();
+  const [panel, setPanel] = useState(null);
+  const [menuUsuario, setMenuUsuario] = useState(false);
+  const [paleta, setPaleta] = useState(false);
+  const [hojaAbierta, setHojaAbierta] = useState(false);
+  const [moduloHoja, setModuloHoja] = useState(null);
+  const [rutaVista, setRutaVista] = useState(pathname);
 
-  const handleLogout = () => {
+  if (rutaVista !== pathname) {
+    setRutaVista(pathname);
+    setPanel(null);
+    setMenuUsuario(false);
+    setHojaAbierta(false);
+    setModuloHoja(null);
+  }
+
+  useEffect(() => {
+    registrarReciente(pathname);
+  }, [pathname]);
+
+  useEffect(() => activarTablasMoviles(), [pathname]);
+
+  useEffect(() => {
+    const alTeclear = e => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaleta(true);
+      } else if (e.key === 'Escape') {
+        setPanel(null);
+        setMenuUsuario(false);
+      }
+    };
+    window.addEventListener('keydown', alTeclear);
+    return () => window.removeEventListener('keydown', alTeclear);
+  }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle('sheet-open', hojaAbierta);
+    return () => document.body.classList.remove('sheet-open');
+  }, [hojaAbierta]);
+
+  const cerrarTodo = () => {
+    setPanel(null);
+    setMenuUsuario(false);
+  };
+
+  const abrirPaleta = () => {
+    cerrarTodo();
+    setHojaAbierta(false);
+    setPaleta(true);
+  };
+
+  const volver = () => {
+    if (window.history.state && window.history.state.idx > 0) navigate(-1);
+    else navigate('/inicio');
+  };
+
+  const cerrarSesion = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
     navigate('/login');
   };
 
-  const initials = (usuario.nombre || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  const rolLabel = usuario.rol === 'admin' ? 'Administrador' : 'Supervisor';
+  const iniciales = (usuario.nombre || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  const rolEtiqueta = esAdmin ? 'Administrador' : 'Supervisor';
+  const TemaIcon = tema === 'dark' ? Sun : Moon;
+  const temaTexto = tema === 'dark' ? 'Modo claro' : 'Modo oscuro';
+  const moduloActual = moduloDeRuta(pathname);
+  const enInicio = pathname === '/inicio';
+  const etiquetaModulo = modulos.find(m => m.id === moduloActual)?.label;
+  const moduloPanel = modulos.find(m => m.id === panel);
+  const moduloDeHoja = modulos.find(m => m.id === moduloHoja);
 
-  const sidebarContent = (
-    <div style={{
-      width: 252,
-      height: '100vh',
-      background: 'linear-gradient(180deg, #0C1322 0%, #080E1A 100%)',
-      borderRight: '1px solid #1A2840',
-      display: 'flex',
-      flexDirection: 'column',
-      flexShrink: 0,
-    }}>
+  const rutasBarra = esAdmin ? BARRA_ADMIN : BARRA_SUPERVISOR;
+  const itemsBarra = rutasBarra.map(buscarItem).filter(Boolean);
 
-      {/* LOGO */}
-      <div style={{ padding: '18px 20px 16px', borderBottom: '1px solid #1A2840' }}>
-        <div style={{
-          background: '#ffffff',
-          borderRadius: 8,
-          padding: '8px 14px',
-          display: 'inline-block',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.5)',
-        }}>
-          <img src={logo} alt="ATI Termic" style={{ maxWidth: 148, height: 'auto', display: 'block' }} />
-        </div>
-      </div>
+  const tbRef = useRef(null);
+  const tabsRef = useRef(null);
+  const tabRefs = useRef({});
+  const [marcador, setMarcador] = useState(null);
+  const idResaltado = panel || (enInicio ? 'inicio' : moduloActual);
 
-      {/* NAV */}
-      <nav style={{ flex: 1, paddingTop: 8, paddingBottom: 8, overflowY: 'auto' }}>
-        <Section label="Operaciones" open={operOpen} onToggle={() => setOperOpen(v => !v)}>
-          {NAV_ITEMS.map(item => (
-            <NavItem key={item.to} {...item} onClick={() => setMobileOpen(false)} />
-          ))}
-        </Section>
+  useEffect(() => {
+    const medir = () => {
+      const nodo = idResaltado && tabRefs.current[idResaltado];
+      if (!nodo || !tabsRef.current || !tbRef.current) {
+        setMarcador(null);
+        return;
+      }
+      const r = nodo.getBoundingClientRect();
+      const tabsR = tabsRef.current.getBoundingClientRect();
+      const tbR = tbRef.current.getBoundingClientRect();
+      setMarcador({
+        left: r.left - tabsR.left + 14,
+        width: r.width - 28,
+        flecha: r.left - tbR.left + r.width / 2
+      });
+    };
+    medir();
+    window.addEventListener('resize', medir);
+    return () => window.removeEventListener('resize', medir);
+  }, [idResaltado, modulos]);
 
-        {usuario.rol === 'admin' && (
-          <>
-            <div style={{ height: 1, background: '#1A2840', margin: '6px 16px' }} />
-            <Section label="Administración" open={adminOpen} onToggle={() => setAdminOpen(v => !v)}>
-              {ADMIN_ITEMS.map(item => (
-                <NavItem key={item.to} {...item} onClick={() => setMobileOpen(false)} />
-              ))}
-            </Section>
-          </>
-        )}
-      </nav>
-
-      {/* USER */}
-      <div style={{
-        borderTop: '1px solid #1A2840',
-        padding: '14px 16px',
-        background: 'rgba(6,11,20,0.5)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-          <div style={{
-            width: 34, height: 34, borderRadius: 8, flexShrink: 0,
-            background: 'linear-gradient(135deg, #2563EB 0%, #5DB835 100%)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: 0.5,
-          }}>
-            {initials}
-          </div>
-          <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#E8EFFE', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {usuario.nombre || 'Usuario'}
-            </div>
-            <div style={{ fontSize: 11, color: '#5DB835', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-              {rolLabel}
-            </div>
-          </div>
-        </div>
-
-        <LogoutBtn onClick={handleLogout} />
+  const infoUsuario = (
+    <div className="sb-user-row">
+      <div className="sb-avatar">{iniciales}</div>
+      <div className="sb-user-info">
+        <div className="sb-user-name">{usuario.nombre || 'Usuario'}</div>
+        <div className="sb-user-role">{rolEtiqueta}</div>
       </div>
     </div>
   );
 
   return (
     <>
-      {/* Sidebar — visible en desktop */}
-      <div className="sidebar-desktop" style={{ display: 'flex' }}>
-        {sidebarContent}
-      </div>
+      <header className="tb" ref={tbRef}>
+        <div className="tb-inner">
+          <NavLink to="/inicio" className="tb-brand" aria-label="Inicio">
+            <div className="logo-chip small">
+              <img src={logo} alt="ATI Termic" />
+            </div>
+          </NavLink>
 
-      {/* Header top bar — solo en móvil */}
-      <div className="mobile-header">
-        <button
-          onClick={() => setMobileOpen(true)}
-          style={{
-            background: 'none', border: '1px solid #1A2840', borderRadius: 7,
-            padding: '6px 9px', cursor: 'pointer', color: '#E8EFFE',
-            display: 'flex', alignItems: 'center', flexShrink: 0,
-          }}
-        >
-          <Menu size={19} />
-        </button>
-
-        <div style={{
-          background: '#ffffff', borderRadius: 6, padding: '5px 10px',
-          display: 'flex', alignItems: 'center',
-        }}>
-          <img src={logo} alt="ATI Termic" style={{ height: 22, display: 'block' }} />
-        </div>
-
-        <div style={{
-          width: 32, height: 32, borderRadius: 7, flexShrink: 0,
-          background: 'linear-gradient(135deg, #2563EB 0%, #5DB835 100%)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: 0.5,
-        }}>
-          {initials}
-        </div>
-      </div>
-
-      {/* Drawer móvil */}
-      {mobileOpen && (
-        <>
-          <div
-            onClick={() => setMobileOpen(false)}
-            style={{
-              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
-              zIndex: 200, backdropFilter: 'blur(3px)',
-            }}
-          />
-          <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 300, animation: 'slideRight 0.2s ease' }}>
-            {sidebarContent}
-            <button
-              onClick={() => setMobileOpen(false)}
-              style={{
-                position: 'absolute', top: 14, right: -42,
-                background: '#0C1322', border: '1px solid #1A2840',
-                borderRadius: 7, padding: '6px 8px', cursor: 'pointer', color: '#E8EFFE',
-                display: 'flex', alignItems: 'center',
-              }}
+          <nav className="tb-tabs" ref={tabsRef} aria-label="Módulos">
+            <NavLink
+              to="/inicio"
+              title="Inicio"
+              ref={el => { tabRefs.current.inicio = el; }}
+              className={({ isActive }) => `tb-tab${isActive ? ' current' : ''}`}
             >
-              <X size={17} />
+              <Home size={16} strokeWidth={1.8} />
+              <span>Inicio</span>
+            </NavLink>
+            {modulos.map(m => {
+              const Icon = m.icon;
+              const abierto = panel === m.id;
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  title={m.label}
+                  ref={el => { tabRefs.current[m.id] = el; }}
+                  className={`tb-tab${abierto ? ' open' : ''}${moduloActual === m.id ? ' current' : ''}`}
+                  aria-expanded={abierto}
+                  onClick={() => {
+                    setMenuUsuario(false);
+                    setPanel(abierto ? null : m.id);
+                  }}
+                >
+                  <Icon size={16} strokeWidth={1.8} />
+                  <span>{m.label}</span>
+                  <ChevronDown size={13} strokeWidth={2.4} className={`tb-caret${abierto ? ' open' : ''}`} />
+                </button>
+              );
+            })}
+            {marcador && (
+              <span
+                className="tb-indicador"
+                style={{ left: marcador.left, width: marcador.width }}
+                aria-hidden="true"
+              />
+            )}
+          </nav>
+
+          <div className="tb-tools">
+            <button type="button" className="tb-search" onClick={abrirPaleta}>
+              <Search size={15} strokeWidth={2} />
+              <span>Buscar función...</span>
+              <kbd>Ctrl K</kbd>
             </button>
+            <button
+              type="button"
+              className="tb-icon-btn"
+              onClick={alternarTema}
+              aria-label={temaTexto}
+              title={temaTexto}
+            >
+              <TemaIcon size={17} strokeWidth={1.8} />
+            </button>
+            <div className="tb-user">
+              <button
+                type="button"
+                className="tb-avatar-btn"
+                aria-expanded={menuUsuario}
+                aria-label="Cuenta"
+                onClick={() => {
+                  setPanel(null);
+                  setMenuUsuario(v => !v);
+                }}
+              >
+                <div className="sb-avatar small">{iniciales}</div>
+              </button>
+              {menuUsuario && (
+                <div className="tb-usermenu">
+                  {infoUsuario}
+                  <button type="button" className="sb-action danger" onClick={cerrarSesion}>
+                    <LogOut size={14} />
+                    Cerrar sesión
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {moduloPanel && (
+          <div className="tb-panel">
+            {marcador && panel && (
+              <span className="tb-panel-flecha" style={{ left: marcador.flecha }} aria-hidden="true" />
+            )}
+            <div className="tb-panel-inner">
+              <div className="tb-panel-head">
+                <span className="tb-panel-title">{moduloPanel.label}</span>
+                <span className="tb-panel-count">
+                  {moduloPanel.items.length} {moduloPanel.items.length === 1 ? 'función' : 'funciones'}
+                </span>
+              </div>
+              <div className="tb-panel-grid">
+                {moduloPanel.items.map(item => {
+                  const ItemIcon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      onClick={cerrarTodo}
+                      className={({ isActive }) => `tb-card${isActive ? ' active' : ''}`}
+                    >
+                      <span className="tb-card-icon"><ItemIcon size={18} strokeWidth={1.6} /></span>
+                      <span className="tb-card-label">{item.label}</span>
+                    </NavLink>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {(panel || menuUsuario) && <div className="tb-backdrop" onClick={cerrarTodo} />}
+
+      <header className="mobile-header">
+        {enInicio ? (
+          <NavLink to="/inicio" aria-label="Inicio" className="mh-brand">
+            <div className="logo-chip small">
+              <img src={logo} alt="ATI Termic" />
+            </div>
+          </NavLink>
+        ) : (
+          <>
+            <button type="button" className="mh-btn" onClick={volver} aria-label="Volver">
+              <ArrowLeft size={18} />
+            </button>
+            <div className="mh-title">{etiquetaModulo || 'ATI Termic'}</div>
+          </>
+        )}
+        <div className="mh-right">
+          <button type="button" className="mh-btn" onClick={abrirPaleta} aria-label="Buscar función">
+            <Search size={17} />
+          </button>
+          <button type="button" className="mh-btn" onClick={alternarTema} aria-label={temaTexto}>
+            <TemaIcon size={17} />
+          </button>
+          <div className="sb-avatar small">{iniciales}</div>
+        </div>
+      </header>
+
+      <nav className="bn" aria-label="Navegación principal">
+        <NavLink to="/inicio" className={({ isActive }) => `bn-item${isActive ? ' active' : ''}`}>
+          <Home size={21} strokeWidth={1.8} />
+          <span>Inicio</span>
+        </NavLink>
+        {itemsBarra.map(item => {
+          const Icon = item.icon;
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) => `bn-item${isActive ? ' active' : ''}`}
+            >
+              <Icon size={21} strokeWidth={1.8} />
+              <span>{item.short}</span>
+            </NavLink>
+          );
+        })}
+        <button
+          type="button"
+          className={`bn-item${hojaAbierta ? ' active' : ''}`}
+          onClick={() => {
+            setModuloHoja(null);
+            setHojaAbierta(v => !v);
+          }}
+          aria-expanded={hojaAbierta}
+        >
+          {hojaAbierta ? <X size={21} strokeWidth={1.8} /> : <Menu size={21} strokeWidth={1.8} />}
+          <span>Más</span>
+        </button>
+      </nav>
+
+      {hojaAbierta && (
+        <>
+          <div className="sheet-backdrop" onClick={() => setHojaAbierta(false)} />
+          <div className="sheet" role="dialog" aria-label="Todas las funciones">
+            <div className="sheet-handle" />
+            <button type="button" className="sb-search sheet-search" onClick={abrirPaleta}>
+              <Search size={15} strokeWidth={2} />
+              <span>Buscar función...</span>
+            </button>
+            <div className="sheet-body">
+              {!moduloDeHoja ? (
+                <div className="sheet-modules">
+                  {modulos.map(m => {
+                    const Icon = m.icon;
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        className="sheet-module"
+                        onClick={() => setModuloHoja(m.id)}
+                      >
+                        <span className="sheet-module-icon"><Icon size={22} strokeWidth={1.6} /></span>
+                        <span className="sheet-module-label">{m.label}</span>
+                        <span className="sheet-module-count">
+                          {m.items.length} {m.items.length === 1 ? 'función' : 'funciones'}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <>
+                  <button type="button" className="sheet-back" onClick={() => setModuloHoja(null)}>
+                    <ArrowLeft size={16} />
+                    {moduloDeHoja.label}
+                  </button>
+                  <div className="sheet-list">
+                    {moduloDeHoja.items.map(item => {
+                      const ItemIcon = item.icon;
+                      return (
+                        <NavLink
+                          key={item.to}
+                          to={item.to}
+                          onClick={() => setHojaAbierta(false)}
+                          className={({ isActive }) => `sheet-link${isActive ? ' active' : ''}`}
+                        >
+                          <span className="tb-card-icon"><ItemIcon size={18} strokeWidth={1.6} /></span>
+                          <span className="sheet-link-label">{item.label}</span>
+                          <ChevronRight size={16} className="sheet-link-arrow" />
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="sb-user">
+              {infoUsuario}
+              <div className="sb-user-actions">
+                <button type="button" className="sb-action" onClick={alternarTema}>
+                  <TemaIcon size={14} />
+                  {temaTexto}
+                </button>
+                <button type="button" className="sb-action danger" onClick={cerrarSesion}>
+                  <LogOut size={14} />
+                  Cerrar sesión
+                </button>
+              </div>
+            </div>
           </div>
         </>
       )}
 
-      <style>{`
-        @media (max-width: 768px) {
-          .sidebar-desktop { display: none !important; }
-        }
-        @keyframes slideRight {
-          from { transform: translateX(-100%); opacity: 0; }
-          to   { transform: translateX(0);    opacity: 1; }
-        }
-      `}</style>
-    </>
-  );
-}
+      {paleta && <Paleta modulos={modulos} onClose={() => setPaleta(false)} />}
 
-function LogoutBtn({ onClick }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        width: '100%',
-        display: 'flex', alignItems: 'center', gap: 8,
-        padding: '8px 12px',
-        background: hovered ? 'rgba(239,68,68,0.08)' : 'transparent',
-        border: hovered ? '1px solid rgba(239,68,68,0.3)' : '1px solid #1A2840',
-        borderRadius: 7,
-        color: hovered ? '#EF4444' : '#7D8FA8',
-        fontSize: 13, fontWeight: 500,
-        cursor: 'pointer',
-        transition: 'all 0.15s',
-        justifyContent: 'center',
-      }}
-    >
-      <LogOut size={14} />
-      Cerrar sesión
-    </button>
+      <IndicadorCarga />
+    </>
   );
 }

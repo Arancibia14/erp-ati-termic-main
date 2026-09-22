@@ -316,9 +316,9 @@ export default function IngresoGuia() {
         {loadingGuias ? (
           <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
         ) : guias.length === 0 ? (
-          <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13, fontStyle: 'italic' }}>
-            No hay guías de despacho registradas
-          </p>
+          <div className="estado-vacio">
+            <p>Aún no se ha registrado ninguna guía de despacho.</p>
+          </div>
         ) : (
           <div className="table-container">
             <table>

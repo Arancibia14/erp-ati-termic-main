@@ -208,9 +208,9 @@ export default function Usuarios() {
         {loading ? (
           <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
         ) : usuarios.length === 0 ? (
-          <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13, fontStyle: 'italic' }}>
-            No hay usuarios registrados
-          </p>
+          <div className="estado-vacio">
+            <p>Todavía no hay usuarios registrados en el sistema.</p>
+          </div>
         ) : (
           <div className="table-container">
             <table>

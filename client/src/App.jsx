@@ -1,42 +1,47 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './styles/index.css';
 import Sidebar from './components/Sidebar';
+import { CargaPagina } from './components/IndicadorCarga';
+import EstadoConexion from './components/EstadoConexion';
+import './styles/theme.css';
 import Login from './pages/Login';
-import Bitacora from './pages/Bitacora';
-import CajaChica from './pages/CajaChica';
-import SSO from './pages/SSO';
-import Evidencia from './pages/Evidencia';
-import ValidarEvidencias from './pages/ValidarEvidencias';
-import OrdenCompra from './pages/OrdenCompra';
-import VincularFactura from './pages/VincularFactura';
-import ControlCostos from './pages/ControlCostos';
-import Comunicacion from './pages/Comunicacion';
-import RecepcionInsumos from './pages/RecepcionInsumos';
-import SubcontratistasProyecto from './pages/SubcontratistasProyecto';
-import ManoObra from './pages/ManoObra';
-import Portafolio from './pages/Portafolio';
-import BuscadorDocumentos from './pages/BuscadorDocumentos';
-import ControlPresupuesto from './pages/ControlPresupuesto';
-import Polizas from './pages/Polizas';
-import CertificadoTecnico from './pages/CertificadoTecnico';
-import Configuracion from './pages/Configuracion';
-import Catalogo from './pages/Catalogo';
-import SolicitudMateriales from './pages/SolicitudMateriales';
-import AprobacionesPendientes from './pages/AprobacionesPendientes';
-import Trabajadores from './pages/Trabajadores';
-import IngresoGuia from './pages/IngresoGuia';
-import DocumentacionLaboral from './pages/DocumentacionLaboral';
-import Liquidaciones from './pages/Liquidaciones';
-import AnexoContrato from './pages/AnexoContrato';
-import EntregaEpp from './pages/EntregaEpp';
-import HistorialEntregasEpp from './pages/HistorialEntregasEpp';
-import CatalogoEquipos from './pages/CatalogoEquipos';
-import Herramientas from './pages/Herramientas';
-import MaterialesTransito from './pages/MaterialesTransito';
-import CertificadosCalidad from './pages/CertificadosCalidad';
-import DevolucionObra from './pages/DevolucionObra';
-import HistorialOrdenesCompra from './pages/HistorialOrdenesCompra';
-import Usuarios from './pages/Usuarios';
+const Inicio = lazy(() => import('./pages/Inicio'));
+const Bitacora = lazy(() => import('./pages/Bitacora'));
+const CajaChica = lazy(() => import('./pages/CajaChica'));
+const SSO = lazy(() => import('./pages/SSO'));
+const Evidencia = lazy(() => import('./pages/Evidencia'));
+const ValidarEvidencias = lazy(() => import('./pages/ValidarEvidencias'));
+const OrdenCompra = lazy(() => import('./pages/OrdenCompra'));
+const VincularFactura = lazy(() => import('./pages/VincularFactura'));
+const ControlCostos = lazy(() => import('./pages/ControlCostos'));
+const Comunicacion = lazy(() => import('./pages/Comunicacion'));
+const RecepcionInsumos = lazy(() => import('./pages/RecepcionInsumos'));
+const SubcontratistasProyecto = lazy(() => import('./pages/SubcontratistasProyecto'));
+const ManoObra = lazy(() => import('./pages/ManoObra'));
+const Portafolio = lazy(() => import('./pages/Portafolio'));
+const BuscadorDocumentos = lazy(() => import('./pages/BuscadorDocumentos'));
+const ControlPresupuesto = lazy(() => import('./pages/ControlPresupuesto'));
+const Polizas = lazy(() => import('./pages/Polizas'));
+const CertificadoTecnico = lazy(() => import('./pages/CertificadoTecnico'));
+const Configuracion = lazy(() => import('./pages/Configuracion'));
+const Catalogo = lazy(() => import('./pages/Catalogo'));
+const SolicitudMateriales = lazy(() => import('./pages/SolicitudMateriales'));
+const AprobacionesPendientes = lazy(() => import('./pages/AprobacionesPendientes'));
+const Trabajadores = lazy(() => import('./pages/Trabajadores'));
+const IngresoGuia = lazy(() => import('./pages/IngresoGuia'));
+const DocumentacionLaboral = lazy(() => import('./pages/DocumentacionLaboral'));
+const Liquidaciones = lazy(() => import('./pages/Liquidaciones'));
+const AnexoContrato = lazy(() => import('./pages/AnexoContrato'));
+const EntregaEpp = lazy(() => import('./pages/EntregaEpp'));
+const HistorialEntregasEpp = lazy(() => import('./pages/HistorialEntregasEpp'));
+const CatalogoEquipos = lazy(() => import('./pages/CatalogoEquipos'));
+const Herramientas = lazy(() => import('./pages/Herramientas'));
+const MaterialesTransito = lazy(() => import('./pages/MaterialesTransito'));
+const CertificadosCalidad = lazy(() => import('./pages/CertificadosCalidad'));
+const DevolucionObra = lazy(() => import('./pages/DevolucionObra'));
+const HistorialOrdenesCompra = lazy(() => import('./pages/HistorialOrdenesCompra'));
+const Usuarios = lazy(() => import('./pages/Usuarios'));
 
 function PrivateLayout({ children }) {
   const token = localStorage.getItem('token');
@@ -44,8 +49,11 @@ function PrivateLayout({ children }) {
   return (
     <div className="app-layout">
       <Sidebar />
+      <EstadoConexion />
       <main className="main-content">
-        {children}
+        <Suspense fallback={<CargaPagina />}>
+          {children}
+        </Suspense>
       </main>
     </div>
   );
@@ -64,6 +72,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
 
         {/* Rutas accesibles por todos los roles */}
+        <Route path="/inicio" element={<PrivateLayout><Inicio /></PrivateLayout>} />
         <Route path="/bitacora" element={<PrivateLayout><Bitacora /></PrivateLayout>} />
         <Route path="/caja-chica" element={<PrivateLayout><CajaChica /></PrivateLayout>} />
         <Route path="/sso" element={<PrivateLayout><SSO /></PrivateLayout>} />
@@ -102,8 +111,8 @@ export default function App() {
         <Route path="/historial-oc" element={<PrivateLayout><AdminRoute><HistorialOrdenesCompra /></AdminRoute></PrivateLayout>} />
         <Route path="/usuarios" element={<PrivateLayout><AdminRoute><Usuarios /></AdminRoute></PrivateLayout>} />
 
-        <Route path="/" element={<Navigate to="/bitacora" replace />} />
-        <Route path="*" element={<Navigate to="/bitacora" replace />} />
+        <Route path="/" element={<Navigate to="/inicio" replace />} />
+        <Route path="*" element={<Navigate to="/inicio" replace />} />
       </Routes>
     </BrowserRouter>
   );

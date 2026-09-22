@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { BarChart2, RefreshCw, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
 import {
-  ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  Legend, ResponsiveContainer, ReferenceLine
+  ComposedChart, Bar, Area, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, ReferenceLine
 } from 'recharts';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
@@ -16,22 +16,82 @@ const formatPeso = v => {
 const formatPesoFull = v =>
   Number(v).toLocaleString('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 });
 
+const COLOR_SERIE = {
+  presupuesto_mensual: 'var(--color-blue)',
+  gasto_real: 'var(--color-green)',
+  acumulado_ppto: 'var(--color-blue)',
+  acumulado_real: 'var(--color-green)'
+};
+
 const TooltipCustom = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
+  const diferencia = payload.length === 2 ? payload[0].value - payload[1].value : null;
   return (
     <div style={{
-      background: '#1C2128', border: '1px solid #2D3748', borderRadius: 6,
-      padding: '10px 14px', fontSize: 12
+      background: 'var(--color-bg-surface)', border: '1px solid var(--color-border-strong)', borderRadius: 12,
+      padding: '12px 14px', fontSize: 12.5, minWidth: 210, boxShadow: 'var(--shadow-md)'
     }}>
-      <div style={{ fontWeight: 700, marginBottom: 6, color: '#E6EDF3' }}>{label}</div>
+      <div style={{
+        fontWeight: 700, marginBottom: 8, paddingBottom: 8, color: 'var(--color-text-primary)',
+        borderBottom: '1px solid var(--color-border-subtle)', letterSpacing: '0.02em'
+      }}>{label}</div>
       {payload.map((p, i) => (
-        <div key={i} style={{ color: p.color, marginBottom: 2 }}>
-          {p.name}: {formatPesoFull(p.value)}
+        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+          <span style={{ width: 8, height: 8, borderRadius: 2, background: COLOR_SERIE[p.dataKey], flexShrink: 0 }} />
+          <span style={{ flex: 1, color: 'var(--color-text-secondary)' }}>{p.name}</span>
+          <span style={{ fontWeight: 600, color: 'var(--color-text-primary)', fontVariantNumeric: 'tabular-nums' }}>
+            {formatPesoFull(p.value)}
+          </span>
         </div>
       ))}
+      {diferencia !== null && (
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', marginTop: 8, paddingTop: 8,
+          borderTop: '1px solid var(--color-border-subtle)', color: 'var(--color-text-secondary)'
+        }}>
+          <span>Diferencia</span>
+          <span style={{ fontWeight: 700, color: diferencia >= 0 ? 'var(--color-green-text)' : 'var(--color-danger)', fontVariantNumeric: 'tabular-nums' }}>
+            {diferencia >= 0 ? '+' : ''}{formatPesoFull(diferencia)}
+          </span>
+        </div>
+      )}
     </div>
   );
 };
+
+const Leyenda = ({ items }) => (
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, marginBottom: 14 }}>
+    {items.map(item => (
+      <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: 'var(--color-text-secondary)' }}>
+        <span style={{ width: 10, height: 10, borderRadius: 3, background: item.color }} />
+        {item.label}
+      </div>
+    ))}
+  </div>
+);
+
+const EJE = { fontSize: 11.5, fill: 'var(--color-text-secondary)' };
+
+const Degradados = ({ id }) => (
+  <defs>
+    <linearGradient id={`${id}-azul`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" style={{ stopColor: 'var(--color-blue)', stopOpacity: 0.95 }} />
+      <stop offset="100%" style={{ stopColor: 'var(--color-blue)', stopOpacity: 0.45 }} />
+    </linearGradient>
+    <linearGradient id={`${id}-verde`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" style={{ stopColor: 'var(--color-green)', stopOpacity: 0.95 }} />
+      <stop offset="100%" style={{ stopColor: 'var(--color-green)', stopOpacity: 0.5 }} />
+    </linearGradient>
+    <linearGradient id={`${id}-area-azul`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" style={{ stopColor: 'var(--color-blue)', stopOpacity: 0.22 }} />
+      <stop offset="100%" style={{ stopColor: 'var(--color-blue)', stopOpacity: 0 }} />
+    </linearGradient>
+    <linearGradient id={`${id}-area-verde`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" style={{ stopColor: 'var(--color-green)', stopOpacity: 0.3 }} />
+      <stop offset="100%" style={{ stopColor: 'var(--color-green)', stopOpacity: 0 }} />
+    </linearGradient>
+  </defs>
+);
 
 const ANIO_ACTUAL = new Date().getFullYear();
 const ANIOS = Array.from({ length: 6 }, (_, i) => ANIO_ACTUAL - i);
@@ -245,7 +305,7 @@ export default function ControlCostos() {
             <div style={{
               display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px',
               background: 'rgba(192, 57, 43, 0.12)', border: '1px solid var(--color-danger)',
-              borderRadius: 4, marginBottom: 20, fontSize: 13, color: '#e57368'
+              borderRadius: 4, marginBottom: 20, fontSize: 13, color: 'var(--color-danger)'
             }}>
               <AlertTriangle size={16} />
               Alerta: la desviación supera el umbral de tolerancia. Se requiere revisión del presupuesto.
@@ -256,44 +316,53 @@ export default function ControlCostos() {
           {!sinPresupuesto && (
             <>
               <div className="card" style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 16, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-secondary)' }}>
+                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 14, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-secondary)' }}>
                   Gasto mensual vs Presupuesto mensual — {yearSel}
                 </div>
-                <ResponsiveContainer width="100%" height={280}>
-                  <ComposedChart data={datos.serie} margin={{ top: 4, right: 16, bottom: 0, left: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#2D3748" />
-                    <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#8B949E' }} />
-                    <YAxis tickFormatter={formatPeso} tick={{ fontSize: 11, fill: '#8B949E' }} width={72} />
-                    <Tooltip content={<TooltipCustom />} />
-                    <Legend wrapperStyle={{ fontSize: 12, color: '#8B949E' }} />
-                    <Bar dataKey="presupuesto_mensual" name="Presupuesto mensual" fill="#1E40D8" opacity={0.7} radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="gasto_real" name="Gasto real" fill="#5DB835" radius={[2, 2, 0, 0]} />
+                <Leyenda items={[
+                  { label: 'Presupuesto mensual', color: 'var(--color-blue)' },
+                  { label: 'Gasto real', color: 'var(--color-green)' }
+                ]} />
+                <ResponsiveContainer width="100%" height={300}>
+                  <ComposedChart data={datos.serie} margin={{ top: 8, right: 12, bottom: 0, left: 4 }} barGap={4} barCategoryGap="22%">
+                    <Degradados id="gm" />
+                    <CartesianGrid vertical={false} strokeDasharray="2 5" stroke="var(--color-border)" />
+                    <XAxis dataKey="label" tick={EJE} axisLine={{ stroke: 'var(--color-border)' }} tickLine={false} tickMargin={10} />
+                    <YAxis tickFormatter={formatPeso} tick={EJE} axisLine={false} tickLine={false} width={64} />
+                    <Tooltip content={<TooltipCustom />} cursor={{ fill: 'var(--color-blue-muted)' }} />
+                    <Bar dataKey="presupuesto_mensual" name="Presupuesto mensual" fill="url(#gm-azul)" maxBarSize={22} radius={[7, 7, 0, 0]} />
+                    <Bar dataKey="gasto_real" name="Gasto real" fill="url(#gm-verde)" maxBarSize={22} radius={[7, 7, 0, 0]} />
                   </ComposedChart>
                 </ResponsiveContainer>
               </div>
 
               <div className="card">
-                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 16, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-secondary)' }}>
+                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 14, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-secondary)' }}>
                   Curva de costo acumulado — Planificado vs Real
                 </div>
-                <ResponsiveContainer width="100%" height={280}>
-                  <ComposedChart data={datos.serie} margin={{ top: 4, right: 16, bottom: 0, left: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#2D3748" />
-                    <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#8B949E' }} />
-                    <YAxis tickFormatter={formatPeso} tick={{ fontSize: 11, fill: '#8B949E' }} width={72} />
-                    <Tooltip content={<TooltipCustom />} />
-                    <Legend wrapperStyle={{ fontSize: 12, color: '#8B949E' }} />
+                <Leyenda items={[
+                  { label: 'Acumulado planificado', color: 'var(--color-blue)' },
+                  { label: 'Acumulado real', color: 'var(--color-green)' },
+                  { label: 'Presupuesto total', color: 'var(--color-warning)' }
+                ]} />
+                <ResponsiveContainer width="100%" height={300}>
+                  <ComposedChart data={datos.serie} margin={{ top: 8, right: 12, bottom: 0, left: 4 }}>
+                    <Degradados id="ac" />
+                    <CartesianGrid vertical={false} strokeDasharray="2 5" stroke="var(--color-border)" />
+                    <XAxis dataKey="label" tick={EJE} axisLine={{ stroke: 'var(--color-border)' }} tickLine={false} tickMargin={10} />
+                    <YAxis tickFormatter={formatPeso} tick={EJE} axisLine={false} tickLine={false} width={64} />
+                    <Tooltip content={<TooltipCustom />} cursor={{ stroke: 'var(--color-border-strong)', strokeDasharray: '3 3' }} />
                     {/* extendDomain: en una obra de varios años lo planificado del año no llega al
                         total, y sin esto el eje se corta antes y la línea no se dibuja */}
                     <ReferenceLine
                       y={datos.presupuesto}
                       ifOverflow="extendDomain"
                       stroke="var(--color-warning)"
-                      strokeDasharray="6 3"
-                      label={{ value: 'Presupuesto total', fill: '#D4930A', fontSize: 11, position: 'insideTopRight' }}
+                      strokeDasharray="6 4"
+                      label={{ value: 'Presupuesto total', fill: 'var(--color-warning)', fontSize: 11.5, position: 'insideTopRight' }}
                     />
-                    <Line type="monotone" dataKey="acumulado_ppto" name="Acumulado planificado" stroke="#1E40D8" strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="acumulado_real" name="Acumulado real" stroke="#5DB835" strokeWidth={2} dot={{ r: 3 }} />
+                    <Area type="monotone" dataKey="acumulado_ppto" name="Acumulado planificado" stroke="var(--color-blue)" strokeWidth={2.5} fill="url(#ac-area-azul)" dot={false} activeDot={{ r: 5, strokeWidth: 2, stroke: 'var(--color-bg-surface)' }} />
+                    <Area type="monotone" dataKey="acumulado_real" name="Acumulado real" stroke="var(--color-green)" strokeWidth={2.5} fill="url(#ac-area-verde)" dot={{ r: 3.5, strokeWidth: 2, stroke: 'var(--color-bg-surface)', fill: 'var(--color-green)' }} activeDot={{ r: 5.5, strokeWidth: 2, stroke: 'var(--color-bg-surface)' }} />
                   </ComposedChart>
                 </ResponsiveContainer>
               </div>
