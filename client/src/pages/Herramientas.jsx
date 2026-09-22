@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Wrench, Send, RotateCcw, History, Plus } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import { IlustracionEquipoVacio } from '../components/Ilustraciones';
 import Badge from '../components/Badge';
 
 export default function Herramientas() {
@@ -214,9 +215,10 @@ export default function Herramientas() {
 
       <div className="card" style={{ padding: 0 }}>
         {herramientas.length === 0 ? (
-          <p style={{ padding: 20, fontSize: 13, color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
-            No hay herramientas registradas en el catálogo maestro.
-          </p>
+          <div className="estado-vacio">
+            <IlustracionEquipoVacio />
+            <p>Aún no se ha registrado ninguna herramienta. Da de alta la primera para poder asignarla en terreno.</p>
+          </div>
         ) : (
           <div className="table-container">
             <table>

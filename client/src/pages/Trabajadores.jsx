@@ -247,9 +247,9 @@ export default function Trabajadores() {
         {loading ? (
           <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
         ) : trabajadores.length === 0 ? (
-          <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13, fontStyle: 'italic' }}>
-            No hay trabajadores registrados
-          </p>
+          <div className="estado-vacio">
+            <p>Todavía no hay trabajadores registrados. Crea el primer expediente para comenzar.</p>
+          </div>
         ) : (
           <div className="table-container">
             <table>

@@ -1,12 +1,83 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>client</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <script>
+      try {
+        document.documentElement.setAttribute("data-theme", localStorage.getItem("ati_tema") === "light" ? "light" : "dark");
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    </script>
+    <style>
+      html, body { margin: 0; height: 100%; background: #060b14; }
+      html[data-theme="light"], html[data-theme="light"] body { background: #f1f4f9; }
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 100000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+        background:
+          radial-gradient(700px 420px at 85% -5%, rgba(37, 99, 235, 0.16), transparent 60%),
+          radial-gradient(640px 380px at -5% 105%, rgba(93, 184, 53, 0.1), transparent 60%),
+          #060b14;
+        transition: opacity 0.22s ease, visibility 0.22s ease;
+      }
+      html[data-theme="light"] #splash {
+        background:
+          radial-gradient(700px 420px at 85% -5%, rgba(37, 99, 235, 0.1), transparent 60%),
+          radial-gradient(640px 380px at -5% 105%, rgba(63, 143, 31, 0.08), transparent 60%),
+          #f1f4f9;
+      }
+      #splash.hide { opacity: 0; visibility: hidden; }
+      #splash .card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 20px 32px;
+        box-shadow: 0 16px 44px rgba(0, 0, 0, 0.35);
+        animation: splash-rise 0.7s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+      }
+      #splash img { display: block; width: min(300px, 62vw); height: auto; }
+      #splash .track {
+        width: 150px;
+        height: 3px;
+        border-radius: 3px;
+        overflow: hidden;
+        background: rgba(148, 163, 184, 0.25);
+      }
+      #splash .track span {
+        display: block;
+        width: 45%;
+        height: 100%;
+        border-radius: 3px;
+        background: linear-gradient(90deg, #2563eb, #5db835);
+        animation: splash-run 1.3s ease-in-out infinite;
+      }
+      @keyframes splash-rise {
+        from { opacity: 0; transform: translateY(14px) scale(0.97); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      @keyframes splash-run {
+        0% { transform: translateX(-110%); }
+        100% { transform: translateX(260%); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #splash .card, #splash .track span { animation: none; }
+      }
+    </style>
+    <title>ERP ATI Termic</title>
   </head>
   <body>
+    <div id="splash" role="status" aria-label="Cargando">
+      <div class="card"><img src="/logo.png" alt="ATI Termic" /></div>
+      <div class="track"><span></span></div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

@@ -240,9 +240,9 @@ export default function SSO() {
               htmlFor="sso-fotos-input"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
-                cursor: 'pointer', padding: '8px 14px',
-                border: '1px dashed var(--color-border)',
-                borderRadius: 4, fontSize: 13, color: 'var(--color-text-muted)',
+                cursor: 'pointer', padding: '12px 16px',
+                border: '1.5px dashed var(--color-border-strong)',
+                borderRadius: 12, fontSize: 13, color: 'var(--color-text-secondary)',
                 background: 'var(--color-bg-elevated)', marginBottom: fotos.length ? 10 : 0
               }}
             >

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Package, Plus, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import { IlustracionCatalogoVacio } from '../components/Ilustraciones';
 import Badge from '../components/Badge';
 
 const UNIDADES = ['Unidad', 'Metro', 'Kg', 'Litro', 'Caja', 'Rollo', 'Par'];
@@ -209,9 +210,10 @@ export default function Catalogo() {
         {loading ? (
           <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
         ) : materiales.length === 0 ? (
-          <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13, fontStyle: 'italic' }}>
-            No hay materiales registrados en el catálogo
-          </p>
+          <div className="estado-vacio">
+            <IlustracionCatalogoVacio />
+            <p>El catálogo está vacío por ahora. Registra el primer material para empezar a usarlo en solicitudes y compras.</p>
+          </div>
         ) : (
           <div className="table-container">
             <table>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { CheckCircle, AlertTriangle, XCircle, X } from 'lucide-react';
 
 const ICONS = {
@@ -7,54 +7,82 @@ const ICONS = {
   error: XCircle
 };
 
-const COLORS = {
-  success: 'var(--color-success)',
-  warning: 'var(--color-warning)',
-  error: 'var(--color-danger)'
+const TITULOS = {
+  success: 'Operación exitosa',
+  warning: 'Advertencia',
+  error: 'No se pudo completar'
 };
 
+const MAXIMO_VISIBLE = 4;
+
+function agrupar(toasts) {
+  const grupos = [];
+  toasts.forEach(toast => {
+    const clave = `${toast.type}|${toast.message}`;
+    const existente = grupos.find(g => g.clave === clave);
+    if (existente) {
+      existente.ids.push(toast.id);
+      existente.ultimo = toast;
+    } else {
+      grupos.push({ clave, type: toast.type, message: toast.message, action: toast.action, ids: [toast.id], ultimo: toast });
+    }
+  });
+  return grupos;
+}
+
 export default function Toast({ toasts, removeToast }) {
+  const grupos = agrupar(toasts);
+  const visibles = grupos.slice(-MAXIMO_VISIBLE);
+  const ocultos = grupos.length - visibles.length;
+
   return (
-    <div style={{
-      position: 'fixed',
-      bottom: '24px',
-      right: '24px',
-      zIndex: 9999,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '10px',
-      maxWidth: '360px'
-    }}>
-      {toasts.map(toast => {
-        const Icon = ICONS[toast.type] || CheckCircle;
-        const color = COLORS[toast.type] || COLORS.success;
+    <div className="toast-stack" aria-live="polite">
+      {ocultos > 0 && (
+        <div className="toast-more">
+          {ocultos} {ocultos === 1 ? 'aviso anterior' : 'avisos anteriores'}
+        </div>
+      )}
+      {visibles.map(grupo => {
+        const tipo = ICONS[grupo.type] ? grupo.type : 'success';
+        const Icon = ICONS[tipo];
         return (
-          <div key={toast.id} style={{
-            background: 'var(--color-bg-elevated)',
-            border: '1px solid var(--color-border)',
-            borderLeft: `3px solid ${color}`,
-            borderRadius: '6px',
-            padding: '12px 16px',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '10px',
-            animation: 'slideUp 0.2s ease',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
-          }}>
-            <Icon size={18} color={color} style={{ flexShrink: 0, marginTop: '1px' }} />
-            <span style={{ flex: 1, fontSize: '14px', color: 'var(--color-text-primary)', lineHeight: '1.4' }}>
-              {toast.message}
-            </span>
+          <div key={grupo.clave} className={`toast toast-${tipo}`} role={tipo === 'error' ? 'alert' : 'status'}>
+            <span className="toast-icon"><Icon size={18} strokeWidth={2} /></span>
+            <div className="toast-body">
+              <div className="toast-title">
+                {TITULOS[tipo]}
+                {grupo.ids.length > 1 && <span className="toast-count">×{grupo.ids.length}</span>}
+              </div>
+              <div className="toast-message">{grupo.message}</div>
+              {grupo.action && (
+                <button
+                  type="button"
+                  className="toast-action"
+                  onClick={() => {
+                    grupo.action.onClick();
+                    grupo.ids.forEach(removeToast);
+                  }}
+                >
+                  {grupo.action.label}
+                </button>
+              )}
+            </div>
             <button
-              onClick={() => removeToast(toast.id)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', padding: '0 2px' }}
+              type="button"
+              className="toast-close"
+              aria-label="Cerrar aviso"
+              onClick={() => grupo.ids.forEach(removeToast)}
             >
-              <X size={14} />
+              <X size={15} />
             </button>
+            <span
+              key={grupo.ultimo.id}
+              className="toast-bar"
+              style={{ animationDuration: `${grupo.ultimo.duration || 3500}ms` }}
+            />
           </div>
         );
       })}
-      <style>{`@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
 }
@@ -62,10 +90,13 @@ export default function Toast({ toasts, removeToast }) {
 export function useToast() {
   const [toasts, setToasts] = useState([]);
 
-  const addToast = (message, type = 'success', duration = 3500) => {
-    const id = Date.now();
-    setToasts(prev => [...prev, { id, message, type }]);
+  const addToast = (message, type = 'success', duration = 3500, action = null) => {
+    const id = Date.now() + Math.random();
+    setToasts(prev => [...prev, { id, message, type, duration, action }]);
     setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), duration);
+    if (type === 'success' && typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0) {
+      navigator.vibrate?.(15);
+    }
   };
 
   const removeToast = id => setToasts(prev => prev.filter(t => t.id !== id));
