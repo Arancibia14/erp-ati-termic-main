@@ -16,4 +16,13 @@ function fechaHoy(fecha = new Date()) {
   return `${partes.year}-${partes.month}-${partes.day}`;
 }
 
-module.exports = { ZONA_HORARIA, fechaHoy };
+// Fecha real en formato YYYY-MM-DD: rechaza otros formatos y días que no
+// existen, como el 30 de febrero
+function esFechaValida(fecha) {
+  if (typeof fecha !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(fecha)) return false;
+  const [a, m, d] = fecha.split('-').map(Number);
+  const f = new Date(Date.UTC(a, m - 1, d));
+  return f.getUTCFullYear() === a && f.getUTCMonth() === m - 1 && f.getUTCDate() === d;
+}
+
+module.exports = { ZONA_HORARIA, fechaHoy, esFechaValida };

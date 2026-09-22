@@ -24,9 +24,11 @@ const redondear = n => Math.round(n * 100) / 100;
 // costo ya facturado: si el material se devuelve antes de que llegue su factura,
 // la rebaja queda pendiente y se descuenta cuando la factura se registra. Por eso
 // el acumulado nunca es negativo.
-// factura_fecha y devolucion_obra_fecha son DATE (sin hora) y se guardan con la
-// fecha de Chile, así que agrupar con DATE_FORMAT no depende de la zona horaria
-// del servidor ni de la de MySQL.
+// Los egresos de caja chica (CU 39) también son gasto real, pero se suman aparte:
+// una devolución de material rebaja lo facturado por OC, no lo pagado en efectivo.
+// factura_fecha, devolucion_obra_fecha y egreso_caja_chica_fecha son DATE (sin
+// hora) y se guardan con la fecha de Chile, así que agrupar con DATE_FORMAT no
+// depende de la zona horaria del servidor ni de la de MySQL.
 async function costoAcumuladoPorMes(codigo) {
   const opciones = { replacements: { codigo }, type: sequelize.QueryTypes.SELECT };
   const cargos = await sequelize.query(`
@@ -42,19 +44,28 @@ async function costoAcumuladoPorMes(codigo) {
     WHERE proyecto_codigo_correlativo = :codigo
     GROUP BY mes
   `, opciones);
+  const cajaChica = await sequelize.query(`
+    SELECT DATE_FORMAT(egreso_caja_chica_fecha, '%Y-%m') AS mes, SUM(egreso_caja_chica_monto) AS monto
+    FROM EGRESO_CAJA_CHICA
+    WHERE proyecto_codigo_correlativo = :codigo
+    GROUP BY mes
+  `, opciones);
 
   const meses = new Map();
-  const mesDe = clave => meses.get(clave) || meses.set(clave, { cargos: 0, creditos: 0 }).get(clave);
+  const mesDe = clave => meses.get(clave) || meses.set(clave, { cargos: 0, creditos: 0, caja: 0 }).get(clave);
   for (const c of cargos) if (c.mes) mesDe(c.mes).cargos += parseFloat(c.monto) || 0;
   for (const c of creditos) if (c.mes) mesDe(c.mes).creditos += parseFloat(c.monto) || 0;
+  for (const c of cajaChica) if (c.mes) mesDe(c.mes).caja += parseFloat(c.monto) || 0;
 
   let neto = 0;
   let rebajado = 0;
+  let cajaAcumulada = 0;
   return [...meses.keys()].sort().map(mes => {
-    const { cargos: cargo, creditos: credito } = meses.get(mes);
+    const { cargos: cargo, creditos: credito, caja } = meses.get(mes);
     neto += cargo - credito;
     rebajado += credito;
-    return { mes, acumulado: redondear(Math.max(neto, 0)), rebajado: redondear(rebajado) };
+    cajaAcumulada += caja;
+    return { mes, acumulado: redondear(Math.max(neto, 0) + cajaAcumulada), rebajado: redondear(rebajado) };
   });
 }
 

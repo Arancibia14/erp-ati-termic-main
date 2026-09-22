@@ -11,6 +11,7 @@ const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
 const GuiaDespacho     = require('../models/GuiaDespacho');
 const ContratoLaboral  = require('../models/ContratoLaboral');
 const LogAuditoria     = require('../models/LogAuditoria');
+const EgresoCajaChica  = require('../models/EgresoCajaChica');
 const { fechaHoy } = require('../utils/fecha');
 const { validarRutChileno } = require('../utils/rut');
 const { geocodificarDireccion, ErrorGeocodificacion } = require('../utils/geocodificar');
@@ -492,9 +493,52 @@ async function actualizarPlazoProyecto(req, res) {
   }
 }
 
+// Fondo de caja chica del proyecto (CU 39). Sale del presupuesto de la obra,
+// así que no puede superarlo, y no puede quedar bajo lo que ya se gastó en caja
+// chica porque el saldo quedaría negativo.
+async function actualizarCajaChicaProyecto(req, res) {
+  try {
+    const { codigo } = req.params;
+    const { monto } = req.body;
+    const valor = typeof monto === 'number' ? monto
+      : (typeof monto === 'string' && /^\s*\d+(\.\d{1,2})?\s*$/.test(monto) ? Number(monto) : NaN);
+    if (!Number.isFinite(valor) || valor < 0) {
+      return res.status(400).json({ success: false, error: 'El fondo de caja chica debe ser un monto igual o mayor a cero' });
+    }
+
+    const proyecto = await Proyecto.findByPk(codigo);
+    if (!proyecto)
+      return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
+
+    const presupuesto = parseFloat(proyecto.proyecto_presupuesto_asignado) || 0;
+    if (valor > presupuesto) {
+      return res.status(400).json({
+        success: false,
+        error: `El fondo de caja chica no puede superar el presupuesto del proyecto ($${presupuesto.toLocaleString('es-CL')})`
+      });
+    }
+    const gastado = parseFloat(await EgresoCajaChica.sum('egreso_caja_chica_monto', {
+      where: { proyecto_codigo_correlativo: codigo }
+    })) || 0;
+    if (valor < gastado) {
+      return res.status(400).json({
+        success: false,
+        error: `El fondo no puede ser menor a lo ya gastado en caja chica ($${gastado.toLocaleString('es-CL')})`
+      });
+    }
+
+    await proyecto.update({ proyecto_presupuesto_caja_chica: valor });
+    await audit(`Fondo de caja chica del proyecto ${codigo} actualizado a $${valor.toLocaleString('es-CL')}`, 'SETUP', req.user.rut);
+    return res.json({ success: true, data: proyecto });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al actualizar el fondo de caja chica' });
+  }
+}
+
 module.exports = {
   getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos,
   crearProyecto, crearProveedor, crearTrabajador, crearHito, crearSolicitudMaterial,
   crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
-  actualizarCoordenadasProyecto, actualizarPlazoProyecto
+  actualizarCoordenadasProyecto, actualizarPlazoProyecto, actualizarCajaChicaProyecto
 };

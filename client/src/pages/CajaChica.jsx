@@ -15,6 +15,8 @@ export default function CajaChica() {
   const [loadingEgresos, setLoadingEgresos] = useState(false);
   const [mostrarForm, setMostrarForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  // Fecha máxima del egreso: hoy. Se calcula una vez, no en cada render.
+  const [hoy] = useState(() => fechaLocal());
   const [form, setForm] = useState({
     egreso_caja_chica_monto: '',
     egreso_caja_chica_concepto: '',
@@ -57,11 +59,14 @@ export default function CajaChica() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    if (!form.egreso_caja_chica_monto || !form.egreso_caja_chica_concepto) {
+    if (!form.egreso_caja_chica_monto || !form.egreso_caja_chica_concepto.trim()) {
       addToast('Monto y concepto son requeridos', 'error'); return;
     }
     const monto = parseFloat(form.egreso_caja_chica_monto);
     if (isNaN(monto) || monto <= 0) { addToast('El monto debe ser mayor a 0', 'error'); return; }
+    if (form.egreso_caja_chica_fecha && form.egreso_caja_chica_fecha > hoy) {
+      addToast('La fecha del egreso no puede ser posterior a hoy', 'error'); return;
+    }
     if (saldo && monto > saldo.saldo_disponible) {
       addToast(`Saldo insuficiente. Disponible: ${fmt(saldo.saldo_disponible)}`, 'error'); return;
     }
@@ -103,8 +108,8 @@ export default function CajaChica() {
         {saldo && (
           <div className="form-grid-3" style={{ marginTop: 16 }}>
             <div style={{ background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)', borderRadius: 4, padding: '10px 14px' }}>
-              <div style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Presupuesto</div>
-              <div style={{ fontSize: 16, fontWeight: 700 }}>{fmt(saldo.presupuesto)}</div>
+              <div style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Fondo Caja Chica</div>
+              <div style={{ fontSize: 16, fontWeight: 700 }}>{fmt(saldo.fondo_caja_chica)}</div>
             </div>
             <div style={{ background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)', borderRadius: 4, padding: '10px 14px' }}>
               <div style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Total Egresos</div>
@@ -118,10 +123,15 @@ export default function CajaChica() {
             </div>
           </div>
         )}
+        {saldo && saldo.fondo_caja_chica <= 0 && (
+          <p style={{ fontSize: 12, color: 'var(--color-warning)', marginTop: 12, marginBottom: 0 }}>
+            Este proyecto no tiene fondo de caja chica asignado. El administrador debe asignarlo en Configuración → Proyectos.
+          </p>
+        )}
       </div>
 
-      {/* Botón Nuevo Egreso */}
-      {codigoSeleccionado && !mostrarForm && (
+      {/* Botón Nuevo Egreso: solo si el proyecto tiene fondo asignado */}
+      {codigoSeleccionado && !mostrarForm && saldo && saldo.fondo_caja_chica > 0 && (
         <div style={{ maxWidth: 680, marginBottom: 20 }}>
           <button className="btn btn-primary" onClick={abrirNuevo}>
             <Plus size={15} />
@@ -147,6 +157,7 @@ export default function CajaChica() {
               <input
                 type="date"
                 className="form-input"
+                max={hoy}
                 value={form.egreso_caja_chica_fecha}
                 onChange={e => setForm(f => ({ ...f, egreso_caja_chica_fecha: e.target.value }))}
               />

@@ -88,6 +88,7 @@ async function seed() {
         proyecto_nombre_obra: 'Climatización Centro Comercial Norte',
         proyecto_porcentaje_avance: 35.00,
         proyecto_presupuesto_asignado: 15000000.00,
+        proyecto_presupuesto_caja_chica: 500000.00,
         proyecto_correo_contacto: 'contacto@centronorte.cl',
         estado_proyecto_id: enEjecucion.estado_proyecto_id
       }
@@ -99,6 +100,7 @@ async function seed() {
         proyecto_nombre_obra: 'Sistema HVAC Edificio Corporativo Sur',
         proyecto_porcentaje_avance: 60.00,
         proyecto_presupuesto_asignado: 8500000.00,
+        proyecto_presupuesto_caja_chica: 300000.00,
         proyecto_correo_contacto: 'contacto@edificiosur.cl',
         estado_proyecto_id: enEjecucion.estado_proyecto_id
       }

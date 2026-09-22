@@ -121,11 +121,11 @@ async function reset() {
     // ── PROYECTOS ─────────────────────────────────────────────────────────────
     await Proyecto.findOrCreate({
       where: { proyecto_codigo_correlativo: 'PROY-2024-001' },
-      defaults: { proyecto_nombre_obra: 'Climatización Centro Comercial Norte', proyecto_porcentaje_avance: 35.00, proyecto_presupuesto_asignado: 15000000.00, proyecto_correo_contacto: 'contacto@centronorte.cl', estado_proyecto_id: enEjecucion.estado_proyecto_id }
+      defaults: { proyecto_nombre_obra: 'Climatización Centro Comercial Norte', proyecto_porcentaje_avance: 35.00, proyecto_presupuesto_asignado: 15000000.00, proyecto_presupuesto_caja_chica: 500000.00, proyecto_correo_contacto: 'contacto@centronorte.cl', estado_proyecto_id: enEjecucion.estado_proyecto_id }
     });
     await Proyecto.findOrCreate({
       where: { proyecto_codigo_correlativo: 'PROY-2024-002' },
-      defaults: { proyecto_nombre_obra: 'Sistema HVAC Edificio Corporativo Sur', proyecto_porcentaje_avance: 60.00, proyecto_presupuesto_asignado: 8500000.00, proyecto_correo_contacto: 'contacto@edificiosur.cl', estado_proyecto_id: enEjecucion.estado_proyecto_id }
+      defaults: { proyecto_nombre_obra: 'Sistema HVAC Edificio Corporativo Sur', proyecto_porcentaje_avance: 60.00, proyecto_presupuesto_asignado: 8500000.00, proyecto_presupuesto_caja_chica: 300000.00, proyecto_correo_contacto: 'contacto@edificiosur.cl', estado_proyecto_id: enEjecucion.estado_proyecto_id }
     });
     console.log('✓ Proyectos');
 

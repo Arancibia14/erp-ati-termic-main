@@ -4,7 +4,7 @@ const {
   getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos,
   crearProyecto, crearProveedor, crearTrabajador, crearHito, crearSolicitudMaterial,
   crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
-  actualizarCoordenadasProyecto, actualizarPlazoProyecto
+  actualizarCoordenadasProyecto, actualizarPlazoProyecto, actualizarCajaChicaProyecto
 } = require('../controllers/setupController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
@@ -25,6 +25,7 @@ router.post('/guia-despacho',    verifyToken, requireAdmin, crearGuiaDespacho);
 router.post('/contrato',         verifyToken, requireAdmin, crearContratoLaboral);
 router.put('/proyecto/:codigo/coordenadas', verifyToken, requireAdmin, actualizarCoordenadasProyecto);
 router.put('/proyecto/:codigo/plazo', verifyToken, requireAdmin, actualizarPlazoProyecto);
+router.put('/proyecto/:codigo/caja-chica', verifyToken, requireAdmin, actualizarCajaChicaProyecto);
 router.put('/contrato/:id',      verifyToken, requireAdmin, actualizarContratoLaboral);
 router.delete('/contrato/:id',   verifyToken, requireAdmin, eliminarContratoLaboral);
 

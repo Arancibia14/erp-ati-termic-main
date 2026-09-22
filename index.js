@@ -185,6 +185,9 @@ sequelize.authenticate()
       { tabla: 'PROYECTO', columna: 'proyecto_fecha_inicio',  tipo: { type: DataTypes.DATEONLY, allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_fecha_termino', tipo: { type: DataTypes.DATEONLY, allowNull: true } },
       { tabla: 'CONTROL_CAMBIO_PPTO', columna: 'usuario_rut', tipo: { type: DataTypes.STRING(20), allowNull: false } },
+      // Fondo de caja chica por proyecto (CU 39). Los proyectos existentes parten en $0.
+      { tabla: 'PROYECTO', columna: 'proyecto_presupuesto_caja_chica', tipo: { type: DataTypes.DECIMAL(15, 2), allowNull: false, defaultValue: 0 } },
+      { tabla: 'EGRESO_CAJA_CHICA', columna: 'usuario_rut', tipo: { type: DataTypes.STRING(20), allowNull: true } },
     ];
     for (const m of migraciones) await migrar.agregarColumna(m.tabla, m.columna, m.tipo);
 

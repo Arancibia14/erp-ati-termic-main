@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Settings, FolderPlus, Building2, UserPlus, Flag,
-  ClipboardList, Truck, FileText, MapPin, Edit3, Trash2, CalendarRange
+  ClipboardList, Truck, FileText, MapPin, Edit3, Trash2, CalendarRange, DollarSign
 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
@@ -44,6 +44,8 @@ export default function Configuracion() {
   const [loadingCoords, setLoadingCoords] = useState(false);
   const [fPlazo,      setFPlazo]      = useState({ codigo: '', inicio: '', termino: '' });
   const [loadingPlazo, setLoadingPlazo] = useState(false);
+  const [fCaja,       setFCaja]       = useState({ codigo: '', monto: '' });
+  const [loadingCaja, setLoadingCaja] = useState(false);
   const [fProveedor,  setFProveedor]  = useState({ rut: '', razon_social: '', correo: '', telefono: '' });
   const [fTrabajador, setFTrabajador] = useState({ rut: '', nombres: '', correo: '', telefono: '', especialidad_id: '', proyecto_codigo: '' });
   const [fHito,       setFHito]       = useState({ nombre: '', proyecto_codigo: '', avance: '0' });
@@ -127,6 +129,32 @@ export default function Configuracion() {
       addToast(err.response?.data?.error || 'Error al guardar el plazo', 'error');
     } finally {
       setLoadingPlazo(false);
+    }
+  };
+
+  // Al elegir el proyecto se carga su fondo de caja chica actual para editarlo
+  const elegirProyectoCaja = codigo => {
+    const p = proyectos.find(x => x.proyecto_codigo_correlativo === codigo);
+    setFCaja({ codigo, monto: p ? String(parseFloat(p.proyecto_presupuesto_caja_chica) || 0) : '' });
+  };
+
+  const submitCaja = async e => {
+    e.preventDefault();
+    if (!fCaja.codigo || fCaja.monto === '')
+      return addToast('Selecciona un proyecto e ingresa el fondo de caja chica', 'error');
+    const monto = parseFloat(fCaja.monto);
+    if (isNaN(monto) || monto < 0)
+      return addToast('El fondo de caja chica debe ser un monto igual o mayor a cero', 'error');
+    setLoadingCaja(true);
+    try {
+      await api.put(`/setup/proyecto/${fCaja.codigo}/caja-chica`, { monto });
+      addToast('Fondo de caja chica guardado', 'success');
+      setFCaja({ codigo: '', monto: '' });
+      cargarProyectos();
+    } catch (err) {
+      addToast(err.response?.data?.error || 'Error al guardar el fondo de caja chica', 'error');
+    } finally {
+      setLoadingCaja(false);
     }
   };
 
@@ -501,6 +529,40 @@ export default function Configuracion() {
                 </div>
                 <button type="submit" className="btn btn-primary" style={{ marginTop: 16 }} disabled={loadingPlazo}>
                   <CalendarRange size={15} /> {loadingPlazo ? 'Guardando...' : 'Guardar Plazo'}
+                </button>
+              </form>
+            </div>
+
+            {/* Fondo de caja chica por proyecto (CU 39) */}
+            <div style={{ marginTop: 28, borderTop: '1px solid var(--color-border)', paddingTop: 24 }}>
+              <SectionTitle><DollarSign size={12} style={{ marginRight: 6, display: 'inline' }} />Fondo de Caja Chica</SectionTitle>
+              <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 16 }}>
+                Monto que el proyecto puede gastar por caja chica. Los egresos se descuentan de este fondo y suman al gasto
+                real en Control de Costos. No puede superar el presupuesto del proyecto ni ser menor a lo ya gastado.
+              </p>
+              <form onSubmit={submitCaja}>
+                <div className="form-grid-2">
+                  <div className="form-group" style={fieldStyle}>
+                    <label className="form-label">Proyecto</label>
+                    <select className="form-select" value={fCaja.codigo}
+                      onChange={e => elegirProyectoCaja(e.target.value)}>
+                      <option value="">Selecciona un proyecto...</option>
+                      {proyectos.map(p => (
+                        <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
+                          {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
+                          {parseFloat(p.proyecto_presupuesto_caja_chica) > 0 ? ' ✓' : ' (sin fondo)'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group" style={fieldStyle}>
+                    <label className="form-label">Fondo de Caja Chica ($)</label>
+                    <input type="number" className="form-input" min="0" placeholder="0" value={fCaja.monto}
+                      onChange={e => setFCaja(f => ({ ...f, monto: e.target.value }))} />
+                  </div>
+                </div>
+                <button type="submit" className="btn btn-primary" style={{ marginTop: 16 }} disabled={loadingCaja}>
+                  <DollarSign size={15} /> {loadingCaja ? 'Guardando...' : 'Guardar Fondo'}
                 </button>
               </form>
             </div>

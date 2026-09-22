@@ -4,7 +4,7 @@ const Proyecto = require('../models/Proyecto');
 const EstadoProyecto = require('../models/EstadoProyecto');
 const EgresoCajaChica = require('../models/EgresoCajaChica');
 const LogAuditoria = require('../models/LogAuditoria');
-const { fechaHoy } = require('../utils/fecha');
+const { fechaHoy, esFechaValida } = require('../utils/fecha');
 
 async function getProyectos(req, res) {
   try {
@@ -18,6 +18,23 @@ async function getProyectos(req, res) {
   }
 }
 
+async function totalEgresos(codigo) {
+  const [result] = await sequelize.query(
+    'SELECT COALESCE(SUM(egreso_caja_chica_monto), 0) as total_egresos FROM EGRESO_CAJA_CHICA WHERE proyecto_codigo_correlativo = :codigo',
+    { replacements: { codigo }, type: sequelize.QueryTypes.SELECT }
+  );
+  return parseFloat(result.total_egresos) || 0;
+}
+
+// El saldo de la caja chica sale del fondo asignado al proyecto, no de su
+// presupuesto completo: el presupuesto de la obra también lo consumen las
+// órdenes de compra, y usarlo aquí permitía gastar dos veces el mismo dinero.
+async function calcularSaldo(proyecto) {
+  const fondo = parseFloat(proyecto.proyecto_presupuesto_caja_chica) || 0;
+  const egresos = await totalEgresos(proyecto.proyecto_codigo_correlativo);
+  return { fondo_caja_chica: fondo, total_egresos: egresos, saldo_disponible: fondo - egresos };
+}
+
 async function getSaldo(req, res) {
   try {
     const { codigo } = req.params;
@@ -25,41 +42,45 @@ async function getSaldo(req, res) {
     if (!proyecto) {
       return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
     }
-
-    const [result] = await sequelize.query(
-      'SELECT COALESCE(SUM(egreso_caja_chica_monto), 0) as total_egresos FROM EGRESO_CAJA_CHICA WHERE proyecto_codigo_correlativo = :codigo',
-      { replacements: { codigo }, type: sequelize.QueryTypes.SELECT }
-    );
-
-    const totalEgresos = parseFloat(result.total_egresos) || 0;
-    const presupuesto = parseFloat(proyecto.proyecto_presupuesto_asignado) || 0;
-    const saldo = presupuesto - totalEgresos;
-
-    return res.json({
-      success: true,
-      data: {
-        presupuesto,
-        total_egresos: totalEgresos,
-        saldo_disponible: saldo
-      }
-    });
+    return res.json({ success: true, data: await calcularSaldo(proyecto) });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, error: 'Error al calcular saldo' });
   }
 }
 
+// Monto en pesos: un número, o un texto de solo dígitos con hasta 2 decimales.
+// parseFloat("abc") da NaN y NaN <= 0 es falso, así que antes un monto no
+// numérico pasaba la validación y el egreso se guardaba igual.
+function leerMonto(valor) {
+  if (typeof valor === 'number') return valor;
+  if (typeof valor === 'string' && /^\s*\d+(\.\d{1,2})?\s*$/.test(valor)) return Number(valor);
+  return NaN;
+}
+
 async function registrarEgreso(req, res) {
   try {
     const { proyecto_codigo_correlativo, egreso_caja_chica_monto, egreso_caja_chica_concepto, egreso_caja_chica_fecha } = req.body;
+    const concepto = typeof egreso_caja_chica_concepto === 'string' ? egreso_caja_chica_concepto.trim() : '';
 
-    if (!proyecto_codigo_correlativo || !egreso_caja_chica_monto || !egreso_caja_chica_concepto) {
+    if (!proyecto_codigo_correlativo || !egreso_caja_chica_monto || !concepto) {
       return res.status(400).json({ success: false, error: 'Proyecto, monto y concepto son requeridos' });
     }
 
-    const monto = parseFloat(egreso_caja_chica_monto);
-    if (monto <= 0) {
+    const monto = leerMonto(egreso_caja_chica_monto);
+    if (!Number.isFinite(monto) || monto <= 0) {
       return res.status(400).json({ success: false, error: 'El monto debe ser mayor a 0' });
+    }
+
+    // La fecha la ingresa el actor (paso 19 del CU 39): si viene, debe ser una
+    // fecha real y no posterior a hoy. Sin fecha se usa la de hoy.
+    const hoy = fechaHoy();
+    const fecha = egreso_caja_chica_fecha || hoy;
+    if (!esFechaValida(fecha)) {
+      return res.status(400).json({ success: false, error: 'La fecha del egreso no es válida' });
+    }
+    if (fecha > hoy) {
+      return res.status(400).json({ success: false, error: 'La fecha del egreso no puede ser posterior a hoy' });
     }
 
     const proyecto = await Proyecto.findByPk(proyecto_codigo_correlativo);
@@ -67,13 +88,13 @@ async function registrarEgreso(req, res) {
       return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
     }
 
-    const [result] = await sequelize.query(
-      'SELECT COALESCE(SUM(egreso_caja_chica_monto), 0) as total_egresos FROM EGRESO_CAJA_CHICA WHERE proyecto_codigo_correlativo = :codigo',
-      { replacements: { codigo: proyecto_codigo_correlativo }, type: sequelize.QueryTypes.SELECT }
-    );
-
-    const totalEgresos = parseFloat(result.total_egresos) || 0;
-    const saldo = parseFloat(proyecto.proyecto_presupuesto_asignado) - totalEgresos;
+    const { fondo_caja_chica: fondo, saldo_disponible: saldo } = await calcularSaldo(proyecto);
+    if (fondo <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'El proyecto no tiene fondo de caja chica asignado. El administrador debe asignarlo en Configuración.'
+      });
+    }
 
     if (monto > saldo) {
       return res.status(400).json({
@@ -84,9 +105,10 @@ async function registrarEgreso(req, res) {
 
     const egreso = await EgresoCajaChica.create({
       egreso_caja_chica_monto: monto,
-      egreso_caja_chica_fecha: egreso_caja_chica_fecha || fechaHoy(),
-      egreso_caja_chica_concepto,
-      proyecto_codigo_correlativo
+      egreso_caja_chica_fecha: fecha,
+      egreso_caja_chica_concepto: concepto,
+      proyecto_codigo_correlativo,
+      usuario_rut: req.user.rut
     });
 
     try {

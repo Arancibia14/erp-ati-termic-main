@@ -59,19 +59,20 @@ CREATE TABLE IF NOT EXISTS PROVEEDOR (
 
 -- PROYECTO
 CREATE TABLE IF NOT EXISTS PROYECTO (
-    proyecto_codigo_correlativo    VARCHAR(50)    NOT NULL,
-    proyecto_nombre_obra           VARCHAR(255)   NOT NULL,
-    proyecto_porcentaje_avance     DECIMAL(5,2)   NOT NULL DEFAULT 0,
-    proyecto_presupuesto_asignado  DECIMAL(15,2)  NOT NULL,
-    proyecto_correo_contacto       VARCHAR(150)   NOT NULL,
-    estado_proyecto_id             INT            NOT NULL,
-    proveedor_rut                  VARCHAR(20)    NULL,
-    proyecto_descripcion_tecnica   TEXT           NULL,
-    proyecto_ubicacion             VARCHAR(255)   NULL,
-    proyecto_latitud               DECIMAL(10,7)  NULL,
-    proyecto_longitud              DECIMAL(10,7)  NULL,
-    proyecto_fecha_inicio          DATE           NULL,
-    proyecto_fecha_termino         DATE           NULL,
+    proyecto_codigo_correlativo      VARCHAR(50)    NOT NULL,
+    proyecto_nombre_obra             VARCHAR(255)   NOT NULL,
+    proyecto_porcentaje_avance       DECIMAL(5,2)   NOT NULL DEFAULT 0,
+    proyecto_presupuesto_asignado    DECIMAL(15,2)  NOT NULL,
+    proyecto_correo_contacto         VARCHAR(150)   NOT NULL,
+    estado_proyecto_id               INT            NOT NULL,
+    proveedor_rut                    VARCHAR(20)    NULL,
+    proyecto_descripcion_tecnica     TEXT           NULL,
+    proyecto_ubicacion               VARCHAR(255)   NULL,
+    proyecto_latitud                 DECIMAL(10,7)  NULL,
+    proyecto_longitud                DECIMAL(10,7)  NULL,
+    proyecto_fecha_inicio            DATE           NULL,
+    proyecto_fecha_termino           DATE           NULL,
+    proyecto_presupuesto_caja_chica  DECIMAL(15,2)  NOT NULL DEFAULT 0,
     PRIMARY KEY (proyecto_codigo_correlativo),
     CONSTRAINT fk_proyecto_estado_proyecto_id
         FOREIGN KEY (estado_proyecto_id) REFERENCES ESTADO_PROYECTO (estado_proyecto_id),
@@ -229,9 +230,12 @@ CREATE TABLE IF NOT EXISTS EGRESO_CAJA_CHICA (
     egreso_caja_chica_fecha      DATE           NOT NULL,
     egreso_caja_chica_concepto   TEXT           NOT NULL,
     proyecto_codigo_correlativo  VARCHAR(50)    NOT NULL,
+    usuario_rut                  VARCHAR(20)    NULL,
     PRIMARY KEY (egreso_caja_chica_id),
     CONSTRAINT fk_egreso_caja_chica_proyecto_codigo_correlativo
-        FOREIGN KEY (proyecto_codigo_correlativo) REFERENCES PROYECTO (proyecto_codigo_correlativo)
+        FOREIGN KEY (proyecto_codigo_correlativo) REFERENCES PROYECTO (proyecto_codigo_correlativo),
+    CONSTRAINT fk_egreso_caja_chica_usuario_rut
+        FOREIGN KEY (usuario_rut) REFERENCES USUARIO (usuario_rut)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- EQUIPO_HVAC

@@ -15,7 +15,10 @@ const Proyecto = sequelize.define('Proyecto', {
   proyecto_longitud: { type: DataTypes.DECIMAL(10, 7), allowNull: true },
   // Plazo de la obra: Control de Costos reparte el presupuesto planificado en sus meses
   proyecto_fecha_inicio: { type: DataTypes.DATEONLY, allowNull: true },
-  proyecto_fecha_termino: { type: DataTypes.DATEONLY, allowNull: true }
+  proyecto_fecha_termino: { type: DataTypes.DATEONLY, allowNull: true },
+  // Fondo de caja chica (CU 39): lo asigna el administrador y los egresos se
+  // descuentan de él, no del presupuesto completo de la obra
+  proyecto_presupuesto_caja_chica: { type: DataTypes.DECIMAL(15, 2), allowNull: false, defaultValue: 0 }
 }, {
   tableName: 'PROYECTO',
   timestamps: false
