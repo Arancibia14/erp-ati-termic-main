@@ -5,6 +5,8 @@ import {
   ArrowLeft, CornerDownLeft
 } from 'lucide-react';
 import logo from '../assets/logo.png';
+import avatarAdministrador from '../assets/avatar-administrador.png';
+import avatarSupervisor from '../assets/avatar-supervisor.png';
 import {
   modulosVisibles, buscarItem, moduloDeRuta, normalizar,
   registrarReciente, BARRA_ADMIN, BARRA_SUPERVISOR
@@ -180,8 +182,11 @@ export default function Sidebar() {
     navigate('/login');
   };
 
-  const iniciales = (usuario.nombre || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
   const rolEtiqueta = esAdmin ? 'Administrador' : 'Supervisor';
+  // El avatar identifica el rol: corbata para el Administrador Total, casco para el Supervisor de Obra
+  const avatar = (
+    <img src={esAdmin ? avatarAdministrador : avatarSupervisor} alt={rolEtiqueta} draggable="false" />
+  );
   const TemaIcon = tema === 'dark' ? Sun : Moon;
   const temaTexto = tema === 'dark' ? 'Modo claro' : 'Modo oscuro';
   const moduloActual = moduloDeRuta(pathname);
@@ -222,7 +227,7 @@ export default function Sidebar() {
 
   const infoUsuario = (
     <div className="sb-user-row">
-      <div className="sb-avatar">{iniciales}</div>
+      <div className="sb-avatar">{avatar}</div>
       <div className="sb-user-info">
         <div className="sb-user-name">{usuario.nombre || 'Usuario'}</div>
         <div className="sb-user-role">{rolEtiqueta}</div>
@@ -307,7 +312,7 @@ export default function Sidebar() {
                   setMenuUsuario(v => !v);
                 }}
               >
-                <div className="sb-avatar small">{iniciales}</div>
+                <div className="sb-avatar small">{avatar}</div>
               </button>
               {menuUsuario && (
                 <div className="tb-usermenu">
@@ -379,7 +384,7 @@ export default function Sidebar() {
           <button type="button" className="mh-btn" onClick={alternarTema} aria-label={temaTexto}>
             <TemaIcon size={17} />
           </button>
-          <div className="sb-avatar small">{iniciales}</div>
+          <div className="sb-avatar small">{avatar}</div>
         </div>
       </header>
 

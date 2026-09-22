@@ -207,14 +207,13 @@ kbd {
   padding: 0;
   background: none;
   border: none;
-  border-radius: 10px;
+  border-radius: 50%;
   cursor: pointer;
 }
 
 .tb-avatar-btn .sb-avatar {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
 }
 
 .tb-usermenu {
@@ -488,26 +487,28 @@ kbd {
   margin-bottom: 12px;
 }
 
+/* El avatar es el ícono circular del rol (corbata o casco), con fondo transparente */
 .sb-avatar {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
+  border-radius: 50%;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 0.5px;
-  background: linear-gradient(135deg, #2563eb 0%, #4a9e2a 100%);
+}
+
+.sb-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
 }
 
 .sb-avatar.small {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
-  font-size: 12px;
 }
 
 .sb-user-info {
