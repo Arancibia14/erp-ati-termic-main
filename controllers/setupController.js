@@ -120,33 +120,103 @@ async function getContratos(req, res) {
 
 // ── CREACIONES ────────────────────────────────────────────────────────────────
 
+// CU08 - Estado con el que nace toda obra recién creada.
+const ESTADO_INICIAL_PROYECTO = 'Planificación';
+
+// CU08 paso 5 - El correlativo lo asigna el sistema, no el usuario.
+// Se recorre el año en curso y se toma el mayor número ya emitido. El máximo se
+// calcula numéricamente y no por orden alfabético, para que el día que se pase
+// de OBR-AAAA-999 a cuatro dígitos la serie siga avanzando bien.
+async function siguienteCodigoProyecto(anio) {
+  const prefijo = `OBR-${anio}-`;
+  const emitidos = await Proyecto.findAll({
+    attributes: ['proyecto_codigo_correlativo'],
+    where: { proyecto_codigo_correlativo: { [Op.like]: `${prefijo}%` } }
+  });
+
+  let mayor = 0;
+  for (const p of emitidos) {
+    const sufijo = p.proyecto_codigo_correlativo.slice(prefijo.length);
+    // Solo cuentan los sufijos puramente numéricos: un código cargado a mano
+    // con otro formato no debe cortar la serie.
+    if (!/^\d+$/.test(sufijo)) continue;
+    const n = parseInt(sufijo, 10);
+    if (n > mayor) mayor = n;
+  }
+
+  return prefijo + String(mayor + 1).padStart(3, '0');
+}
+
 async function crearProyecto(req, res) {
   try {
-    const { proyecto_codigo_correlativo, proyecto_nombre_obra, proyecto_presupuesto_asignado, proyecto_correo_contacto, estado_proyecto_id, proyecto_fecha_inicio, proyecto_fecha_termino } = req.body;
-    if (!proyecto_codigo_correlativo || !proyecto_nombre_obra || !proyecto_presupuesto_asignado || !proyecto_correo_contacto || !estado_proyecto_id) {
-      return res.status(400).json({ success: false, error: 'Todos los campos son requeridos' });
+    const { proyecto_nombre_obra, proyecto_presupuesto_asignado, proyecto_correo_contacto, proyecto_ubicacion, proyecto_tipo_sistema, proyecto_fecha_inicio, proyecto_fecha_termino } = req.body;
+
+    // CU08 Excepción 1 - Se devuelve qué campos faltan para que la pantalla los resalte
+    const faltantes = [];
+    if (!proyecto_nombre_obra || !String(proyecto_nombre_obra).trim()) faltantes.push('proyecto_nombre_obra');
+    if (!proyecto_presupuesto_asignado) faltantes.push('proyecto_presupuesto_asignado');
+    if (!proyecto_correo_contacto || !String(proyecto_correo_contacto).trim()) faltantes.push('proyecto_correo_contacto');
+    if (!proyecto_ubicacion || !String(proyecto_ubicacion).trim()) faltantes.push('proyecto_ubicacion');
+    if (!proyecto_tipo_sistema || !String(proyecto_tipo_sistema).trim()) faltantes.push('proyecto_tipo_sistema');
+    if (faltantes.length) {
+      return res.status(400).json({ success: false, error: 'Completa los campos obligatorios', campos: faltantes });
+    }
+
+    // CU08 paso 4 - Validación de formato de los datos ingresados
+    const presupuesto = parseFloat(proyecto_presupuesto_asignado);
+    if (!Number.isFinite(presupuesto) || presupuesto <= 0) {
+      return res.status(400).json({ success: false, error: 'El presupuesto debe ser un monto mayor que cero', campos: ['proyecto_presupuesto_asignado'] });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(proyecto_correo_contacto).trim())) {
+      return res.status(400).json({ success: false, error: 'El correo de contacto no tiene un formato válido', campos: ['proyecto_correo_contacto'] });
     }
     // El plazo es opcional al crear, pero si se indica debe venir completo
     if (proyecto_fecha_inicio || proyecto_fecha_termino) {
       const errorPlazo = errorPlazoProyecto(proyecto_fecha_inicio, proyecto_fecha_termino);
-      if (errorPlazo) return res.status(400).json({ success: false, error: errorPlazo });
+      if (errorPlazo) return res.status(400).json({ success: false, error: errorPlazo, campos: ['proyecto_fecha_inicio', 'proyecto_fecha_termino'] });
     }
-    const existe = await Proyecto.findByPk(proyecto_codigo_correlativo);
-    if (existe) return res.status(400).json({ success: false, error: 'Ya existe un proyecto con ese código' });
 
-    const proyecto = await Proyecto.create({
-      proyecto_codigo_correlativo,
-      proyecto_nombre_obra,
-      proyecto_presupuesto_asignado: parseFloat(proyecto_presupuesto_asignado),
-      proyecto_correo_contacto,
-      proyecto_porcentaje_avance: 0,
-      estado_proyecto_id: parseInt(estado_proyecto_id),
-      proyecto_fecha_inicio: proyecto_fecha_inicio || null,
-      proyecto_fecha_termino: proyecto_fecha_termino || null
+    // CU08 postcondición - La obra nace en estado "Planificación"
+    const [estadoInicial] = await EstadoProyecto.findOrCreate({
+      where: { estado_proyecto_nombre: ESTADO_INICIAL_PROYECTO },
+      defaults: { estado_proyecto_nombre: ESTADO_INICIAL_PROYECTO }
     });
 
-    await audit(`Proyecto ${proyecto_codigo_correlativo} creado`, 'SETUP', req.user.rut);
-    return res.status(201).json({ success: true, data: proyecto });
+    const anio = new Date().getFullYear();
+
+    // Dos administradores creando a la vez pueden calcular el mismo correlativo.
+    // La clave primaria es la que decide: si pierde la carrera, se recalcula.
+    let proyecto = null;
+    for (let intento = 0; intento < 5 && !proyecto; intento++) {
+      const codigo = await siguienteCodigoProyecto(anio);
+      try {
+        proyecto = await Proyecto.create({
+          proyecto_codigo_correlativo: codigo,
+          proyecto_nombre_obra: String(proyecto_nombre_obra).trim(),
+          proyecto_presupuesto_asignado: presupuesto,
+          proyecto_correo_contacto: String(proyecto_correo_contacto).trim(),
+          proyecto_ubicacion: String(proyecto_ubicacion).trim(),
+          proyecto_tipo_sistema: String(proyecto_tipo_sistema).trim(),
+          proyecto_porcentaje_avance: 0,
+          estado_proyecto_id: estadoInicial.estado_proyecto_id,
+          proyecto_fecha_inicio: proyecto_fecha_inicio || null,
+          proyecto_fecha_termino: proyecto_fecha_termino || null
+        });
+      } catch (err) {
+        if (err.name !== 'SequelizeUniqueConstraintError') throw err;
+      }
+    }
+    if (!proyecto) {
+      return res.status(409).json({ success: false, error: 'No se pudo asignar un código correlativo, vuelve a intentarlo' });
+    }
+
+    await audit(`Proyecto ${proyecto.proyecto_codigo_correlativo} creado`, 'SETUP', req.user.rut);
+    // CU08 paso 6 - El mensaje de confirmación lleva el código asignado
+    return res.status(201).json({
+      success: true,
+      data: proyecto,
+      mensaje: `Proyecto creado exitosamente con el código ${proyecto.proyecto_codigo_correlativo}`
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, error: err.message || 'Error al crear proyecto' });

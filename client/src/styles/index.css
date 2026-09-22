@@ -209,6 +209,21 @@ input, select, textarea, button {
   color: var(--color-text-muted);
 }
 
+/* Campo obligatorio que quedó sin completar */
+.form-input.is-invalid,
+.form-select.is-invalid,
+.form-textarea.is-invalid {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-muted);
+}
+
+.form-input.is-invalid:focus,
+.form-select.is-invalid:focus,
+.form-textarea.is-invalid:focus {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
 /* ──────────────────────────────
    BUTTONS
 ────────────────────────────── */
