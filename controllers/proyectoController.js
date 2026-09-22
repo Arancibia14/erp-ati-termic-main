@@ -6,7 +6,8 @@ const LogAuditoria = require('../models/LogAuditoria');
 
 async function getProveedores(req, res) {
   try {
-    const proveedores = await Proveedor.findAll();
+    // CU34 paso 10 - Los proveedores dados de baja no se ofrecen
+    const proveedores = await Proveedor.findAll({ where: { proveedor_activo: true } });
     return res.json({ success: true, data: proveedores });
   } catch (err) {
     console.error(err);

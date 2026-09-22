@@ -13,6 +13,8 @@ const TONOS = {
   'grave': 'amber',
   'fatal': 'red',
   'Vigente': 'green',
+  'Activo': 'green',
+  'Inactivo': 'gray',
   'PendienteFirma': 'amber',
   'Recibido': 'green',
   'Facturado': 'blue',

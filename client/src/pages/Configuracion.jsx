@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  Settings, FolderPlus, Building2, UserPlus,
+  Settings, FolderPlus, UserPlus,
   ClipboardList, Truck, FileText, Edit3, Trash2, CalendarRange, DollarSign
 } from 'lucide-react';
 import api from '../api/axios';
@@ -9,7 +9,6 @@ import Badge from '../components/Badge';
 
 const TABS = [
   { id: 'proyecto',   label: 'Proyectos',       icon: FolderPlus },
-  { id: 'proveedor',  label: 'Proveedores',      icon: Building2 },
   { id: 'trabajador', label: 'Trabajadores',     icon: UserPlus },
   { id: 'sm',         label: 'Solicitudes Mat.', icon: ClipboardList },
   { id: 'guia',       label: 'Guías Despacho',   icon: Truck },
@@ -44,7 +43,6 @@ export default function Configuracion() {
   const [loadingPlazo, setLoadingPlazo] = useState(false);
   const [fCaja,       setFCaja]       = useState({ codigo: '', monto: '' });
   const [loadingCaja, setLoadingCaja] = useState(false);
-  const [fProveedor,  setFProveedor]  = useState({ rut: '', razon_social: '', correo: '', telefono: '' });
   const [fTrabajador, setFTrabajador] = useState({ rut: '', nombres: '', correo: '', telefono: '', especialidad_id: '', proyecto_codigo: '' });
   const [fSM,         setFSM]         = useState({ descripcion: '', cantidad: '', proyecto_codigo: '' });
   const [fGuia,       setFGuia]       = useState({ numero: '', fecha: '', orden_id: '' });
@@ -175,18 +173,6 @@ export default function Configuracion() {
     } finally {
       setLoadingCaja(false);
     }
-  };
-
-  const submitProveedor = e => {
-    e.preventDefault();
-    if (!fProveedor.rut || !fProveedor.razon_social || !fProveedor.correo)
-      return addToast('RUT, razón social y correo son requeridos', 'error');
-    send('/setup/proveedor', {
-      proveedor_rut: fProveedor.rut.trim(),
-      proveedor_razon_social: fProveedor.razon_social,
-      proveedor_correo: fProveedor.correo,
-      proveedor_telefono: fProveedor.telefono || null
-    }, () => setFProveedor({ rut: '', razon_social: '', correo: '', telefono: '' }));
   };
 
   const submitTrabajador = e => {
@@ -488,38 +474,8 @@ export default function Configuracion() {
         )}
 
         {/* ── PROVEEDORES ───────────────────────────────────────── */}
-        {tab === 'proveedor' && (
-          <div className="card">
-            <SectionTitle>Nuevo Proveedor / Subcontratista</SectionTitle>
-            <form onSubmit={submitProveedor}>
-              <div className="form-grid-2">
-                <div className="form-group" style={fieldStyle}>
-                  <label className="form-label">RUT (ej: 76543210-9)</label>
-                  <input className="form-input" placeholder="12345678-9" value={fProveedor.rut}
-                    onChange={e => setFProveedor(f => ({ ...f, rut: e.target.value }))} />
-                </div>
-                <div className="form-group" style={fieldStyle}>
-                  <label className="form-label">Teléfono</label>
-                  <input className="form-input" placeholder="+56 9 1234 5678" value={fProveedor.telefono}
-                    onChange={e => setFProveedor(f => ({ ...f, telefono: e.target.value }))} />
-                </div>
-              </div>
-              <div className="form-group" style={{ marginTop: 14 }}>
-                <label className="form-label">Razón Social</label>
-                <input className="form-input" placeholder="Nombre de la empresa..." value={fProveedor.razon_social}
-                  onChange={e => setFProveedor(f => ({ ...f, razon_social: e.target.value }))} />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Correo</label>
-                <input type="email" className="form-input" placeholder="empresa@correo.cl" value={fProveedor.correo}
-                  onChange={e => setFProveedor(f => ({ ...f, correo: e.target.value }))} />
-              </div>
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                <Building2 size={15} /> {loading ? 'Creando...' : 'Crear Proveedor'}
-              </button>
-            </form>
-          </div>
-        )}
+        {/* El catalogo de proveedores vive en su propia pagina (CU34),
+            donde ademas se pueden dar de baja. */}
 
         {/* ── TRABAJADORES ──────────────────────────────────────── */}
         {tab === 'trabajador' && (

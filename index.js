@@ -141,6 +141,7 @@ app.use('/api/setup',    require('./routes/setup'));
 app.use('/api/hito',     require('./routes/hito'));
 app.use('/api/ubicacion', require('./routes/ubicacion'));
 app.use('/api/especificacion', require('./routes/especificacion'));
+app.use('/api/proveedor',  require('./routes/proveedor'));
 app.use('/api/material', require('./routes/material'));
 app.use('/api/solicitud-material', require('./routes/solicitudMaterial'));
 app.use('/api/trabajador', require('./routes/trabajador'));
@@ -184,6 +185,8 @@ sequelize.authenticate()
       { tabla: 'PROYECTO', columna: 'proyecto_descripcion_tecnica', tipo: { type: DataTypes.TEXT, allowNull: true } },
       // CU08 - Tipo de sistema de climatización pedido en el alta de la obra
       { tabla: 'PROYECTO', columna: 'proyecto_tipo_sistema', tipo: { type: DataTypes.STRING(100), allowNull: true } },
+      // CU34 - Baja lógica de proveedores del catálogo
+      { tabla: 'PROVEEDOR', columna: 'proveedor_activo', tipo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true } },
       // CU09 - Cronograma estimado de cada hito técnico
       { tabla: 'HITO_TECNICO', columna: 'hito_tecnico_fecha_inicio_estimada',  tipo: { type: DataTypes.DATEONLY, allowNull: true } },
       { tabla: 'HITO_TECNICO', columna: 'hito_tecnico_fecha_termino_estimada', tipo: { type: DataTypes.DATEONLY, allowNull: true } },
@@ -372,6 +375,13 @@ sequelize.authenticate()
       "ALTER TABLE DEVOLUCION_OBRA ADD COLUMN devolucion_obra_monto_rebajado DECIMAL(15,2) NULL DEFAULT 0",
     ];
     for (const sql of devolucionMigs) await migrar.sql(sql);
+
+    // CU34 - El correo del proveedor pasa a ser opcional: el caso de uso solo
+    // exige RUT y razón social.
+    const proveedorMigs = [
+      "ALTER TABLE PROVEEDOR MODIFY proveedor_correo VARCHAR(150) NULL",
+    ];
+    for (const sql of proveedorMigs) await migrar.sql(sql);
 
     await migrar.finalizar();
   })

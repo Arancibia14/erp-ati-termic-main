@@ -2,7 +2,6 @@ const { Op }           = require('sequelize');
 const EstadoProyecto   = require('../models/EstadoProyecto');
 const Especialidad     = require('../models/Especialidad');
 const Proyecto         = require('../models/Proyecto');
-const Proveedor        = require('../models/Proveedor');
 const Trabajador       = require('../models/Trabajador');
 const SolicitudMaterial = require('../models/SolicitudMaterial');
 const OrdenCompra      = require('../models/OrdenCompra');
@@ -218,29 +217,6 @@ async function crearProyecto(req, res) {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, error: err.message || 'Error al crear proyecto' });
-  }
-}
-
-async function crearProveedor(req, res) {
-  try {
-    const { proveedor_rut, proveedor_razon_social, proveedor_correo, proveedor_telefono } = req.body;
-    if (!proveedor_rut || !proveedor_razon_social || !proveedor_correo) {
-      return res.status(400).json({ success: false, error: 'RUT, razón social y correo son requeridos' });
-    }
-    const existe = await Proveedor.findByPk(proveedor_rut);
-    if (existe) return res.status(400).json({ success: false, error: 'Ya existe un proveedor con ese RUT' });
-
-    const proveedor = await Proveedor.create({
-      proveedor_rut,
-      proveedor_razon_social,
-      proveedor_correo,
-      proveedor_telefono: proveedor_telefono || null
-    });
-    await audit(`Proveedor ${proveedor_rut} creado`, 'SETUP', req.user.rut);
-    return res.status(201).json({ success: true, data: proveedor });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ success: false, error: err.message || 'Error al crear proveedor' });
   }
 }
 
@@ -532,7 +508,7 @@ async function actualizarCajaChicaProyecto(req, res) {
 
 module.exports = {
   getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos,
-  crearProyecto, crearProveedor, crearTrabajador, crearSolicitudMaterial,
+  crearProyecto, crearTrabajador, crearSolicitudMaterial,
   crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
   actualizarPlazoProyecto, actualizarCajaChicaProyecto
 };

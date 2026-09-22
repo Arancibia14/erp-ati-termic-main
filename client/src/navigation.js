@@ -55,6 +55,7 @@ export const MODULOS = [
       { to: '/certificados-calidad', icon: BadgeCheck, label: 'Certificados de Calidad', short: 'Calidad' },
       { to: '/devolucion-obra', icon: Undo2, label: 'Devolución de Obra', short: 'Devolución' },
       { to: '/catalogo', icon: Warehouse, label: 'Catálogo Maestro', short: 'Catálogo', admin: true },
+      { to: '/proveedores', icon: Building2, label: 'Catálogo de Proveedores', short: 'Proveedores', admin: true },
       { to: '/catalogo-equipos', icon: AirVent, label: 'Catálogo de Equipos', short: 'Equipos', admin: true },
       { to: '/herramientas', icon: Wrench, label: 'Herramientas', short: 'Herramientas' }
     ]

@@ -8,7 +8,11 @@ const { fechaHoy } = require('../utils/fecha');
 
 async function getProveedores(req, res) {
   try {
-    const proveedores = await Proveedor.findAll({ order: [['proveedor_razon_social', 'ASC']] });
+    // CU34 paso 10 - Los proveedores dados de baja no se ofrecen
+    const proveedores = await Proveedor.findAll({
+      where: { proveedor_activo: true },
+      order: [['proveedor_razon_social', 'ASC']]
+    });
     return res.json({ success: true, data: proveedores });
   } catch (err) {
     console.error(err);

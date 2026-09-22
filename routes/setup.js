@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos,
-  crearProyecto, crearProveedor, crearTrabajador, crearSolicitudMaterial,
+  crearProyecto, crearTrabajador, crearSolicitudMaterial,
   crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
   actualizarPlazoProyecto, actualizarCajaChicaProyecto
 } = require('../controllers/setupController');
@@ -17,7 +17,6 @@ router.get('/ordenes',           verifyToken, getOrdenes);
 router.get('/contratos',         verifyToken, requireAdmin, getContratos);
 // Altas de datos base: solo las usa Configuración, que es exclusiva del administrador
 router.post('/proyecto',         verifyToken, requireAdmin, crearProyecto);
-router.post('/proveedor',        verifyToken, requireAdmin, crearProveedor);
 router.post('/trabajador',       verifyToken, requireAdmin, crearTrabajador);
 router.post('/solicitud-material', verifyToken, requireAdmin, crearSolicitudMaterial);
 router.post('/guia-despacho',    verifyToken, requireAdmin, crearGuiaDespacho);
