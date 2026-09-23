@@ -1,8 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Image, Edit3, Save, ChevronDown, ChevronUp } from 'lucide-react';
+import { Image, Edit3, Save, ChevronDown, ChevronUp, Repeat } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+
+// CU11 - Próximos estados válidos desde el estado actual del proyecto.
+// "Detenido" no aparece nunca como destino: eso lo cubre el CU12 (exige motivo).
+function opcionesEstado(actual) {
+  if (actual === 'Finalizado') return [];
+  if (actual === 'Detenido') return ['En Ejecución'];
+  if (actual === 'Planificación') return ['En Ejecución'];
+  if (actual === 'En Ejecución') return ['Planificación', 'Finalizado'];
+  return [];
+}
 
 export default function Portafolio() {
   const { toasts, addToast, removeToast } = useToast();
@@ -12,6 +22,11 @@ export default function Portafolio() {
   const [imagenes, setImagenes] = useState([]);
   const [guardando, setGuardando] = useState(false);
   const [form, setForm] = useState({ proyecto_nombre_obra: '', proyecto_correo_contacto: '', proyecto_descripcion_tecnica: '', proyecto_ubicacion: '' });
+
+  // CU11 - Actualizando estado del proyecto
+  const [nuevoEstado, setNuevoEstado] = useState('');
+  const [cambiandoEstado, setCambiandoEstado] = useState(false);
+  const [erroresEstado, setErroresEstado] = useState([]);
 
   useEffect(() => {
     cargarProyectos();
@@ -34,11 +49,36 @@ export default function Portafolio() {
       proyecto_ubicacion: p.proyecto_ubicacion || ''
     });
     setImagenes([]);
+    const opciones = opcionesEstado(p.EstadoProyecto?.estado_proyecto_nombre);
+    setNuevoEstado(opciones[0] || '');
+    setErroresEstado([]);
   };
 
   const cerrarEdicion = () => {
     setEditando(null);
     setImagenes([]);
+  };
+
+  // CU11 - Actualizando estado del proyecto
+  const cambiarEstado = async codigo => {
+    if (!nuevoEstado) {
+      setErroresEstado(['estado_proyecto_nombre']);
+      return addToast('Selecciona el nuevo estado del proyecto', 'error');
+    }
+    setErroresEstado([]);
+    setCambiandoEstado(true);
+    try {
+      const r = await api.put(`/portafolio/${codigo}/estado`, { estado_proyecto_nombre: nuevoEstado });
+      addToast(r.data.mensaje || 'Estado del proyecto actualizado correctamente', 'success');
+      cargarProyectos();
+      const opciones = opcionesEstado(nuevoEstado);
+      setNuevoEstado(opciones[0] || '');
+    } catch (err) {
+      addToast(err.response?.data?.error || 'Error al cambiar el estado', 'error');
+      setErroresEstado(err.response?.data?.campos || []);
+    } finally {
+      setCambiandoEstado(false);
+    }
   };
 
   const handleImagenes = e => {
@@ -124,6 +164,40 @@ export default function Portafolio() {
             {/* Panel de edición */}
             {editando === p.proyecto_codigo_correlativo && (
               <div style={{ borderTop: '1px solid var(--color-border)', padding: 20 }}>
+                {/* CU11 - Actualizando estado del proyecto */}
+                <div className="form-group">
+                  <label className="form-label">Estado del Proyecto</label>
+                  {opcionesEstado(p.EstadoProyecto?.estado_proyecto_nombre).length === 0 ? (
+                    <p style={{ fontSize: 13, color: 'var(--color-text-muted)', margin: 0 }}>
+                      {p.EstadoProyecto?.estado_proyecto_nombre === 'Finalizado'
+                        ? 'Proyecto finalizado: no se puede cambiar de estado.'
+                        : 'No hay transiciones disponibles para este estado.'}
+                    </p>
+                  ) : (
+                    <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <select
+                        className={'form-select' + (erroresEstado.includes('estado_proyecto_nombre') ? ' is-invalid' : '')}
+                        style={{ maxWidth: 220 }}
+                        value={nuevoEstado}
+                        onChange={e => { setNuevoEstado(e.target.value); setErroresEstado([]); }}
+                      >
+                        {opcionesEstado(p.EstadoProyecto?.estado_proyecto_nombre).map(op => (
+                          <option key={op} value={op}>{op}</option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => cambiarEstado(p.proyecto_codigo_correlativo)}
+                        disabled={cambiandoEstado}
+                      >
+                        <Repeat size={14} />
+                        {cambiandoEstado ? 'Cambiando...' : 'Cambiar Estado'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 <div className="form-grid-2" style={{ marginBottom: 16 }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
                     <label className="form-label">Nombre / Título de Obra</label>
