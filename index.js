@@ -42,8 +42,22 @@ const Herramienta = require('./models/Herramienta');
 const AsignacionHerramienta = require('./models/AsignacionHerramienta');
 const DevolucionObra = require('./models/DevolucionObra');
 const CertificadoCalidad = require('./models/CertificadoCalidad');
+const Sesion = require('./models/Sesion');
+const TokenRecuperacion = require('./models/TokenRecuperacion');
 
 // Associations
+
+// CU04 - Nombre del usuario responsable de cada log, para no mostrar solo el RUT
+LogAuditoria.belongsTo(Usuario, { foreignKey: 'usuario_rut', targetKey: 'usuario_rut' });
+
+// CU05 - Sesiones activas por usuario, para detectar inactividad
+Usuario.hasMany(Sesion, { foreignKey: 'usuario_rut' });
+Sesion.belongsTo(Usuario, { foreignKey: 'usuario_rut' });
+
+// CU06 - Tokens de recuperación de credenciales por usuario
+Usuario.hasMany(TokenRecuperacion, { foreignKey: 'usuario_rut' });
+TokenRecuperacion.belongsTo(Usuario, { foreignKey: 'usuario_rut' });
+
 EstadoProyecto.hasMany(Proyecto, { foreignKey: 'estado_proyecto_id' });
 Proyecto.belongsTo(EstadoProyecto, { foreignKey: 'estado_proyecto_id' });
 
@@ -162,6 +176,8 @@ app.use('/api/transito', require('./routes/transito'));
 app.use('/api/certificado-calidad', require('./routes/certificadoCalidad'));
 app.use('/api/devolucion-obra', require('./routes/devolucionObra'));
 app.use('/api/usuario', require('./routes/usuario'));
+app.use('/api/log-auditoria', require('./routes/logAuditoria'));
+app.use('/api/recuperacion', require('./routes/recuperacion'));
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok', timestamp: new Date() } });
@@ -204,6 +220,8 @@ sequelize.authenticate()
       // Fondo de caja chica por proyecto (CU 39). Los proyectos existentes parten en $0.
       { tabla: 'PROYECTO', columna: 'proyecto_presupuesto_caja_chica', tipo: { type: DataTypes.DECIMAL(15, 2), allowNull: false, defaultValue: 0 } },
       { tabla: 'EGRESO_CAJA_CHICA', columna: 'usuario_rut', tipo: { type: DataTypes.STRING(20), allowNull: true } },
+      // CU04 - Cadena de hashes para detectar alteración externa de los logs
+      { tabla: 'LOG_AUDITORIA', columna: 'log_auditoria_hash', tipo: { type: DataTypes.STRING(64), allowNull: true } },
     ];
     for (const m of migraciones) await migrar.agregarColumna(m.tabla, m.columna, m.tipo);
 

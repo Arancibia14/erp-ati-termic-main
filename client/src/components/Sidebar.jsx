@@ -14,6 +14,7 @@ import {
 import { obtenerTema, aplicarTema } from '../utils/tema';
 import { activarTablasMoviles } from '../utils/tablasMoviles';
 import IndicadorCarga from './IndicadorCarga';
+import api from '../api/axios';
 import '../styles/shell.css';
 
 function useTema() {
@@ -176,9 +177,12 @@ export default function Sidebar() {
     else navigate('/inicio');
   };
 
+  // CU05 - El logout manual también cierra la sesión del lado del servidor
   const cerrarSesion = () => {
+    api.post('/auth/logout', { motivo: 'manual' }).catch(() => {});
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
+    localStorage.removeItem('inactividad_minutos');
     navigate('/login');
   };
 

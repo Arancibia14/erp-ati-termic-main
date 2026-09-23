@@ -1,11 +1,13 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './styles/index.css';
 import Sidebar from './components/Sidebar';
 import { CargaPagina } from './components/IndicadorCarga';
 import EstadoConexion from './components/EstadoConexion';
+import { iniciarVigilanciaInactividad } from './utils/inactividad';
 import './styles/theme.css';
 import Login from './pages/Login';
+import RestablecerContrasena from './pages/RestablecerContrasena';
 const Inicio = lazy(() => import('./pages/Inicio'));
 const Bitacora = lazy(() => import('./pages/Bitacora'));
 const PlanificacionHitos = lazy(() => import('./pages/PlanificacionHitos'));
@@ -47,9 +49,17 @@ const CertificadosCalidad = lazy(() => import('./pages/CertificadosCalidad'));
 const DevolucionObra = lazy(() => import('./pages/DevolucionObra'));
 const HistorialOrdenesCompra = lazy(() => import('./pages/HistorialOrdenesCompra'));
 const Usuarios = lazy(() => import('./pages/Usuarios'));
+const ReporteAuditoria = lazy(() => import('./pages/ReporteAuditoria'));
 
 function PrivateLayout({ children }) {
   const token = localStorage.getItem('token');
+
+  // CU05 - Vigilante de inactividad, activo en todas las páginas privadas
+  useEffect(() => {
+    if (!token) return;
+    return iniciarVigilanciaInactividad();
+  }, [token]);
+
   if (!token) return <Navigate to="/login" replace />;
   return (
     <div className="app-layout">
@@ -75,6 +85,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/restablecer" element={<RestablecerContrasena />} />
 
         {/* Rutas accesibles por todos los roles */}
         <Route path="/inicio" element={<PrivateLayout><Inicio /></PrivateLayout>} />
@@ -120,6 +131,7 @@ export default function App() {
         <Route path="/catalogo-equipos" element={<PrivateLayout><AdminRoute><CatalogoEquipos /></AdminRoute></PrivateLayout>} />
         <Route path="/historial-oc" element={<PrivateLayout><AdminRoute><HistorialOrdenesCompra /></AdminRoute></PrivateLayout>} />
         <Route path="/usuarios" element={<PrivateLayout><AdminRoute><Usuarios /></AdminRoute></PrivateLayout>} />
+        <Route path="/auditoria" element={<PrivateLayout><AdminRoute><ReporteAuditoria /></AdminRoute></PrivateLayout>} />
 
         <Route path="/" element={<Navigate to="/inicio" replace />} />
         <Route path="*" element={<Navigate to="/inicio" replace />} />
