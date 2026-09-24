@@ -227,6 +227,8 @@ sequelize.authenticate()
       { tabla: 'ORDEN_COMPRA', columna: 'orden_compra_iva_porcentaje', tipo: { type: DataTypes.DECIMAL(5, 2), allowNull: true } },
       { tabla: 'EGRESO_CAJA_CHICA', columna: 'egreso_caja_chica_monto_neto', tipo: { type: DataTypes.DECIMAL(15, 2), allowNull: true } },
       { tabla: 'EGRESO_CAJA_CHICA', columna: 'egreso_caja_chica_iva_porcentaje', tipo: { type: DataTypes.DECIMAL(5, 2), allowNull: true } },
+      // CU40 - Comprobante (foto o PDF) de cada egreso de caja chica
+      { tabla: 'EGRESO_CAJA_CHICA', columna: 'egreso_caja_chica_url_comprobante', tipo: { type: DataTypes.TEXT, allowNull: true } },
     ];
     for (const m of migraciones) await migrar.agregarColumna(m.tabla, m.columna, m.tipo);
 

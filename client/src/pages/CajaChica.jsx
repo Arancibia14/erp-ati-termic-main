@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { DollarSign, Plus, Send, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { DollarSign, Plus, Send, X, Camera, Paperclip, FileText, RotateCcw } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import { fechaLocal } from '../utils/fecha';
@@ -9,6 +9,10 @@ const fmt = n => n !== undefined && n !== null ? `$${parseFloat(n).toLocaleStrin
 // CU53 - Mismo cálculo que el servidor. "si": el monto ya trae el IVA y se descuenta
 // tal cual. "no": al monto (neto) se le suma el IVA vigente.
 const redondear2 = v => Math.round(v * 100) / 100;
+// CU40 - Formatos del comprobante: foto de la boleta o PDF electrónico
+const FORMATOS_COMPROBANTE = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+const LIMITE_COMPROBANTE_MB = 10;
+
 function calcularDesglose(monto, incluyeIva, porcentaje) {
   if (!(monto > 0) || !incluyeIva) return null;
   if (incluyeIva === 'si') {
@@ -28,6 +32,14 @@ export default function CajaChica() {
   const [loadingEgresos, setLoadingEgresos] = useState(false);
   const [mostrarForm, setMostrarForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  // CU40 - Adjuntando comprobante de gasto
+  const [egresoComprobante, setEgresoComprobante] = useState(null);
+  const [archivo, setArchivo] = useState(null);
+  const [vistaPrevia, setVistaPrevia] = useState(null);
+  const [errorArchivo, setErrorArchivo] = useState('');
+  const [subiendo, setSubiendo] = useState(false);
+  const inputCamara = useRef(null);
+  const inputArchivo = useRef(null);
   // Fecha máxima del egreso: hoy. Se calcula una vez, no en cada render.
   const [hoy] = useState(() => fechaLocal());
   const [form, setForm] = useState({
@@ -110,6 +122,67 @@ export default function CajaChica() {
       addToast(err.response?.data?.error || 'Error al registrar egreso', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // CU40 - Paso 3: el archivo se valida en el navegador antes de mostrar la vista previa
+  const descartarArchivo = () => {
+    if (vistaPrevia) URL.revokeObjectURL(vistaPrevia);
+    setArchivo(null);
+    setVistaPrevia(null);
+    if (inputCamara.current) inputCamara.current.value = '';
+    if (inputArchivo.current) inputArchivo.current.value = '';
+  };
+
+  const abrirComprobante = egreso => {
+    descartarArchivo();
+    setErrorArchivo('');
+    setEgresoComprobante(egreso);
+  };
+
+  const cerrarComprobante = () => {
+    if (subiendo) return;
+    descartarArchivo();
+    setEgresoComprobante(null);
+  };
+
+  const elegirArchivo = e => {
+    const f = e.target.files?.[0];
+    if (!f) return;   // Excepción 1: el actor canceló la cámara; puede reintentar
+    descartarArchivo();
+    if (!FORMATOS_COMPROBANTE.includes(f.type)) {
+      setErrorArchivo('Formato no válido. El comprobante debe ser una imagen JPG, PNG o WEBP, o un PDF');
+      return;
+    }
+    if (f.size > LIMITE_COMPROBANTE_MB * 1024 * 1024) {
+      setErrorArchivo(`El archivo supera el límite de ${LIMITE_COMPROBANTE_MB} MB`);
+      return;
+    }
+    setErrorArchivo('');
+    setArchivo(f);
+    setVistaPrevia(f.type === 'application/pdf' ? null : URL.createObjectURL(f));
+  };
+
+  const guardarRespaldo = async () => {
+    if (!archivo) {
+      setErrorArchivo('Toma una foto de la boleta o selecciona un archivo');
+      return;
+    }
+    setSubiendo(true);
+    try {
+      const fd = new FormData();
+      fd.append('comprobante', archivo);
+      const r = await api.post(`/caja-chica/egreso/${egresoComprobante.egreso_caja_chica_id}/comprobante`, fd);
+      addToast(r.data.mensaje, 'success');
+      descartarArchivo();
+      setEgresoComprobante(null);
+      cargarDatos(codigoSeleccionado);
+    } catch (err) {
+      const mensaje = err.response?.data?.error || 'Error al guardar el comprobante';
+      setErrorArchivo(mensaje);
+      addToast(mensaje, 'error');
+    } finally {
+      setSubiendo(false);
     }
   };
 
@@ -280,6 +353,7 @@ export default function CajaChica() {
                       <th>Fecha</th>
                       <th>Concepto</th>
                       <th style={{ textAlign: 'right' }}>Monto</th>
+                      <th>Comprobante</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -297,6 +371,19 @@ export default function CajaChica() {
                               : `neto ${fmt(e.egreso_caja_chica_monto_neto)} + IVA ${fmt(e.egreso_caja_chica_monto - e.egreso_caja_chica_monto_neto)}`}
                           </div>
                         </td>
+                        <td>
+                          {e.egreso_caja_chica_url_comprobante ? (
+                            <a href={e.egreso_caja_chica_url_comprobante} target="_blank" rel="noreferrer"
+                               className="btn btn-secondary" style={{ padding: '5px 10px', fontSize: 12 }}>
+                              <FileText size={13} /> Ver comprobante
+                            </a>
+                          ) : (
+                            <button className="btn btn-secondary" style={{ padding: '5px 10px', fontSize: 12 }}
+                                    onClick={() => abrirComprobante(e)}>
+                              <Paperclip size={13} /> Adjuntar Comprobante
+                            </button>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -304,6 +391,66 @@ export default function CajaChica() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* CU40 - Adjuntando comprobante de gasto */}
+      {egresoComprobante && (
+        <div
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 500, padding: 16 }}
+          onClick={cerrarComprobante}
+        >
+          <div className="card" style={{ maxWidth: 460, width: '100%', maxHeight: '90vh', overflowY: 'auto' }} onClick={ev => ev.stopPropagation()}>
+            <h3 style={{ marginBottom: 6, fontSize: 15, fontWeight: 700 }}>Adjuntar Comprobante</h3>
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 14 }}>
+              {new Date(egresoComprobante.egreso_caja_chica_fecha + 'T00:00:00').toLocaleDateString('es-CL')} · {egresoComprobante.egreso_caja_chica_concepto} · {fmt(egresoComprobante.egreso_caja_chica_monto)}
+            </p>
+
+            <input ref={inputCamara} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={elegirArchivo} />
+            <input ref={inputArchivo} type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" style={{ display: 'none' }} onChange={elegirArchivo} />
+
+            {!archivo ? (
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
+                <button className="btn btn-primary" onClick={() => inputCamara.current.click()} disabled={subiendo}>
+                  <Camera size={15} /> Tomar foto
+                </button>
+                <button className="btn btn-secondary" onClick={() => inputArchivo.current.click()} disabled={subiendo}>
+                  <Paperclip size={15} /> Seleccionar archivo
+                </button>
+              </div>
+            ) : (
+              <div style={{ marginBottom: 12 }}>
+                {vistaPrevia ? (
+                  <img src={vistaPrevia} alt="Vista previa del comprobante"
+                       style={{ width: '100%', maxHeight: 260, objectFit: 'contain', borderRadius: 8, border: '1px solid var(--color-border)' }} />
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, padding: 12, border: '1px solid var(--color-border)', borderRadius: 8 }}>
+                    <FileText size={18} /> {archivo.name}
+                  </div>
+                )}
+                <button className="btn btn-secondary" style={{ marginTop: 10, padding: '5px 10px', fontSize: 12 }}
+                        onClick={descartarArchivo} disabled={subiendo}>
+                  <RotateCcw size={13} /> Tomar otra
+                </button>
+              </div>
+            )}
+
+            {errorArchivo && (
+              <p style={{ color: 'var(--color-danger)', fontSize: 13, marginBottom: 12 }}>{errorArchivo}</p>
+            )}
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 14 }}>
+              Revisa que la boleta se lea bien: una vez guardado, el comprobante no se podrá reemplazar.
+            </p>
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="btn btn-primary" onClick={guardarRespaldo} disabled={subiendo || !archivo}>
+                {subiendo ? 'Guardando...' : 'Guardar Respaldo'}
+              </button>
+              <button className="btn btn-secondary" onClick={cerrarComprobante} disabled={subiendo}>
+                Cancelar
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

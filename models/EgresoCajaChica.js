@@ -13,7 +13,9 @@ const EgresoCajaChica = sequelize.define('EgresoCajaChica', {
   // CU53 - Desglose del egreso: egreso_caja_chica_monto es el total descontado del
   // saldo. Los egresos anteriores a este CU no tienen desglose.
   egreso_caja_chica_monto_neto: { type: DataTypes.DECIMAL(15, 2), allowNull: true },
-  egreso_caja_chica_iva_porcentaje: { type: DataTypes.DECIMAL(5, 2), allowNull: true }
+  egreso_caja_chica_iva_porcentaje: { type: DataTypes.DECIMAL(5, 2), allowNull: true },
+  // CU40 - Foto o PDF de la boleta. Una vez guardado no se reemplaza (respaldo inmutable)
+  egreso_caja_chica_url_comprobante: { type: DataTypes.TEXT, allowNull: true }
 }, {
   tableName: 'EGRESO_CAJA_CHICA',
   timestamps: false

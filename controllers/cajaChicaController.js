@@ -1,4 +1,7 @@
 const { Op } = require('sequelize');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const sequelize = require('../config/database');
 const Proyecto = require('../models/Proyecto');
 const EstadoProyecto = require('../models/EstadoProyecto');
@@ -168,4 +171,82 @@ async function getEgresosByProyecto(req, res) {
   }
 }
 
-module.exports = { getProyectos, getSaldo, registrarEgreso, getEgresosByProyecto };
+// CU40 - Adjuntando comprobante de gasto: foto de la boleta o PDF electrónico
+const COMPROBANTE_LIMITE_MB = 10;
+const COMPROBANTE_FORMATOS = {
+  '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.pdf': 'application/pdf'
+};
+
+const uploadComprobante = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      const dir = path.join(__dirname, '../uploads/comprobantes');
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      cb(null, dir);
+    },
+    filename: (req, file, cb) => {
+      cb(null, `comprobante_${req.params.id}_${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
+    }
+  }),
+  limits: { fileSize: COMPROBANTE_LIMITE_MB * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    // Paso 3 - Formato válido: la extensión y el tipo real del archivo deben coincidir
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (COMPROBANTE_FORMATOS[ext] && COMPROBANTE_FORMATOS[ext] === file.mimetype) return cb(null, true);
+    cb(new Error('Formato no válido. El comprobante debe ser una imagen JPG, PNG o WEBP, o un PDF'));
+  }
+});
+
+// Traduce los fallos de multer a mensajes para el actor
+function recibirComprobante(req, res, next) {
+  uploadComprobante.single('comprobante')(req, res, err => {
+    if (!err) return next();
+    const error = err.code === 'LIMIT_FILE_SIZE'
+      ? `El archivo supera el límite de ${COMPROBANTE_LIMITE_MB} MB`
+      : err.message || 'Error al procesar el archivo';
+    return res.status(400).json({ success: false, error, campos: ['comprobante'] });
+  });
+}
+
+async function adjuntarComprobante(req, res) {
+  const borrarSubido = () => { if (req.file) fs.unlink(req.file.path, () => {}); };
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Toma una foto de la boleta o selecciona un archivo', campos: ['comprobante'] });
+    }
+    const egreso = await EgresoCajaChica.findByPk(req.params.id);
+    if (!egreso) {
+      borrarSubido();
+      return res.status(404).json({ success: false, error: 'El egreso no existe' });
+    }
+    // Postcondición: el respaldo es inmutable. Solo se escribe si sigue vacío en ese
+    // instante, así dos cargas simultáneas no pueden pisarse.
+    const url = `/uploads/comprobantes/${req.file.filename}`;
+    const [actualizados] = await EgresoCajaChica.update(
+      { egreso_caja_chica_url_comprobante: url },
+      { where: { egreso_caja_chica_id: egreso.egreso_caja_chica_id, egreso_caja_chica_url_comprobante: null } }
+    );
+    if (actualizados === 0) {
+      borrarSubido();
+      return res.status(409).json({ success: false, error: 'Este egreso ya tiene un comprobante guardado y no se puede reemplazar' });
+    }
+    egreso.egreso_caja_chica_url_comprobante = url;
+
+    try {
+      await LogAuditoria.create({
+        log_auditoria_fecha_hora: new Date(),
+        log_auditoria_accion: `Comprobante adjuntado al egreso de caja chica #${egreso.egreso_caja_chica_id} del proyecto ${egreso.proyecto_codigo_correlativo}`,
+        log_auditoria_modulo: 'CAJA_CHICA',
+        usuario_rut: req.user.rut
+      });
+    } catch (_) { /* log no crítico */ }
+
+    return res.status(201).json({ success: true, mensaje: 'Comprobante guardado correctamente', data: egreso });
+  } catch (err) {
+    borrarSubido();
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al guardar el comprobante' });
+  }
+}
+
+module.exports = { getProyectos, getSaldo, registrarEgreso, getEgresosByProyecto, recibirComprobante, adjuntarComprobante };
