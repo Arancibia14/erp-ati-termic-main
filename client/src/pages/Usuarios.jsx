@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { UserCog, Plus } from 'lucide-react';
+import { UserCog, Plus, KeyRound } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
@@ -25,6 +25,12 @@ export default function Usuarios() {
   const [form, setForm] = useState(FORM_VACIO);
   const [camposInvalidos, setCamposInvalidos] = useState({});
   const [errorForm, setErrorForm] = useState('');
+  const [rolModal, setRolModal] = useState(null);
+  const [nuevoRol, setNuevoRol] = useState('');
+  const [rolInvalido, setRolInvalido] = useState(false);
+  const [errorRol, setErrorRol] = useState(null);
+  const [cambiandoRol, setCambiandoRol] = useState(false);
+  const rutPropio = JSON.parse(localStorage.getItem('usuario') || '{}').rut;
 
   const cargarUsuarios = () => {
     setLoading(true);
@@ -85,6 +91,54 @@ export default function Usuarios() {
         addToast(mensaje, 'error');
       })
       .finally(() => setGuardando(false));
+  };
+
+  // CU02 - Gestionando niveles de acceso
+  const abrirCambioRol = usuario => {
+    setRolModal(usuario);
+    setNuevoRol('');
+    setRolInvalido(false);
+    setErrorRol(null);
+  };
+
+  const confirmarCambioRol = () => {
+    if (!nuevoRol) {
+      setRolInvalido(true);
+      addToast('Selecciona el nuevo nivel de acceso', 'error');
+      return;
+    }
+
+    setCambiandoRol(true);
+    setErrorRol(null);
+    // Se envía el rol que se vio en pantalla para detectar cambios simultáneos (Excepción 2)
+    api.put(`/usuario/${encodeURIComponent(rolModal.usuario_rut)}/rol`, { rol: nuevoRol, rol_anterior: rolModal.rol })
+      .then(r => {
+        if (r.data.data.propio) {
+          // El token propio lleva el rol anterior: hay que volver a entrar
+          localStorage.removeItem('token');
+          localStorage.removeItem('usuario');
+          localStorage.removeItem('inactividad_minutos');
+          window.location.href = '/login?motivo=rol-actualizado';
+          return;
+        }
+        addToast(r.data.mensaje, 'success');
+        setRolModal(null);
+        cargarUsuarios();
+      })
+      .catch(err => {
+        const data = err.response?.data || {};
+        const mensaje = data.error || 'Error al actualizar el nivel de acceso';
+        addToast(mensaje, 'error');
+        if (err.response?.status === 404) {
+          // Excepción 1: el registro ya no existe, se refresca el listado
+          setRolModal(null);
+          cargarUsuarios();
+          return;
+        }
+        if (data.campos?.includes('rol')) setRolInvalido(true);
+        setErrorRol({ mensaje, recargar: data.codigo === 'CONCURRENCIA' });
+      })
+      .finally(() => setCambiandoRol(false));
   };
 
   const inputStyle = campo => camposInvalidos[campo]
@@ -220,15 +274,30 @@ export default function Usuarios() {
                   <th>Nombre</th>
                   <th>Correo Institucional</th>
                   <th>Rol</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {usuarios.map(u => (
                   <tr key={u.usuario_rut}>
                     <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{u.usuario_rut}</td>
-                    <td style={{ fontWeight: 600, fontSize: 13 }}>{u.usuario_nombre}</td>
+                    <td style={{ fontWeight: 600, fontSize: 13 }}>
+                      {u.usuario_nombre}
+                      {u.usuario_rut === rutPropio && (
+                        <span style={{ fontWeight: 400, color: 'var(--color-text-muted)' }}> (tú)</span>
+                      )}
+                    </td>
                     <td style={{ fontSize: 13 }}>{u.usuario_correo_institucional}</td>
                     <td><Badge value={ROL_LABEL[u.rol]} /></td>
+                    <td>
+                      <button
+                        className="btn btn-secondary"
+                        style={{ padding: '5px 10px', fontSize: 12 }}
+                        onClick={() => abrirCambioRol(u)}
+                      >
+                        <KeyRound size={13} /> Cambiar rol
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -236,6 +305,60 @@ export default function Usuarios() {
           </div>
         )}
       </div>
+
+      {rolModal && (
+        <div
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 500, padding: 16 }}
+          onClick={() => !cambiandoRol && setRolModal(null)}
+        >
+          <div className="card" style={{ maxWidth: 460, width: '100%' }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ marginBottom: 6, fontSize: 15, fontWeight: 700 }}>Cambiar nivel de acceso</h3>
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 14 }}>
+              {rolModal.usuario_nombre} · {rolModal.usuario_rut} · rol actual: {ROL_LABEL[rolModal.rol]}
+            </p>
+
+            <div className="form-group">
+              <label className="form-label">Nuevo nivel de acceso</label>
+              <select
+                className={`form-select${rolInvalido ? ' is-invalid' : ''}`}
+                value={nuevoRol}
+                onChange={e => { setNuevoRol(e.target.value); setRolInvalido(false); setErrorRol(null); }}
+              >
+                <option value="">Selecciona un nivel</option>
+                {['admin', 'supervisor'].filter(r => r !== rolModal.rol).map(r => (
+                  <option key={r} value={r}>{ROL_LABEL[r]}</option>
+                ))}
+              </select>
+            </div>
+
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 14 }}>
+              {rolModal.usuario_rut === rutPropio
+                ? 'Estás cambiando tu propio nivel de acceso. Al confirmar se cerrará tu sesión y deberás volver a entrar.'
+                : 'Si este usuario tiene una sesión abierta, se cerrará para que el nuevo nivel se aplique de inmediato.'}
+            </p>
+
+            {errorRol && (
+              <div style={{ marginBottom: 14 }}>
+                <p style={{ color: 'var(--color-danger)', fontSize: 13 }}>{errorRol.mensaje}</p>
+                {errorRol.recargar && (
+                  <button className="btn btn-secondary" style={{ marginTop: 8 }} onClick={() => window.location.reload()}>
+                    Recargar página
+                  </button>
+                )}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="btn btn-primary" onClick={confirmarCambioRol} disabled={cambiandoRol}>
+                {cambiandoRol ? 'Guardando...' : 'Confirmar cambio'}
+              </button>
+              <button className="btn btn-secondary" onClick={() => setRolModal(null)} disabled={cambiandoRol}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Toast toasts={toasts} removeToast={removeToast} />
     </div>

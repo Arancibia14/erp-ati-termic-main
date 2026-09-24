@@ -8,6 +8,8 @@ const INACTIVIDAD_MINUTOS = Number(process.env.SESION_INACTIVIDAD_MINUTOS) || 15
 
 const MENSAJE_INACTIVIDAD = 'Su sesión ha expirado por inactividad. Por favor, ingrese sus credenciales nuevamente';
 
+const MENSAJE_ROL_ACTUALIZADO = 'Su nivel de acceso fue modificado por un administrador. Ingrese nuevamente para aplicar sus nuevos permisos';
+
 async function verifyToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -32,6 +34,11 @@ async function verifyToken(req, res, next) {
     }
 
     const sesion = await Sesion.findByPk(decoded.sid);
+    // CU02 - Un administrador cambió el rol de este usuario: debe volver a entrar
+    // para que el token lleve sus nuevos permisos.
+    if (sesion && sesion.sesion_estado === 'rol_actualizado') {
+      return res.status(401).json({ success: false, error: MENSAJE_ROL_ACTUALIZADO, codigo: 'ROL_ACTUALIZADO' });
+    }
     if (!sesion || sesion.sesion_estado !== 'activa') {
       return res.status(401).json({ success: false, error: 'Token inválido o expirado', codigo: 'SESION_INVALIDA' });
     }

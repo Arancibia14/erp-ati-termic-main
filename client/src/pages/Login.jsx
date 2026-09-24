@@ -77,6 +77,10 @@ export default function Login() {
     } else if (searchParams.get('motivo') === 'password-restablecida') {
       addToast('Contraseña restablecida exitosamente. Ya puedes iniciar sesión con tus nuevas credenciales.', 'success');
       setSearchParams({}, { replace: true });
+    } else if (searchParams.get('motivo') === 'rol-actualizado') {
+      // CU02 - Postcondición: el nuevo rango se aplica al volver a entrar
+      addToast('Su nivel de acceso fue modificado por un administrador. Ingrese nuevamente para aplicar sus nuevos permisos', 'warning');
+      setSearchParams({}, { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

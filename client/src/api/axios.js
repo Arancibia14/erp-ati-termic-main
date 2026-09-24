@@ -38,7 +38,11 @@ api.interceptors.response.use(
       localStorage.removeItem('inactividad_minutos');
       // CU05 - Si el propio servidor detectó la inactividad (por ejemplo, otra
       // pestaña dejó de usarse), redirige con el mismo mensaje literal.
-      const destino = error.response.data?.codigo === 'SESION_EXPIRADA' ? '/login?motivo=inactividad' : '/login';
+      const codigo = error.response.data?.codigo;
+      // CU02 - Si un administrador le cambió el rol, avisa por qué debe volver a entrar.
+      const destino = codigo === 'SESION_EXPIRADA' ? '/login?motivo=inactividad'
+        : codigo === 'ROL_ACTUALIZADO' ? '/login?motivo=rol-actualizado'
+        : '/login';
       window.location.href = destino;
     }
     return Promise.reject(error);
