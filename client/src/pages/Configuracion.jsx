@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Settings, FolderPlus, UserPlus,
-  ClipboardList, Truck, FileText, Edit3, Trash2, CalendarRange, DollarSign
+  ClipboardList, Truck, FileText, Edit3, Trash2, CalendarRange, DollarSign, Percent
 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
@@ -13,7 +13,23 @@ const TABS = [
   { id: 'sm',         label: 'Solicitudes Mat.', icon: ClipboardList },
   { id: 'guia',       label: 'Guías Despacho',   icon: Truck },
   { id: 'contrato',   label: 'Contratos',        icon: FileText },
+  { id: 'tributario', label: 'Parámetros Legales y Tributarios', icon: Percent },
 ];
+
+// CU52 - Porcentaje válido: acepta coma o punto decimal, entre 0 y 100, hasta 2 decimales
+const errorPorcentaje = valor => {
+  const texto = String(valor ?? '').trim().replace(',', '.');
+  if (texto === '') return 'vacio';
+  if (!/^-?\d+(\.\d+)?$/.test(texto)) return 'no_numerico';
+  if (Number(texto) < 0 || Number(texto) > 100 || !/^\d+(\.\d{1,2})?$/.test(texto)) return 'fuera_de_rango';
+  return null;
+};
+const MENSAJE_PORCENTAJE = {
+  vacio: 'Completa los porcentajes de IVA y retención',
+  no_numerico: 'El valor ingresado no es numérico. Ingresa un número válido',
+  fuera_de_rango: 'El porcentaje debe ser un número entre 0 y 100, con hasta 2 decimales'
+};
+const fechaLegible = f => f ? f.split('-').reverse().join('-') : 'sin registro';
 
 const fieldStyle = { marginBottom: 0 };
 
@@ -47,6 +63,11 @@ export default function Configuracion() {
   const [fSM,         setFSM]         = useState({ descripcion: '', cantidad: '', proyecto_codigo: '' });
   const [fGuia,       setFGuia]       = useState({ numero: '', fecha: '', orden_id: '' });
   const [fContrato,   setFContrato]   = useState({ rut: '', sueldo: '', leyes: '', inicio: '', termino: '', proyecto_codigo: '' });
+  // CU52 - Parámetros legales y tributarios
+  const [fTrib,       setFTrib]       = useState({ iva: '', retencion_honorarios: '' });
+  const [tributarios, setTributarios] = useState([]);
+  const [errTrib,     setErrTrib]     = useState([]);
+  const [loadingTrib, setLoadingTrib] = useState(false);
 
   // Se declaran antes de los efectos que las llaman
   const cargarProyectos = () =>
@@ -54,6 +75,17 @@ export default function Configuracion() {
 
   const cargarContratos = () =>
     api.get('/setup/contratos').then(r => setContratos(r.data.data)).catch(() => {});
+
+  const cargarTributarios = () =>
+    api.get('/parametro/tributarios')
+      .then(r => {
+        setTributarios(r.data.data);
+        const valores = {};
+        r.data.data.forEach(p => { valores[p.campo] = p.valor === null ? '' : String(p.valor).replace('.', ','); });
+        setFTrib(valores);
+        setErrTrib([]);
+      })
+      .catch(() => addToast('Error al cargar los parámetros tributarios', 'error'));
 
   useEffect(() => {
     api.get('/setup/especialidades').then(r => setEspecialidades(r.data.data)).catch(() => {});
@@ -66,7 +98,28 @@ export default function Configuracion() {
       api.get('/setup/trabajadores').then(r => setTrabajadores(r.data.data)).catch(() => {});
       cargarContratos();
     }
+    if (tab === 'tributario') cargarTributarios();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
+
+  const submitTributarios = e => {
+    e.preventDefault();
+    // Excepción 1 - Se valida en el navegador antes de enviar
+    const errores = ['iva', 'retencion_honorarios'].map(c => ({ campo: c, error: errorPorcentaje(fTrib[c]) })).filter(x => x.error);
+    if (errores.length) {
+      setErrTrib(errores.map(x => x.campo));
+      addToast(MENSAJE_PORCENTAJE[errores[0].error], 'error');
+      return;
+    }
+    setLoadingTrib(true);
+    api.put('/parametro/tributarios', fTrib)
+      .then(r => { addToast(r.data.mensaje, 'success'); cargarTributarios(); })
+      .catch(err => {
+        setErrTrib(err.response?.data?.campos || []);
+        addToast(err.response?.data?.error || 'Error al guardar los parámetros tributarios', 'error');
+      })
+      .finally(() => setLoadingTrib(false));
+  };
 
   // onError recibe los campos que el backend marcó como faltantes, para resaltarlos
   const send = async (endpoint, body, onSuccess, onError) => {
@@ -716,6 +769,39 @@ export default function Configuracion() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* ── CU52 PARÁMETROS LEGALES Y TRIBUTARIOS ───────────── */}
+        {tab === 'tributario' && (
+          <div className="card">
+            <SectionTitle>Parámetros Legales y Tributarios</SectionTitle>
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 14 }}>
+              Los nuevos valores se aplican a las transacciones que se creen desde el momento en que se guardan.
+            </p>
+            <form onSubmit={submitTributarios}>
+              <div className="form-grid-2">
+                {tributarios.map(p => (
+                  <div key={p.campo} className="form-group" style={fieldStyle}>
+                    <label className="form-label">{p.nombre} (%)</label>
+                    <input type="text" inputMode="decimal" placeholder={p.campo === 'iva' ? '19' : '15,25'}
+                      className={`form-input${errTrib.includes(p.campo) ? ' is-invalid' : ''}`}
+                      value={fTrib[p.campo] ?? ''}
+                      onChange={e => {
+                        const valor = e.target.value;
+                        setFTrib(f => ({ ...f, [p.campo]: valor }));
+                        setErrTrib(prev => prev.filter(c => c !== p.campo));
+                      }} />
+                    <p style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 4 }}>
+                      Vigente desde {fechaLegible(p.fecha_vigencia)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <button type="submit" className="btn btn-primary" style={{ marginTop: 16 }} disabled={loadingTrib || tributarios.length === 0}>
+                <Percent size={15} /> {loadingTrib ? 'Guardando...' : 'Guardar Cambios'}
+              </button>
+            </form>
           </div>
         )}
       </div>

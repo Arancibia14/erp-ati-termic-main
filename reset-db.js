@@ -93,6 +93,15 @@ async function reset() {
       where: { parametro_sistema_clave: 'radio_recepcion_metros' },
       defaults: { parametro_sistema_clave: 'radio_recepcion_metros', parametro_sistema_valor: 500 }
     });
+    // CU52 - IVA y retención de boletas de honorarios vigentes en 2026
+    await ParametroSistema.findOrCreate({
+      where: { parametro_sistema_clave: 'iva_porcentaje' },
+      defaults: { parametro_sistema_clave: 'iva_porcentaje', parametro_sistema_valor: 19 }
+    });
+    await ParametroSistema.findOrCreate({
+      where: { parametro_sistema_clave: 'retencion_honorarios_porcentaje' },
+      defaults: { parametro_sistema_clave: 'retencion_honorarios_porcentaje', parametro_sistema_valor: 15.25 }
+    });
     console.log('✓ Parámetros del sistema');
 
     // ── USUARIOS ──────────────────────────────────────────────────────────────

@@ -178,6 +178,7 @@ app.use('/api/devolucion-obra', require('./routes/devolucionObra'));
 app.use('/api/usuario', require('./routes/usuario'));
 app.use('/api/log-auditoria', require('./routes/logAuditoria'));
 app.use('/api/recuperacion', require('./routes/recuperacion'));
+app.use('/api/parametro', require('./routes/parametro'));
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok', timestamp: new Date() } });
@@ -405,6 +406,16 @@ sequelize.authenticate()
       "ALTER TABLE PROVEEDOR MODIFY proveedor_correo VARCHAR(150) NULL",
     ];
     for (const sql of proveedorMigs) await migrar.sql(sql);
+
+    // CU52 - IVA y retención de honorarios vigentes en 2026. Solo se crean si
+    // faltan: si el administrador ya los modificó, se respetan sus valores.
+    for (const [clave, valor] of [['iva_porcentaje', 19], ['retencion_honorarios_porcentaje', 15.25]]) {
+      try {
+        await ParametroSistema.findOrCreate({ where: { parametro_sistema_clave: clave }, defaults: { parametro_sistema_valor: valor } });
+      } catch (err) {
+        console.error(`[MIGRACIÓN FALLIDA] Parámetro ${clave}\n    ${err.message}`);
+      }
+    }
 
     await migrar.finalizar();
   })
