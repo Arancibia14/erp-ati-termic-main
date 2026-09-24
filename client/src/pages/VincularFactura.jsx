@@ -164,7 +164,18 @@ export default function VincularFactura() {
                                   </td>
                                 </tr>
                               ))}
+                              {/* CU53 - La factura se compara contra el total con IVA */}
                               <tr style={{ borderTop: '2px solid var(--color-border)' }}>
+                                <td colSpan={3} style={{ textAlign: 'right', fontSize: 12, color: 'var(--color-text-secondary)' }}>Neto</td>
+                                <td style={{ textAlign: 'right' }}>{formatPeso(orden.monto_neto)}</td>
+                              </tr>
+                              <tr>
+                                <td colSpan={3} style={{ textAlign: 'right', fontSize: 12, color: 'var(--color-text-secondary)' }}>
+                                  {orden.iva_porcentaje === null ? 'IVA' : `IVA (${String(orden.iva_porcentaje).replace('.', ',')}%)`}
+                                </td>
+                                <td style={{ textAlign: 'right' }}>{orden.iva_porcentaje === null ? 'No registrado' : formatPeso(orden.monto_iva)}</td>
+                              </tr>
+                              <tr>
                                 <td colSpan={3} style={{ fontWeight: 700, textAlign: 'right', textTransform: 'uppercase', fontSize: 12 }}>Total OC</td>
                                 <td style={{ textAlign: 'right', fontWeight: 700, color: 'var(--color-green)' }}>{formatPeso(orden.total_calculado)}</td>
                               </tr>

@@ -6,6 +6,7 @@ const OrdenCompra = require('../models/OrdenCompra');
 const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
 const LogAuditoria = require('../models/LogAuditoria');
 const { fechaHoy } = require('../utils/fecha');
+const { obtenerIvaVigente, alertarIvaNoConfigurado, MENSAJE_IVA_NO_CONFIGURADO } = require('../utils/impuestos');
 
 async function getMisSolicitudes(req, res) {
   try {
@@ -122,6 +123,8 @@ async function generarOrdenCompraDesdeSolicitud(solicitud, req, costoEstimado) {
     return { oc_generada: false, motivo: `El material "${material.material_nombre}" no tiene proveedor asignado en el catálogo; asígnalo y genera la Orden de Compra manualmente` };
   }
 
+  // CU53 - El costo estimado es el neto; la OC guarda el IVA vigente
+  const iva = await obtenerIvaVigente();
   const folio = `OC-${Date.now()}`;
   const ordenCompra = await OrdenCompra.create({
     orden_compra_folio: folio,
@@ -129,8 +132,10 @@ async function generarOrdenCompraDesdeSolicitud(solicitud, req, costoEstimado) {
     orden_compra_estado: 'Emitida',
     proveedor_rut: material.material_proveedor_rut,
     proyecto_codigo_correlativo: solicitud.proyecto_codigo_correlativo,
-    solicitud_material_id: solicitud.solicitud_material_id
+    solicitud_material_id: solicitud.solicitud_material_id,
+    orden_compra_iva_porcentaje: iva.porcentaje
   });
+  if (!iva.configurado) await alertarIvaNoConfigurado(`la orden de compra ${folio}`, req.user.rut);
 
   for (const linea of repartirCosto(costoEstimado, solicitud.solicitud_material_cantidad)) {
     await DetalleOrdenCompra.create({
@@ -151,7 +156,7 @@ async function generarOrdenCompraDesdeSolicitud(solicitud, req, costoEstimado) {
     });
   } catch (_) { /* log no crítico */ }
 
-  return { oc_generada: true, motivo: null, orden_compra: ordenCompra };
+  return { oc_generada: true, motivo: null, orden_compra: ordenCompra, alerta_iva: iva.configurado ? null : MENSAJE_IVA_NO_CONFIGURADO };
 }
 
 async function aprobarSolicitud(req, res) {
@@ -207,7 +212,8 @@ async function aprobarSolicitud(req, res) {
         comprobante,
         oc_generada: resultadoOC.oc_generada,
         motivo_pausa_oc: resultadoOC.motivo,
-        orden_compra: resultadoOC.orden_compra || null
+        orden_compra: resultadoOC.orden_compra || null,
+        alerta_iva: resultadoOC.alerta_iva || null
       }
     });
   } catch (err) {

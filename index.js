@@ -223,6 +223,10 @@ sequelize.authenticate()
       { tabla: 'EGRESO_CAJA_CHICA', columna: 'usuario_rut', tipo: { type: DataTypes.STRING(20), allowNull: true } },
       // CU04 - Cadena de hashes para detectar alteración externa de los logs
       { tabla: 'LOG_AUDITORIA', columna: 'log_auditoria_hash', tipo: { type: DataTypes.STRING(64), allowNull: true } },
+      // CU53 - Desglose de impuestos guardado en cada documento financiero
+      { tabla: 'ORDEN_COMPRA', columna: 'orden_compra_iva_porcentaje', tipo: { type: DataTypes.DECIMAL(5, 2), allowNull: true } },
+      { tabla: 'EGRESO_CAJA_CHICA', columna: 'egreso_caja_chica_monto_neto', tipo: { type: DataTypes.DECIMAL(15, 2), allowNull: true } },
+      { tabla: 'EGRESO_CAJA_CHICA', columna: 'egreso_caja_chica_iva_porcentaje', tipo: { type: DataTypes.DECIMAL(5, 2), allowNull: true } },
     ];
     for (const m of migraciones) await migrar.agregarColumna(m.tabla, m.columna, m.tipo);
 

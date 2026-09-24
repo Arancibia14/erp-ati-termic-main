@@ -5,6 +5,16 @@ const EstadoProyecto = require('../models/EstadoProyecto');
 const EgresoCajaChica = require('../models/EgresoCajaChica');
 const LogAuditoria = require('../models/LogAuditoria');
 const { fechaHoy, esFechaValida } = require('../utils/fecha');
+const {
+  obtenerIvaVigente, desgloseDesdeNeto, desgloseDesdeTotal, alertarIvaNoConfigurado, MENSAJE_IVA_NO_CONFIGURADO
+} = require('../utils/impuestos');
+
+// CU53 - Respuesta a "¿El monto que ingresaste ya incluye IVA?": true, false o null si falta
+function leerIncluyeIva(valor) {
+  if (valor === true || valor === 'si' || valor === 'true') return true;
+  if (valor === false || valor === 'no' || valor === 'false') return false;
+  return null;
+}
 
 async function getProyectos(req, res) {
   try {
@@ -60,7 +70,7 @@ function leerMonto(valor) {
 
 async function registrarEgreso(req, res) {
   try {
-    const { proyecto_codigo_correlativo, egreso_caja_chica_monto, egreso_caja_chica_concepto, egreso_caja_chica_fecha } = req.body;
+    const { proyecto_codigo_correlativo, egreso_caja_chica_monto, egreso_caja_chica_concepto, egreso_caja_chica_fecha, incluye_iva } = req.body;
     const concepto = typeof egreso_caja_chica_concepto === 'string' ? egreso_caja_chica_concepto.trim() : '';
 
     if (!proyecto_codigo_correlativo || !egreso_caja_chica_monto || !concepto) {
@@ -70,6 +80,11 @@ async function registrarEgreso(req, res) {
     const monto = leerMonto(egreso_caja_chica_monto);
     if (!Number.isFinite(monto) || monto <= 0) {
       return res.status(400).json({ success: false, error: 'El monto debe ser mayor a 0' });
+    }
+
+    const incluyeIva = leerIncluyeIva(incluye_iva);
+    if (incluyeIva === null) {
+      return res.status(400).json({ success: false, error: 'Indica si el monto que ingresaste ya incluye IVA', campos: ['incluye_iva'] });
     }
 
     // La fecha la ingresa el actor (paso 19 del CU 39): si viene, debe ser una
@@ -96,7 +111,11 @@ async function registrarEgreso(req, res) {
       });
     }
 
-    if (monto > saldo) {
+    // CU53 - Si ya incluye IVA se descuenta tal cual; si no, se le suma el IVA vigente
+    const iva = await obtenerIvaVigente();
+    const desglose = incluyeIva ? desgloseDesdeTotal(monto, iva.porcentaje) : desgloseDesdeNeto(monto, iva.porcentaje);
+
+    if (desglose.total > saldo) {
       return res.status(400).json({
         success: false,
         error: `Saldo insuficiente. Saldo disponible: $${saldo.toLocaleString('es-CL')}`
@@ -104,23 +123,31 @@ async function registrarEgreso(req, res) {
     }
 
     const egreso = await EgresoCajaChica.create({
-      egreso_caja_chica_monto: monto,
+      egreso_caja_chica_monto: desglose.total,
+      egreso_caja_chica_monto_neto: desglose.neto,
+      egreso_caja_chica_iva_porcentaje: desglose.iva_porcentaje,
       egreso_caja_chica_fecha: fecha,
       egreso_caja_chica_concepto: concepto,
       proyecto_codigo_correlativo,
       usuario_rut: req.user.rut
     });
+    if (!iva.configurado) await alertarIvaNoConfigurado(`el egreso de caja chica #${egreso.egreso_caja_chica_id}`, req.user.rut);
 
     try {
       await LogAuditoria.create({
         log_auditoria_fecha_hora: new Date(),
-        log_auditoria_accion: `Egreso de $${monto} registrado en proyecto ${proyecto_codigo_correlativo}`,
+        log_auditoria_accion: `Egreso de $${desglose.total} registrado en proyecto ${proyecto_codigo_correlativo} (neto $${desglose.neto} + IVA $${desglose.iva})`,
         log_auditoria_modulo: 'CAJA_CHICA',
         usuario_rut: req.user.rut
       });
     } catch (_) { /* log no crítico */ }
 
-    return res.status(201).json({ success: true, data: egreso });
+    return res.status(201).json({
+      success: true,
+      data: egreso,
+      desglose,
+      alerta: iva.configurado ? null : MENSAJE_IVA_NO_CONFIGURADO
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, error: 'Error al registrar egreso' });

@@ -6,6 +6,9 @@ const Proveedor = require('../models/Proveedor');
 const Proyecto = require('../models/Proyecto');
 const LogAuditoria = require('../models/LogAuditoria');
 const { fechaHoy } = require('../utils/fecha');
+const {
+  obtenerIvaVigente, desgloseDesdeNeto, desgloseGuardado, alertarIvaNoConfigurado, MENSAJE_IVA_NO_CONFIGURADO
+} = require('../utils/impuestos');
 
 async function getProveedores(req, res) {
   try {
@@ -53,6 +56,8 @@ async function generarOrdenCompra(req, res) {
       return res.status(404).json({ success: false, error: 'Proveedor no encontrado' });
     }
 
+    // CU53 - Se recupera el IVA vigente y se deja fijo en la OC
+    const iva = await obtenerIvaVigente();
     const folio = `OC-${Date.now()}`;
     const ordenCompra = await OrdenCompra.create({
       orden_compra_folio: folio,
@@ -60,7 +65,8 @@ async function generarOrdenCompra(req, res) {
       orden_compra_estado: 'Emitida',
       proveedor_rut,
       proyecto_codigo_correlativo: solicitud.proyecto_codigo_correlativo,
-      solicitud_material_id
+      solicitud_material_id,
+      orden_compra_iva_porcentaje: iva.porcentaje
     });
 
     for (const detalle of detalles) {
@@ -81,18 +87,32 @@ async function generarOrdenCompra(req, res) {
       usuario_rut: req.user.rut
     });
 
-    return res.status(201).json({ success: true, data: ordenCompra });
+    if (!iva.configurado) await alertarIvaNoConfigurado(`la orden de compra ${folio}`, req.user.rut);
+
+    const neto = detalles.reduce((acc, d) => acc + (Number(d.cantidad) || 0) * (Number(d.precio_unitario) || 0), 0);
+    return res.status(201).json({
+      success: true,
+      data: ordenCompra,
+      desglose: desgloseDesdeNeto(neto, iva.porcentaje),
+      alerta: iva.configurado ? null : MENSAJE_IVA_NO_CONFIGURADO
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, error: 'Error al generar orden de compra' });
   }
 }
 
-function montoTotal(detalles) {
+function montoNeto(detalles) {
   return detalles.reduce(
     (acc, d) => acc + (d.detalle_orden_compra_cantidad || 0) * parseFloat(d.detalle_orden_compra_precio_unitario || 0),
     0
   );
+}
+
+// CU53 - Neto, IVA y total de una OC con el % que quedó guardado en ella
+function desgloseOC(orden, detalles) {
+  const d = desgloseGuardado(montoNeto(detalles), orden.orden_compra_iva_porcentaje);
+  return { monto_neto: d.neto, iva_porcentaje: d.iva_porcentaje, monto_iva: d.iva, monto_total: d.total };
 }
 
 // CU36 - Almacenando historial de Órdenes de Compra
@@ -123,7 +143,7 @@ async function getHistorial(req, res) {
       proyecto_codigo_correlativo: o.proyecto_codigo_correlativo,
       proyecto_nombre_obra: o.Proyecto?.proyecto_nombre_obra || null,
       proveedor: o.Proveedor?.proveedor_razon_social || '—',
-      monto_total: montoTotal(o.DetalleOrdenCompras || [])
+      ...desgloseOC(o, o.DetalleOrdenCompras || [])
     }));
 
     return res.json({ success: true, data });
@@ -152,7 +172,7 @@ async function getDetalle(req, res) {
       data: {
         orden,
         detalles,
-        monto_total: montoTotal(detalles)
+        ...desgloseOC(orden, detalles)
       }
     });
   } catch (err) {

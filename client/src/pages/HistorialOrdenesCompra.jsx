@@ -91,7 +91,7 @@ export default function HistorialOrdenesCompra() {
                   <th>Fecha</th>
                   <th>Proyecto</th>
                   <th>Proveedor</th>
-                  <th>Monto Total</th>
+                  <th>Total (con IVA)</th>
                   <th>Estado</th>
                   <th></th>
                 </tr>
@@ -103,7 +103,12 @@ export default function HistorialOrdenesCompra() {
                     <td style={{ fontSize: 13 }}>{o.orden_compra_fecha}</td>
                     <td style={{ fontSize: 13 }}>{o.proyecto_codigo_correlativo}</td>
                     <td style={{ fontSize: 13 }}>{o.proveedor}</td>
-                    <td style={{ fontSize: 13 }}>{clp(o.monto_total)}</td>
+                    <td style={{ fontSize: 13 }}>
+                      {clp(o.monto_total)}
+                      {o.iva_porcentaje === null && (
+                        <div style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>IVA no registrado</div>
+                      )}
+                    </td>
                     <td><Badge value={o.orden_compra_estado} /></td>
                     <td>
                       <button className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: 12 }}
@@ -151,7 +156,22 @@ export default function HistorialOrdenesCompra() {
                 </tbody>
               </table>
             </div>
-            <p style={{ marginTop: 12, fontWeight: 700, fontSize: 14 }}>Total: {clp(detalle.monto_total)}</p>
+            {/* CU53 - Desglose con el % de IVA que quedó guardado en la OC */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'auto auto', justifyContent: 'end', columnGap: 16, rowGap: 4, marginTop: 12, fontSize: 13 }}>
+              <span style={{ color: 'var(--color-text-muted)' }}>Neto</span>
+              <span style={{ textAlign: 'right' }}>{clp(detalle.monto_neto)}</span>
+              <span style={{ color: 'var(--color-text-muted)' }}>
+                {detalle.iva_porcentaje === null ? 'IVA' : `IVA (${String(detalle.iva_porcentaje).replace('.', ',')}%)`}
+              </span>
+              <span style={{ textAlign: 'right' }}>{detalle.iva_porcentaje === null ? 'No registrado' : clp(detalle.monto_iva)}</span>
+              <span style={{ fontWeight: 700, fontSize: 14 }}>Total</span>
+              <span style={{ fontWeight: 700, fontSize: 14, textAlign: 'right' }}>{clp(detalle.monto_total)}</span>
+            </div>
+            {detalle.iva_porcentaje === null && (
+              <p style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 6, textAlign: 'right' }}>
+                Orden emitida antes del cálculo automático de impuestos.
+              </p>
+            )}
 
             <button className="btn btn-secondary" style={{ marginTop: 16 }} onClick={() => setDetalle(null)}>Cerrar</button>
           </div>

@@ -6,6 +6,19 @@ import { fechaLocal } from '../utils/fecha';
 
 const fmt = n => n !== undefined && n !== null ? `$${parseFloat(n).toLocaleString('es-CL')}` : '--';
 
+// CU53 - Mismo cálculo que el servidor. "si": el monto ya trae el IVA y se descuenta
+// tal cual. "no": al monto (neto) se le suma el IVA vigente.
+const redondear2 = v => Math.round(v * 100) / 100;
+function calcularDesglose(monto, incluyeIva, porcentaje) {
+  if (!(monto > 0) || !incluyeIva) return null;
+  if (incluyeIva === 'si') {
+    const iva = Math.round(monto - monto / (1 + porcentaje / 100));
+    return { neto: redondear2(monto - iva), iva, total: monto };
+  }
+  const iva = Math.round(monto * porcentaje / 100);
+  return { neto: monto, iva, total: redondear2(monto + iva) };
+}
+
 export default function CajaChica() {
   const { toasts, addToast, removeToast } = useToast();
   const [proyectos, setProyectos] = useState([]);
@@ -20,14 +33,23 @@ export default function CajaChica() {
   const [form, setForm] = useState({
     egreso_caja_chica_monto: '',
     egreso_caja_chica_concepto: '',
-    egreso_caja_chica_fecha: fechaLocal()
+    egreso_caja_chica_fecha: fechaLocal(),
+    incluye_iva: ''
   });
+  const [iva, setIva] = useState({ porcentaje: 0, configurado: true });
+  const [ivaInvalido, setIvaInvalido] = useState(false);
 
   useEffect(() => {
     api.get('/caja-chica/proyectos')
       .then(r => setProyectos(r.data.data))
       .catch(() => addToast('Error al cargar proyectos', 'error'));
+    api.get('/parametro/iva-vigente')
+      .then(r => setIva(r.data.data))
+      .catch(() => addToast('Error al cargar el IVA vigente', 'error'));
   }, []);
+
+  const desglose = calcularDesglose(parseFloat(form.egreso_caja_chica_monto), form.incluye_iva, iva.porcentaje);
+  const porcentajeIva = String(iva.porcentaje).replace('.', ',');
 
   const cargarDatos = async codigo => {
     if (!codigo) { setSaldo(null); setEgresos([]); return; }
@@ -51,7 +73,8 @@ export default function CajaChica() {
   };
 
   const abrirNuevo = () => {
-    setForm({ egreso_caja_chica_monto: '', egreso_caja_chica_concepto: '', egreso_caja_chica_fecha: fechaLocal() });
+    setForm({ egreso_caja_chica_monto: '', egreso_caja_chica_concepto: '', egreso_caja_chica_fecha: fechaLocal(), incluye_iva: '' });
+    setIvaInvalido(false);
     setMostrarForm(true);
   };
 
@@ -64,16 +87,23 @@ export default function CajaChica() {
     }
     const monto = parseFloat(form.egreso_caja_chica_monto);
     if (isNaN(monto) || monto <= 0) { addToast('El monto debe ser mayor a 0', 'error'); return; }
+    if (!form.incluye_iva) {
+      setIvaInvalido(true);
+      addToast('Indica si el monto que ingresaste ya incluye IVA', 'error'); return;
+    }
     if (form.egreso_caja_chica_fecha && form.egreso_caja_chica_fecha > hoy) {
       addToast('La fecha del egreso no puede ser posterior a hoy', 'error'); return;
     }
-    if (saldo && monto > saldo.saldo_disponible) {
+    // Se compara contra el saldo lo que realmente se descontará (con IVA)
+    if (saldo && desglose && desglose.total > saldo.saldo_disponible) {
       addToast(`Saldo insuficiente. Disponible: ${fmt(saldo.saldo_disponible)}`, 'error'); return;
     }
     setLoading(true);
     try {
-      await api.post('/caja-chica', { ...form, proyecto_codigo_correlativo: codigoSeleccionado });
+      const r = await api.post('/caja-chica', { ...form, proyecto_codigo_correlativo: codigoSeleccionado });
       addToast('Egreso registrado correctamente', 'success');
+      // CU53 Excepción 1 - IVA no configurado: se usó 0%
+      if (r.data.alerta) addToast(r.data.alerta, 'warning', 7000);
       setMostrarForm(false);
       cargarDatos(codigoSeleccionado);
     } catch (err) {
@@ -172,12 +202,40 @@ export default function CajaChica() {
                 value={form.egreso_caja_chica_monto}
                 onChange={e => setForm(f => ({ ...f, egreso_caja_chica_monto: e.target.value }))}
               />
-              {saldo && form.egreso_caja_chica_monto && parseFloat(form.egreso_caja_chica_monto) > saldo.saldo_disponible && (
+              {saldo && desglose && desglose.total > saldo.saldo_disponible && (
                 <span style={{ fontSize: 12, color: 'var(--color-danger)', display: 'block', marginTop: 4 }}>
-                  Monto supera el saldo disponible ({fmt(saldo.saldo_disponible)})
+                  El total a descontar supera el saldo disponible ({fmt(saldo.saldo_disponible)})
                 </span>
               )}
             </div>
+            {/* CU53 - Cálculo de impuestos del gasto */}
+            <div className="form-group">
+              <label className="form-label">¿El monto que ingresaste ya incluye IVA?</label>
+              <select
+                className={`form-select${ivaInvalido ? ' is-invalid' : ''}`}
+                value={form.incluye_iva}
+                onChange={e => { setForm(f => ({ ...f, incluye_iva: e.target.value })); setIvaInvalido(false); }}
+              >
+                <option value="">Selecciona una opción</option>
+                <option value="si">Sí, ya incluye IVA</option>
+                <option value="no">No, hay que sumarle el IVA</option>
+              </select>
+              {!iva.configurado && (
+                <span style={{ fontSize: 12, color: 'var(--tone-amber)', display: 'block', marginTop: 4 }}>
+                  El IVA no está configurado: el gasto se calculará con 0%.
+                </span>
+              )}
+            </div>
+            {desglose && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'auto auto', justifyContent: 'start', columnGap: 16, rowGap: 2, fontSize: 13, marginBottom: 16 }}>
+                <span style={{ color: 'var(--color-text-muted)' }}>Neto</span>
+                <span style={{ textAlign: 'right' }}>{fmt(desglose.neto)}</span>
+                <span style={{ color: 'var(--color-text-muted)' }}>IVA ({porcentajeIva}%)</span>
+                <span style={{ textAlign: 'right' }}>{fmt(desglose.iva)}</span>
+                <span style={{ fontWeight: 700 }}>Total a descontar</span>
+                <span style={{ fontWeight: 700, textAlign: 'right' }}>{fmt(desglose.total)}</span>
+              </div>
+            )}
             <div className="form-group">
               <label className="form-label">Concepto</label>
               <textarea
@@ -233,6 +291,11 @@ export default function CajaChica() {
                         <td style={{ fontSize: 13 }}>{e.egreso_caja_chica_concepto}</td>
                         <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--color-danger)' }}>
                           {fmt(e.egreso_caja_chica_monto)}
+                          <div style={{ fontSize: 11, fontWeight: 400, color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
+                            {e.egreso_caja_chica_iva_porcentaje === null
+                              ? 'IVA no registrado'
+                              : `neto ${fmt(e.egreso_caja_chica_monto_neto)} + IVA ${fmt(e.egreso_caja_chica_monto - e.egreso_caja_chica_monto_neto)}`}
+                          </div>
                         </td>
                       </tr>
                     ))}

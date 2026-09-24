@@ -16,16 +16,20 @@ export default function OrdenCompra() {
   const [seleccionada, setSeleccionada] = useState(null);
   const [proveedorRut, setProveedorRut] = useState('');
   const [detalles, setDetalles] = useState([{ ...DETALLE_VACIO }]);
+  // CU53 - IVA vigente para mostrar el desglose antes de generar
+  const [iva, setIva] = useState({ porcentaje: 0, configurado: true });
 
   const cargar = async () => {
     setLoading(true);
     try {
-      const [rSol, rProv] = await Promise.all([
+      const [rSol, rProv, rIva] = await Promise.all([
         api.get('/orden-compra/solicitudes-pendientes'),
-        api.get('/orden-compra/proveedores')
+        api.get('/orden-compra/proveedores'),
+        api.get('/parametro/iva-vigente')
       ]);
       setSolicitudes(rSol.data.data);
       setProveedores(rProv.data.data);
+      setIva(rIva.data.data);
     } catch (err) {
       addToast(err.response?.data?.error || 'Error al cargar datos', 'error');
     } finally {
@@ -62,11 +66,15 @@ export default function OrdenCompra() {
     setDetalles(prev => prev.filter((_, idx) => idx !== i));
   };
 
-  const totalOC = detalles.reduce((sum, d) => {
+  // CU53 - Los precios ingresados son netos: el IVA se calcula sobre el neto
+  const netoOC = detalles.reduce((sum, d) => {
     const cant = parseFloat(d.cantidad) || 0;
     const precio = parseFloat(d.precio_unitario) || 0;
     return sum + cant * precio;
   }, 0);
+  const ivaOC = Math.round(netoOC * iva.porcentaje / 100);
+  const totalOC = netoOC + ivaOC;
+  const porcentajeIva = String(iva.porcentaje).replace('.', ',');
 
   const formatPeso = v => v.toLocaleString('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 });
 
@@ -78,12 +86,14 @@ export default function OrdenCompra() {
 
     setEnviando(true);
     try {
-      await api.post('/orden-compra/generar', {
+      const r = await api.post('/orden-compra/generar', {
         solicitud_material_id: seleccionada.solicitud_material_id,
         proveedor_rut: proveedorRut,
         detalles: detvalid
       });
       addToast('Orden de compra generada correctamente', 'success');
+      // CU53 Excepción 1 - IVA no configurado: se usó 0%
+      if (r.data.alerta) addToast(r.data.alerta, 'warning', 7000);
       setSeleccionada(null);
       resetForm();
       cargar();
@@ -204,9 +214,20 @@ export default function OrdenCompra() {
                       ))}
                     </div>
 
-                    {/* Total + botón */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16 }}>
+                    {/* CU53 - Desglose neto + IVA = total antes de generar */}
+                    {!iva.configurado && (
+                      <p style={{ marginTop: 14, fontSize: 12, color: 'var(--tone-amber)' }}>
+                        El IVA no está configurado: esta orden se calculará con 0%. Configúrelo en Parámetros Legales y Tributarios.
+                      </p>
+                    )}
+                    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginTop: 16 }}>
                       <div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'auto auto', columnGap: 16, rowGap: 2, fontSize: 13, marginBottom: 6 }}>
+                          <span style={{ color: 'var(--color-text-secondary)' }}>Neto</span>
+                          <span style={{ textAlign: 'right' }}>{formatPeso(netoOC)}</span>
+                          <span style={{ color: 'var(--color-text-secondary)' }}>IVA ({porcentajeIva}%)</span>
+                          <span style={{ textAlign: 'right' }}>{formatPeso(ivaOC)}</span>
+                        </div>
                         <span style={{ fontSize: 12, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total OC</span>
                         <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-green)' }}>{formatPeso(totalOC)}</div>
                       </div>

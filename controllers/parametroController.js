@@ -3,6 +3,7 @@ const sequelize = require('../config/database');
 const ParametroSistema = require('../models/ParametroSistema');
 const LogAuditoria = require('../models/LogAuditoria');
 const { fechaHoy } = require('../utils/fecha');
+const { obtenerIvaVigente } = require('../utils/impuestos');
 
 // CU52 - Parámetros legales y tributarios editables desde Configuración.
 // "campo" es el nombre que usa el formulario; "clave" es la fila en PARAMETRO_SISTEMA.
@@ -97,4 +98,14 @@ async function actualizarTributarios(req, res) {
   }
 }
 
-module.exports = { getTributarios, actualizarTributarios };
+// CU53 - IVA vigente para mostrar el desglose antes de guardar un documento
+async function getIvaVigente(req, res) {
+  try {
+    return res.json({ success: true, data: await obtenerIvaVigente() });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al obtener el IVA vigente' });
+  }
+}
+
+module.exports = { getTributarios, actualizarTributarios, getIvaVigente };

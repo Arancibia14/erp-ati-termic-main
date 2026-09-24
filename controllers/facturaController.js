@@ -8,6 +8,14 @@ const GuiaDespacho = require('../models/GuiaDespacho');
 const Proveedor = require('../models/Proveedor');
 const Factura = require('../models/Factura');
 const LogAuditoria = require('../models/LogAuditoria');
+const { desgloseGuardado } = require('../utils/impuestos');
+
+// CU53 - La factura del proveedor trae IVA: se compara contra el total con IVA de la OC
+function desgloseOrden(orden) {
+  const neto = (orden.DetalleOrdenCompras || []).reduce((sum, d) =>
+    sum + (parseFloat(d.detalle_orden_compra_cantidad) * parseFloat(d.detalle_orden_compra_precio_unitario)), 0);
+  return desgloseGuardado(neto, orden.orden_compra_iva_porcentaje);
+}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -46,10 +54,8 @@ async function getOrdenesPendientesFact(req, res) {
 
     const data = ordenes.map(o => {
       const plain = o.toJSON();
-      const total = (plain.DetalleOrdenCompras || []).reduce((sum, d) => {
-        return sum + (parseFloat(d.detalle_orden_compra_cantidad) * parseFloat(d.detalle_orden_compra_precio_unitario));
-      }, 0);
-      return { ...plain, total_calculado: total };
+      const d = desgloseOrden(plain);
+      return { ...plain, total_calculado: d.total, monto_neto: d.neto, iva_porcentaje: d.iva_porcentaje, monto_iva: d.iva };
     });
 
     return res.json({ success: true, data });
@@ -81,10 +87,8 @@ async function vincularFactura(req, res) {
       return res.status(404).json({ success: false, error: 'Orden de compra no encontrada' });
     }
 
-    // Validar que el monto de la factura coincida con el total de la OC (tolerancia 1 CLP)
-    const totalOC = (orden.DetalleOrdenCompras || []).reduce((sum, d) => {
-      return sum + (parseFloat(d.detalle_orden_compra_cantidad) * parseFloat(d.detalle_orden_compra_precio_unitario));
-    }, 0);
+    // Validar que el monto de la factura coincida con el total con IVA de la OC (tolerancia 1 CLP)
+    const totalOC = desgloseOrden(orden).total;
 
     const montoFactura = parseFloat(factura_monto_total);
     if (totalOC > 0 && Math.abs(montoFactura - totalOC) > 1) {

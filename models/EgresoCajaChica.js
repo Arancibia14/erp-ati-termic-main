@@ -9,7 +9,11 @@ const EgresoCajaChica = sequelize.define('EgresoCajaChica', {
   proyecto_codigo_correlativo: { type: DataTypes.STRING(50), allowNull: false },
   // Quién registró el egreso. Es opcional porque los egresos anteriores a esta
   // columna no lo tienen; los nuevos lo guardan siempre.
-  usuario_rut: { type: DataTypes.STRING(20), allowNull: true }
+  usuario_rut: { type: DataTypes.STRING(20), allowNull: true },
+  // CU53 - Desglose del egreso: egreso_caja_chica_monto es el total descontado del
+  // saldo. Los egresos anteriores a este CU no tienen desglose.
+  egreso_caja_chica_monto_neto: { type: DataTypes.DECIMAL(15, 2), allowNull: true },
+  egreso_caja_chica_iva_porcentaje: { type: DataTypes.DECIMAL(5, 2), allowNull: true }
 }, {
   tableName: 'EGRESO_CAJA_CHICA',
   timestamps: false

@@ -61,7 +61,7 @@ export default function AprobacionesPendientes() {
       monto_estimado: costo
     })
       .then(r => {
-        const { alerta_presupuesto, oc_generada, motivo_pausa_oc, orden_compra } = r.data.data;
+        const { alerta_presupuesto, oc_generada, motivo_pausa_oc, orden_compra, alerta_iva } = r.data.data;
 
         if (alerta_presupuesto) {
           addToast('Solicitud aprobada — presupuesto excedido', 'warning');
@@ -70,6 +70,8 @@ export default function AprobacionesPendientes() {
         } else {
           addToast(`Solicitud aprobada — ${motivo_pausa_oc}`, 'warning');
         }
+        // CU53 Excepción 1 - la OC automática se calculó con IVA 0%
+        if (alerta_iva) addToast(alerta_iva, 'warning', 7000);
 
         setExpandidaId(null);
         cargarSolicitudes();
