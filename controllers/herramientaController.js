@@ -1,11 +1,46 @@
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const Herramienta = require('../models/Herramienta');
 const AsignacionHerramienta = require('../models/AsignacionHerramienta');
+const DocumentoHerramienta = require('../models/DocumentoHerramienta');
 const Trabajador = require('../models/Trabajador');
 const ContratoLaboral = require('../models/ContratoLaboral');
 const LogAuditoria = require('../models/LogAuditoria');
 const { fechaHoy } = require('../utils/fecha');
 
 const hoy = () => fechaHoy();
+
+// CU50 - Centralizando documentación técnica de herramientas
+const FORMATOS_OK = ['.pdf', '.jpg', '.jpeg', '.png'];
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = path.join(__dirname, '../uploads/documentacion-herramientas');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `herramienta_doc_${Date.now()}${path.extname(file.originalname)}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 15 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (FORMATOS_OK.includes(path.extname(file.originalname).toLowerCase())) {
+      cb(null, true);
+    } else {
+      cb(new Error('Formato no compatible. Usa PDF, JPG, JPEG o PNG.'));
+    }
+  }
+});
+
+function eliminarArchivo(urlRelativa) {
+  if (!urlRelativa) return;
+  fs.unlink(path.join(__dirname, '..', urlRelativa), () => {});
+}
 
 // Buscador de herramientas
 async function getHerramientas(req, res) {
@@ -236,4 +271,75 @@ async function getHistorial(req, res) {
   }
 }
 
-module.exports = { getHerramientas, getTrabajadoresActivos, crear, asignar, devolver, getHistorial };
+// CU50 - Centralizando documentación técnica de herramientas
+async function getDocumentos(req, res) {
+  try {
+    const { id } = req.params;
+    const documentos = await DocumentoHerramienta.findAll({
+      where: { herramienta_id: id },
+      order: [['documento_herramienta_id', 'DESC']]
+    });
+    return res.json({ success: true, data: documentos });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al obtener la documentación adjunta' });
+  }
+}
+
+// CU50 - Centralizando documentación técnica de herramientas
+async function subirDocumento(req, res) {
+  try {
+    const { id } = req.params;
+    const { etiqueta } = req.body;
+
+    const limpiar = () => { if (req.file) eliminarArchivo(`/uploads/documentacion-herramientas/${req.file.filename}`); };
+
+    // Excepción 1 - Herramienta no registrada
+    const herramienta = await Herramienta.findByPk(id);
+    if (!herramienta) {
+      limpiar();
+      return res.status(404).json({ success: false, error: 'La herramienta no está registrada. Crea el registro de la herramienta antes de adjuntar documentos.' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Se requiere adjuntar el archivo', campos: ['archivo'] });
+    }
+
+    if (!etiqueta || !etiqueta.trim()) {
+      limpiar();
+      return res.status(400).json({ success: false, error: 'Escribe una etiqueta para el documento (ej. Manual de Uso)', campos: ['etiqueta'] });
+    }
+
+    let documento;
+    try {
+      documento = await DocumentoHerramienta.create({
+        herramienta_id: herramienta.herramienta_id,
+        documento_herramienta_etiqueta: etiqueta.trim(),
+        documento_herramienta_url: `/uploads/documentacion-herramientas/${req.file.filename}`,
+        documento_herramienta_formato: path.extname(req.file.originalname).replace('.', '').toLowerCase(),
+        documento_herramienta_fecha: fechaHoy()
+      });
+    } catch (dbErr) {
+      // La escritura en base de datos falla: se elimina el archivo físico ya guardado
+      console.error(dbErr);
+      limpiar();
+      return res.status(500).json({ success: false, error: 'No se pudo almacenar el archivo en el servidor. La subida fue abortada.' });
+    }
+
+    try {
+      await LogAuditoria.create({
+        log_auditoria_fecha_hora: new Date(),
+        log_auditoria_accion: `Documento "${etiqueta.trim()}" adjuntado a la herramienta ${herramienta.herramienta_codigo} (${herramienta.herramienta_nombre})`,
+        log_auditoria_modulo: 'DOCUMENTACION_HERRAMIENTA',
+        usuario_rut: req.user.rut
+      });
+    } catch (_) { /* log no crítico */ }
+
+    return res.status(201).json({ success: true, data: documento, mensaje: 'Documento cargado correctamente' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al subir la documentación de la herramienta' });
+  }
+}
+
+module.exports = { upload, getHerramientas, getTrabajadoresActivos, crear, asignar, devolver, getHistorial, getDocumentos, subirDocumento };

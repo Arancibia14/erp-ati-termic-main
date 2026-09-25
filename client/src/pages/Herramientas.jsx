@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Wrench, Send, RotateCcw, History, Plus } from 'lucide-react';
+import { Wrench, Send, RotateCcw, History, Plus, FileText, Upload, Download } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import { IlustracionEquipoVacio } from '../components/Ilustraciones';
@@ -23,6 +23,14 @@ export default function Herramientas() {
 
   const [histModal, setHistModal] = useState(null);
   const [historial, setHistorial] = useState([]);
+
+  // CU50 - Centralizando documentación técnica de herramientas
+  const [docModal, setDocModal] = useState(null);
+  const [documentos, setDocumentos] = useState([]);
+  const [etiquetaDoc, setEtiquetaDoc] = useState('');
+  const [archivoDoc, setArchivoDoc] = useState(null);
+  const [erroresDoc, setErroresDoc] = useState([]);
+  const [subiendoDoc, setSubiendoDoc] = useState(false);
 
   const cargar = () => {
     api.get('/herramienta')
@@ -89,6 +97,49 @@ export default function Herramientas() {
       })
       .catch(err => addToast(err.response?.data?.error || 'Error al dar de alta la herramienta', 'error'))
       .finally(() => setCreandoHerramienta(false));
+  };
+
+  // CU50 - Centralizando documentación técnica de herramientas
+  const abrirDocumentacion = h => {
+    setDocModal(h);
+    setDocumentos([]);
+    setEtiquetaDoc('');
+    setArchivoDoc(null);
+    setErroresDoc([]);
+    api.get(`/herramienta/${h.herramienta_id}/documentos`)
+      .then(r => setDocumentos(r.data.data))
+      .catch(() => addToast('Error al cargar la documentación adjunta', 'error'));
+  };
+
+  const subirDocumento = () => {
+    const faltantes = [];
+    if (!archivoDoc) faltantes.push('archivo');
+    if (!etiquetaDoc.trim()) faltantes.push('etiqueta');
+    if (faltantes.length) {
+      setErroresDoc(faltantes);
+      addToast('Completa los campos obligatorios resaltados', 'error');
+      return;
+    }
+    setErroresDoc([]);
+    setSubiendoDoc(true);
+    const fd = new FormData();
+    fd.append('etiqueta', etiquetaDoc.trim());
+    fd.append('archivo', archivoDoc);
+    api.post(`/herramienta/${docModal.herramienta_id}/documentos`, fd, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+      .then(r => {
+        addToast(r.data.mensaje || 'Documento cargado correctamente', 'success');
+        setEtiquetaDoc('');
+        setArchivoDoc(null);
+        return api.get(`/herramienta/${docModal.herramienta_id}/documentos`);
+      })
+      .then(r => setDocumentos(r.data.data))
+      .catch(err => {
+        addToast(err.response?.data?.error || 'Error al subir el archivo', 'error');
+        setErroresDoc(err.response?.data?.campos || []);
+      })
+      .finally(() => setSubiendoDoc(false));
   };
 
   const disponibles = herramientas.filter(h => h.herramienta_estado === 'Disponible');
@@ -256,6 +307,15 @@ export default function Herramientas() {
                         >
                           <History size={13} /> Historial
                         </button>
+                        {usuario.rol === 'admin' && (
+                          <button
+                            className="btn btn-secondary"
+                            style={{ padding: '5px 10px', fontSize: 12 }}
+                            onClick={() => abrirDocumentacion(h)}
+                          >
+                            <FileText size={13} /> Documentación
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -330,6 +390,79 @@ export default function Herramientas() {
             <button className="btn btn-secondary" style={{ marginTop: 16 }} onClick={() => setHistModal(null)}>
               Cerrar
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* CU50 - Centralizando documentación técnica de herramientas */}
+      {docModal && (
+        <div
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 500, padding: 24, overflowY: 'auto' }}
+          onClick={() => setDocModal(null)}
+        >
+          <div className="card" style={{ maxWidth: 560, width: '100%' }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ marginBottom: 4, fontSize: 15, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <FileText size={16} /> Documentación Adjunta
+            </h3>
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 16 }}>
+              {docModal.herramienta_codigo} — {docModal.herramienta_nombre}
+            </p>
+
+            {documentos.length === 0 ? (
+              <p style={{ fontSize: 13, color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: 16 }}>
+                Sin documentos adjuntos.
+              </p>
+            ) : (
+              <div className="table-container" style={{ marginBottom: 16 }}>
+                <table>
+                  <thead><tr><th>Etiqueta</th><th>Formato</th><th>Fecha</th><th></th></tr></thead>
+                  <tbody>
+                    {documentos.map(d => (
+                      <tr key={d.documento_herramienta_id}>
+                        <td style={{ fontSize: 12 }}>{d.documento_herramienta_etiqueta}</td>
+                        <td style={{ fontSize: 12, textTransform: 'uppercase' }}>{d.documento_herramienta_formato}</td>
+                        <td style={{ fontSize: 12 }}>{d.documento_herramienta_fecha}</td>
+                        <td>
+                          <a href={d.documento_herramienta_url} target="_blank" rel="noreferrer"
+                             className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: 11, textDecoration: 'none' }}>
+                            <Download size={12} /> Ver
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <div className="form-group">
+              <label className="form-label">Etiqueta del documento</label>
+              <input
+                className={'form-input' + (erroresDoc.includes('etiqueta') ? ' is-invalid' : '')}
+                placeholder="Ej. Manual de Uso"
+                value={etiquetaDoc}
+                onChange={e => { setEtiquetaDoc(e.target.value); setErroresDoc([]); }}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Archivo (PDF, JPG o PNG — máx. 15 MB)</label>
+              <input
+                type="file"
+                className={'form-input' + (erroresDoc.includes('archivo') ? ' is-invalid' : '')}
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={e => { setArchivoDoc(e.target.files[0] || null); setErroresDoc([]); }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="btn btn-primary" onClick={subirDocumento} disabled={subiendoDoc}>
+                <Upload size={14} />
+                {subiendoDoc ? 'Subiendo...' : 'Subir Archivo'}
+              </button>
+              <button className="btn btn-secondary" onClick={() => setDocModal(null)} disabled={subiendoDoc}>
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       )}

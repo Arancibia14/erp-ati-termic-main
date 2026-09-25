@@ -40,6 +40,7 @@ const ModeloHvac = require('./models/ModeloHvac');
 const DocumentoEquipo = require('./models/DocumentoEquipo');
 const Herramienta = require('./models/Herramienta');
 const AsignacionHerramienta = require('./models/AsignacionHerramienta');
+const DocumentoHerramienta = require('./models/DocumentoHerramienta');
 const DevolucionObra = require('./models/DevolucionObra');
 const CertificadoCalidad = require('./models/CertificadoCalidad');
 const Sesion = require('./models/Sesion');
@@ -110,6 +111,10 @@ EquipoHVAC.belongsTo(ModeloHvac, { foreignKey: 'modelo_hvac_id' });
 // CU43 - Certificados de garantía ligados a la unidad física específica
 EquipoHVAC.hasMany(DocumentoLegal, { foreignKey: 'equipo_hvac_numero_serie' });
 DocumentoLegal.belongsTo(EquipoHVAC, { foreignKey: 'equipo_hvac_numero_serie' });
+
+// CU50 - Documentación técnica adjunta por herramienta
+Herramienta.hasMany(DocumentoHerramienta, { foreignKey: 'herramienta_id' });
+DocumentoHerramienta.belongsTo(Herramienta, { foreignKey: 'herramienta_id' });
 
 Especialidad.hasMany(Trabajador, { foreignKey: 'especialidad_id' });
 Trabajador.belongsTo(Especialidad, { foreignKey: 'especialidad_id' });
