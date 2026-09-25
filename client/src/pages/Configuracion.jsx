@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Settings, FolderPlus, UserPlus,
-  ClipboardList, Truck, FileText, Edit3, Trash2, CalendarRange, DollarSign, Percent
+  ClipboardList, Truck, FileText, Edit3, Trash2, CalendarRange, DollarSign, Percent, Mail, Image
 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
@@ -14,6 +14,7 @@ const TABS = [
   { id: 'guia',       label: 'Guías Despacho',   icon: Truck },
   { id: 'contrato',   label: 'Contratos',        icon: FileText },
   { id: 'tributario', label: 'Parámetros Legales y Tributarios', icon: Percent },
+  { id: 'plantillas', label: 'Configuración de Notificaciones', icon: Mail },
 ];
 
 // CU52 - Porcentaje válido: acepta coma o punto decimal, entre 0 y 100, hasta 2 decimales
@@ -68,6 +69,15 @@ export default function Configuracion() {
   const [tributarios, setTributarios] = useState([]);
   const [errTrib,     setErrTrib]     = useState([]);
   const [loadingTrib, setLoadingTrib] = useState(false);
+  // CU48 - Plantillas de correo electrónico
+  const [eventosCorreo, setEventosCorreo] = useState([]);
+  const [eventoActivo,  setEventoActivo]  = useState('');
+  const [fPlantilla,    setFPlantilla]    = useState({ asunto: '', contenido_html: '', contenido_texto: '' });
+  const [etiquetasEvento, setEtiquetasEvento] = useState([]);
+  const [errPlantilla,  setErrPlantilla]  = useState([]);
+  const [loadingPlantilla, setLoadingPlantilla] = useState(false);
+  const [guardandoPlantilla, setGuardandoPlantilla] = useState(false);
+  const htmlRef = useRef(null);
 
   // Se declaran antes de los efectos que las llaman
   const cargarProyectos = () =>
@@ -87,6 +97,33 @@ export default function Configuracion() {
       })
       .catch(() => addToast('Error al cargar los parámetros tributarios', 'error'));
 
+  // CU48 Paso 1 - Lista de eventos de correo disponibles
+  const cargarEventosCorreo = () =>
+    api.get('/plantilla-correo')
+      .then(r => {
+        setEventosCorreo(r.data.data);
+        if (r.data.data.length && !eventoActivo) setEventoActivo(r.data.data[0].evento);
+      })
+      .catch(() => addToast('Error al cargar los eventos de correo', 'error'));
+
+  // CU48 Paso 2 - Contenido actual de la plantilla seleccionada
+  const cargarPlantilla = evento => {
+    if (!evento) return;
+    setLoadingPlantilla(true);
+    api.get(`/plantilla-correo/${evento}`)
+      .then(r => {
+        setFPlantilla({
+          asunto: r.data.data.asunto,
+          contenido_html: r.data.data.contenido_html,
+          contenido_texto: r.data.data.contenido_texto || ''
+        });
+        setEtiquetasEvento(r.data.data.etiquetas);
+        setErrPlantilla([]);
+      })
+      .catch(() => addToast('Error al cargar la plantilla', 'error'))
+      .finally(() => setLoadingPlantilla(false));
+  };
+
   useEffect(() => {
     api.get('/setup/especialidades').then(r => setEspecialidades(r.data.data)).catch(() => {});
     cargarProyectos();
@@ -99,8 +136,48 @@ export default function Configuracion() {
       cargarContratos();
     }
     if (tab === 'tributario') cargarTributarios();
+    if (tab === 'plantillas') cargarEventosCorreo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
+
+  useEffect(() => {
+    if (tab === 'plantillas' && eventoActivo) cargarPlantilla(eventoActivo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventoActivo]);
+
+  // Inserta texto en la posición del cursor del editor HTML (etiquetas dinámicas, logo)
+  const insertarEnCursor = texto => {
+    const el = htmlRef.current;
+    if (!el) return;
+    const inicio = el.selectionStart ?? el.value.length;
+    const fin = el.selectionEnd ?? el.value.length;
+    const nuevo = el.value.slice(0, inicio) + texto + el.value.slice(fin);
+    setFPlantilla(f => ({ ...f, contenido_html: nuevo }));
+    requestAnimationFrame(() => {
+      el.focus();
+      el.selectionStart = el.selectionEnd = inicio + texto.length;
+    });
+  };
+
+  const submitPlantilla = e => {
+    e.preventDefault();
+    setGuardandoPlantilla(true);
+    api.put(`/plantilla-correo/${eventoActivo}`, {
+      asunto: fPlantilla.asunto,
+      contenido_html: fPlantilla.contenido_html,
+      contenido_texto: fPlantilla.contenido_texto
+    })
+      .then(r => {
+        addToast(r.data.mensaje, 'success');
+        setErrPlantilla([]);
+        cargarEventosCorreo();
+      })
+      .catch(err => {
+        setErrPlantilla(err.response?.data?.campos || []);
+        addToast(err.response?.data?.error || 'Error al actualizar la plantilla', 'error');
+      })
+      .finally(() => setGuardandoPlantilla(false));
+  };
 
   const submitTributarios = e => {
     e.preventDefault();
@@ -367,7 +444,7 @@ export default function Configuracion() {
       </div>
 
       {/* La tabla de contratos necesita más ancho que los formularios */}
-      <div style={{ maxWidth: tab === 'contrato' ? 960 : 620 }}>
+      <div style={{ maxWidth: tab === 'contrato' || tab === 'plantillas' ? 960 : 620 }}>
 
         {/* ── PROYECTOS ─────────────────────────────────────────── */}
         {tab === 'proyecto' && (
@@ -802,6 +879,81 @@ export default function Configuracion() {
                 <Percent size={15} /> {loadingTrib ? 'Guardando...' : 'Guardar Cambios'}
               </button>
             </form>
+          </div>
+        )}
+
+        {/* ── CU48 PLANTILLAS DE CORREO ELECTRÓNICO ───────────── */}
+        {tab === 'plantillas' && (
+          <div className="card">
+            <SectionTitle>Gestión de Plantillas</SectionTitle>
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 16 }}>
+              Edita el asunto y el contenido de los correos automáticos que envía el sistema. Los cambios se aplican
+              a todos los envíos futuros de ese tipo de correo.
+            </p>
+
+            <div className="form-group" style={{ maxWidth: 360 }}>
+              <label className="form-label">Evento a editar</label>
+              <select className="form-select" value={eventoActivo} onChange={e => setEventoActivo(e.target.value)}>
+                {eventosCorreo.map(ev => (
+                  <option key={ev.evento} value={ev.evento}>{ev.nombre}</option>
+                ))}
+              </select>
+            </div>
+
+            {loadingPlantilla ? (
+              <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 16 }}>Cargando plantilla...</p>
+            ) : (
+              <form onSubmit={submitPlantilla} style={{ marginTop: 16 }}>
+                <div className="form-group">
+                  <label className="form-label">Asunto del Correo</label>
+                  <input className={`form-input${errPlantilla.includes('asunto') ? ' is-invalid' : ''}`}
+                    value={fPlantilla.asunto}
+                    onChange={e => { setFPlantilla(f => ({ ...f, asunto: e.target.value })); setErrPlantilla(p => p.filter(c => c !== 'asunto')); }} />
+                </div>
+
+                {/* Etiquetas dinámicas y logo: se insertan en la posición del cursor del editor */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+                  {etiquetasEvento.map(tag => (
+                    <button key={tag} type="button" className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: 11 }}
+                      onClick={() => insertarEnCursor(`{{${tag}}}`)}>
+                      {`{{${tag}}}`}
+                    </button>
+                  ))}
+                  <button type="button" className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: 11 }}
+                    onClick={() => insertarEnCursor(`<img src="${window.location.origin}/logo.png" alt="ATI Termic" style="height:40px" />`)}>
+                    <Image size={12} /> Logo ATI Termic
+                  </button>
+                </div>
+
+                <div className="form-grid-2">
+                  <div className="form-group" style={fieldStyle}>
+                    <label className="form-label">Contenido (HTML)</label>
+                    <textarea ref={htmlRef} className={`form-textarea${errPlantilla.includes('contenido_html') ? ' is-invalid' : ''}`}
+                      rows={12} style={{ fontFamily: 'monospace', fontSize: 12 }}
+                      value={fPlantilla.contenido_html}
+                      onChange={e => { setFPlantilla(f => ({ ...f, contenido_html: e.target.value })); setErrPlantilla(p => p.filter(c => c !== 'contenido_html')); }} />
+                  </div>
+                  <div className="form-group" style={fieldStyle}>
+                    <label className="form-label">Vista Previa</label>
+                    <div style={{
+                      border: '1px solid var(--color-border)', borderRadius: 6, padding: 12,
+                      minHeight: 268, background: '#fff', color: '#111', fontSize: 13, overflow: 'auto'
+                    }} dangerouslySetInnerHTML={{ __html: fPlantilla.contenido_html }} />
+                  </div>
+                </div>
+
+                <div className="form-group" style={{ marginTop: 14 }}>
+                  <label className="form-label">Contenido en Texto Plano <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}>(opcional)</span></label>
+                  <textarea className="form-textarea" rows={4}
+                    value={fPlantilla.contenido_texto}
+                    onChange={e => setFPlantilla(f => ({ ...f, contenido_texto: e.target.value }))} />
+                </div>
+
+                <button type="submit" className="btn btn-primary" style={{ marginTop: 16 }} disabled={guardandoPlantilla}>
+                  <Mail size={15} /> {guardandoPlantilla ? 'Guardando...' : 'Guardar Plantilla'}
+                </button>
+              </form>
+            )}
           </div>
         )}
       </div>

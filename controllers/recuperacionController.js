@@ -1,8 +1,10 @@
 const bcrypt = require('bcryptjs');
 const Usuario = require('../models/Usuario');
 const TokenRecuperacion = require('../models/TokenRecuperacion');
+const PlantillaCorreo = require('../models/PlantillaCorreo');
 const LogAuditoria = require('../models/LogAuditoria');
 const { enviarCorreo } = require('../utils/correo');
+const { aplicarPlantilla } = require('../utils/plantillaCorreo');
 const { generarTokenPlano, hashToken, compararToken, fechaExpiracion, MINUTOS_VALIDEZ } = require('../utils/tokenRecuperacion');
 
 function validarPassword(pw) {
@@ -61,11 +63,15 @@ async function solicitarRecuperacion(req, res) {
     // token ya incluidos: así el usuario no tiene que volver a tipear el token.
     const link = `${FRONTEND_URL}/restablecer?rut=${encodeURIComponent(rut)}&token=${encodeURIComponent(tokenPlano)}`;
 
+    // CU48 - El contenido del correo sale de la plantilla editable por el
+    // administrador, no de texto fijo: así una edición se aplica de inmediato.
+    const plantilla = await PlantillaCorreo.findByPk('recuperacion_credenciales');
+    const valores = { nombre: usuario.usuario_nombre, token: tokenPlano, link, minutos: MINUTOS_VALIDEZ };
     await enviarCorreo({
       para: usuario.usuario_correo_institucional,
-      asunto: 'Recuperación de credenciales — ATI Termic',
-      texto: `Hola ${usuario.usuario_nombre}.\n\nTu token de recuperación es: ${tokenPlano}\n\nPara restablecer tu contraseña, entra a: ${link}\n\nEste token vence en ${MINUTOS_VALIDEZ} minutos. Si no solicitaste este cambio, ignora este correo.`,
-      html: `<p>Hola ${usuario.usuario_nombre}.</p><p>Tu token de recuperación es:</p><p style="font-size:22px;font-weight:700;letter-spacing:2px">${tokenPlano}</p><p><a href="${link}">Haz clic aquí para restablecer tu contraseña</a></p><p>Este token vence en ${MINUTOS_VALIDEZ} minutos. Si no solicitaste este cambio, ignora este correo.</p>`
+      asunto: aplicarPlantilla(plantilla.plantilla_correo_asunto, valores),
+      texto: aplicarPlantilla(plantilla.plantilla_correo_contenido_texto, valores),
+      html: aplicarPlantilla(plantilla.plantilla_correo_contenido_html, valores)
     });
 
     await audit(`Usuario ${rut} solicitó recuperación de credenciales`, 'RECUPERACION', rut);

@@ -45,6 +45,7 @@ const DevolucionObra = require('./models/DevolucionObra');
 const CertificadoCalidad = require('./models/CertificadoCalidad');
 const Sesion = require('./models/Sesion');
 const TokenRecuperacion = require('./models/TokenRecuperacion');
+const PlantillaCorreo = require('./models/PlantillaCorreo');
 
 // Associations
 
@@ -189,6 +190,7 @@ app.use('/api/log-auditoria', require('./routes/logAuditoria'));
 app.use('/api/recuperacion', require('./routes/recuperacion'));
 app.use('/api/garantia', require('./routes/garantia'));
 app.use('/api/parametro', require('./routes/parametro'));
+app.use('/api/plantilla-correo', require('./routes/plantillaCorreo'));
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok', timestamp: new Date() } });
@@ -432,6 +434,25 @@ sequelize.authenticate()
         await ParametroSistema.findOrCreate({ where: { parametro_sistema_clave: clave }, defaults: { parametro_sistema_valor: valor } });
       } catch (err) {
         console.error(`[MIGRACIÓN FALLIDA] Parámetro ${clave}\n    ${err.message}`);
+      }
+    }
+
+    // CU48 - Plantilla por defecto de cada evento de correo. Solo se crea si
+    // falta: si el administrador ya la editó, se respeta su contenido.
+    const { PLANTILLAS_POR_DEFECTO } = require('./utils/plantillaCorreo');
+    for (const [evento, def] of Object.entries(PLANTILLAS_POR_DEFECTO)) {
+      try {
+        await PlantillaCorreo.findOrCreate({
+          where: { plantilla_correo_evento: evento },
+          defaults: {
+            plantilla_correo_nombre: def.nombre,
+            plantilla_correo_asunto: def.asunto,
+            plantilla_correo_contenido_html: def.html,
+            plantilla_correo_contenido_texto: def.texto
+          }
+        });
+      } catch (err) {
+        console.error(`[MIGRACIÓN FALLIDA] Plantilla de correo ${evento}\n    ${err.message}`);
       }
     }
 
