@@ -43,6 +43,8 @@ const AnexoContrato = lazy(() => import('./pages/AnexoContrato'));
 const EntregaEpp = lazy(() => import('./pages/EntregaEpp'));
 const HistorialEntregasEpp = lazy(() => import('./pages/HistorialEntregasEpp'));
 const CatalogoEquipos = lazy(() => import('./pages/CatalogoEquipos'));
+const CargarGarantia = lazy(() => import('./pages/CargarGarantia'));
+const DescargarGarantia = lazy(() => import('./pages/DescargarGarantia'));
 const Herramientas = lazy(() => import('./pages/Herramientas'));
 const MaterialesTransito = lazy(() => import('./pages/MaterialesTransito'));
 const CertificadosCalidad = lazy(() => import('./pages/CertificadosCalidad'));
@@ -129,6 +131,8 @@ export default function App() {
         <Route path="/liquidaciones" element={<PrivateLayout><AdminRoute><Liquidaciones /></AdminRoute></PrivateLayout>} />
         <Route path="/anexo-contrato" element={<PrivateLayout><AdminRoute><AnexoContrato /></AdminRoute></PrivateLayout>} />
         <Route path="/catalogo-equipos" element={<PrivateLayout><AdminRoute><CatalogoEquipos /></AdminRoute></PrivateLayout>} />
+        <Route path="/garantias/cargar" element={<PrivateLayout><AdminRoute><CargarGarantia /></AdminRoute></PrivateLayout>} />
+        <Route path="/garantias/descargar" element={<PrivateLayout><AdminRoute><DescargarGarantia /></AdminRoute></PrivateLayout>} />
         <Route path="/historial-oc" element={<PrivateLayout><AdminRoute><HistorialOrdenesCompra /></AdminRoute></PrivateLayout>} />
         <Route path="/usuarios" element={<PrivateLayout><AdminRoute><Usuarios /></AdminRoute></PrivateLayout>} />
         <Route path="/auditoria" element={<PrivateLayout><AdminRoute><ReporteAuditoria /></AdminRoute></PrivateLayout>} />

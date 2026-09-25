@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { upload, getModelos, crearModelo, getDocumentosModelo, subirDocumento } = require('../controllers/equipoController');
+const { upload, getModelos, crearModelo, getUnidadesModelo, crearUnidad, getDocumentosModelo, subirDocumento } = require('../controllers/equipoController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 function subirArchivo(req, res, next) {
@@ -19,5 +19,9 @@ router.get('/modelos', verifyToken, requireAdmin, getModelos);
 router.post('/modelos', verifyToken, requireAdmin, crearModelo);
 router.get('/modelos/:id/documentos', verifyToken, requireAdmin, getDocumentosModelo);
 router.post('/modelos/:id/documentos', verifyToken, requireAdmin, subirArchivo, subirDocumento);
+
+// CU NUEVO 6 - Registrando unidades físicas de equipo HVAC
+router.get('/modelos/:id/unidades', verifyToken, requireAdmin, getUnidadesModelo);
+router.post('/modelos/:id/unidades', verifyToken, requireAdmin, crearUnidad);
 
 module.exports = router;

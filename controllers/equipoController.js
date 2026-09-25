@@ -3,6 +3,8 @@ const path = require('path');
 const fs = require('fs');
 const ModeloHvac = require('../models/ModeloHvac');
 const DocumentoEquipo = require('../models/DocumentoEquipo');
+const EquipoHVAC = require('../models/EquipoHVAC');
+const Proyecto = require('../models/Proyecto');
 const LogAuditoria = require('../models/LogAuditoria');
 const { fechaHoy } = require('../utils/fecha');
 
@@ -79,6 +81,80 @@ async function crearModelo(req, res) {
   }
 }
 
+// CU NUEVO 6 - Registrando unidades físicas de equipo HVAC
+async function getUnidadesModelo(req, res) {
+  try {
+    const { id } = req.params;
+    const unidades = await EquipoHVAC.findAll({
+      where: { modelo_hvac_id: id },
+      include: [{ model: Proyecto, attributes: ['proyecto_nombre_obra'] }],
+      order: [['equipo_hvac_fecha_instalacion', 'DESC']]
+    });
+    return res.json({ success: true, data: unidades });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al obtener las unidades del equipo' });
+  }
+}
+
+// CU NUEVO 6 - Registrando unidades físicas de equipo HVAC
+async function crearUnidad(req, res) {
+  try {
+    const { id } = req.params;
+    const { numero_serie, proyecto_codigo_correlativo, fecha_instalacion } = req.body;
+
+    const modelo = await ModeloHvac.findByPk(id);
+    if (!modelo) {
+      return res.status(404).json({ success: false, error: 'El modelo de equipo no existe en el catálogo' });
+    }
+
+    const faltantes = [];
+    if (!numero_serie || !String(numero_serie).trim()) faltantes.push('numero_serie');
+    if (!proyecto_codigo_correlativo) faltantes.push('proyecto_codigo_correlativo');
+    if (!fecha_instalacion) faltantes.push('fecha_instalacion');
+    if (faltantes.length) {
+      return res.status(400).json({ success: false, error: 'Completa los campos obligatorios', campos: faltantes });
+    }
+
+    const serie = String(numero_serie).trim();
+
+    const proyecto = await Proyecto.findByPk(proyecto_codigo_correlativo);
+    if (!proyecto) {
+      return res.status(404).json({ success: false, error: 'Proyecto no encontrado', campos: ['proyecto_codigo_correlativo'] });
+    }
+
+    const existente = await EquipoHVAC.findByPk(serie);
+    if (existente) {
+      return res.status(409).json({
+        success: false,
+        error: `El número de serie "${serie}" ya está registrado`,
+        campos: ['numero_serie']
+      });
+    }
+
+    const unidad = await EquipoHVAC.create({
+      equipo_hvac_numero_serie: serie,
+      equipo_hvac_fecha_instalacion: fecha_instalacion,
+      modelo_hvac_id: modelo.modelo_hvac_id,
+      proyecto_codigo_correlativo
+    });
+
+    try {
+      await LogAuditoria.create({
+        log_auditoria_fecha_hora: new Date(),
+        log_auditoria_accion: `Unidad de equipo "${serie}" registrada (modelo ${modelo.modelo_hvac_nombre}, proyecto ${proyecto_codigo_correlativo})`,
+        log_auditoria_modulo: 'EQUIPO_HVAC',
+        usuario_rut: req.user.rut
+      });
+    } catch (_) { /* log no crítico */ }
+
+    return res.status(201).json({ success: true, data: unidad });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al registrar la unidad de equipo' });
+  }
+}
+
 async function getDocumentosModelo(req, res) {
   try {
     const { id } = req.params;
@@ -148,4 +224,4 @@ async function subirDocumento(req, res) {
   }
 }
 
-module.exports = { upload, getModelos, crearModelo, getDocumentosModelo, subirDocumento };
+module.exports = { upload, getModelos, crearModelo, getUnidadesModelo, crearUnidad, getDocumentosModelo, subirDocumento };

@@ -107,6 +107,10 @@ EquipoHVAC.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
 ModeloHvac.hasMany(EquipoHVAC, { foreignKey: 'modelo_hvac_id' });
 EquipoHVAC.belongsTo(ModeloHvac, { foreignKey: 'modelo_hvac_id' });
 
+// CU43 - Certificados de garantía ligados a la unidad física específica
+EquipoHVAC.hasMany(DocumentoLegal, { foreignKey: 'equipo_hvac_numero_serie' });
+DocumentoLegal.belongsTo(EquipoHVAC, { foreignKey: 'equipo_hvac_numero_serie' });
+
 Especialidad.hasMany(Trabajador, { foreignKey: 'especialidad_id' });
 Trabajador.belongsTo(Especialidad, { foreignKey: 'especialidad_id' });
 
@@ -178,6 +182,7 @@ app.use('/api/devolucion-obra', require('./routes/devolucionObra'));
 app.use('/api/usuario', require('./routes/usuario'));
 app.use('/api/log-auditoria', require('./routes/logAuditoria'));
 app.use('/api/recuperacion', require('./routes/recuperacion'));
+app.use('/api/garantia', require('./routes/garantia'));
 app.use('/api/parametro', require('./routes/parametro'));
 
 app.get('/api/health', (req, res) => {
@@ -229,6 +234,8 @@ sequelize.authenticate()
       { tabla: 'EGRESO_CAJA_CHICA', columna: 'egreso_caja_chica_iva_porcentaje', tipo: { type: DataTypes.DECIMAL(5, 2), allowNull: true } },
       // CU40 - Comprobante (foto o PDF) de cada egreso de caja chica
       { tabla: 'EGRESO_CAJA_CHICA', columna: 'egreso_caja_chica_url_comprobante', tipo: { type: DataTypes.TEXT, allowNull: true } },
+      // CU43 - Certificado de garantía ligado a una unidad física específica
+      { tabla: 'DOCUMENTO_LEGAL', columna: 'equipo_hvac_numero_serie', tipo: { type: DataTypes.STRING(100), allowNull: true } },
     ];
     for (const m of migraciones) await migrar.agregarColumna(m.tabla, m.columna, m.tipo);
 

@@ -9,7 +9,10 @@ const DocumentoLegal = sequelize.define('DocumentoLegal', {
   documento_legal_fecha_vencimiento: { type: DataTypes.DATEONLY, allowNull: true },
   documento_legal_estado: { type: DataTypes.STRING(50), allowNull: false, defaultValue: 'Vigente' },
   trabajador_rut: { type: DataTypes.STRING(20), allowNull: true },
-  proyecto_codigo_correlativo: { type: DataTypes.STRING(50), allowNull: true }
+  proyecto_codigo_correlativo: { type: DataTypes.STRING(50), allowNull: true },
+  // CU43 - Cuando el documento es un certificado de garantía, queda ligado a
+  // la unidad física específica (no solo al proyecto, como el resto).
+  equipo_hvac_numero_serie: { type: DataTypes.STRING(100), allowNull: true }
 }, {
   tableName: 'DOCUMENTO_LEGAL',
   timestamps: false

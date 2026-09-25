@@ -4,7 +4,8 @@ import {
   ArrowRightLeft, HardHat, History, ClipboardPlus, ClipboardCheck, ShoppingCart,
   FileClock, FileInput, Truck, BadgeCheck, Undo2, Warehouse, AirVent, Wrench,
   Wallet, Paperclip, ChartLine, Calculator, HandCoins, FolderSearch, UserCog,
-  SlidersHorizontal, Building2, UsersRound, Boxes, Banknote, Settings, ScrollText
+  SlidersHorizontal, Building2, UsersRound, Boxes, Banknote, Settings, ScrollText,
+  ShieldPlus
 } from 'lucide-react';
 
 export const MODULOS = [
@@ -58,6 +59,8 @@ export const MODULOS = [
       { to: '/catalogo', icon: Warehouse, label: 'Catálogo Maestro', short: 'Catálogo', admin: true },
       { to: '/proveedores', icon: Building2, label: 'Catálogo de Proveedores', short: 'Proveedores', admin: true },
       { to: '/catalogo-equipos', icon: AirVent, label: 'Catálogo de Equipos', short: 'Equipos', admin: true },
+      { to: '/garantias/cargar', icon: ShieldPlus, label: 'Cargar Garantía', short: 'Cargar Garantía', admin: true },
+      { to: '/garantias/descargar', icon: ShieldCheck, label: 'Consulta de Garantías', short: 'Garantías', admin: true },
       { to: '/herramientas', icon: Wrench, label: 'Herramientas', short: 'Herramientas' }
     ]
   },
