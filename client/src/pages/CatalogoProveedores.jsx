@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Building2, Plus, Ban, RotateCcw, X } from 'lucide-react';
+import { Building2, Plus, Ban, RotateCcw, X, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import ModalEliminacion from '../components/ModalEliminacion';
 
 // CU34 - Gestionando catálogo de proveedores
 const FORM_VACIO = { rut: '', razon_social: '', correo: '', telefono: '' };
 
 export default function CatalogoProveedores() {
   const { toasts, addToast, removeToast } = useToast();
+  // CU 49 - Proveedor cuya eliminación se está validando
+  const [eliminacion, setEliminacion] = useState(null);
   const [proveedores, setProveedores] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [abierto, setAbierto] = useState(false);
@@ -187,6 +190,7 @@ export default function CatalogoProveedores() {
                     <td style={{ fontSize: 13 }}>{p.proveedor_telefono || '—'}</td>
                     <td><Badge value={p.proveedor_activo ? 'Activo' : 'Inactivo'} /></td>
                     <td>
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                       {p.proveedor_activo ? (
                         <button type="button" className="btn btn-secondary" style={{ padding: '6px 12px', fontSize: 12 }}
                           disabled={cambiando === p.proveedor_rut}
@@ -200,6 +204,11 @@ export default function CatalogoProveedores() {
                           <RotateCcw size={13} /> Reactivar
                         </button>
                       )}
+                      <button type="button" className="btn btn-danger" style={{ padding: '6px 12px', fontSize: 12 }}
+                        onClick={() => setEliminacion({ ruta: `/proveedor/${encodeURIComponent(p.proveedor_rut)}`, tipo: 'el proveedor', nombre: p.proveedor_razon_social })}>
+                        <Trash2 size={13} /> Eliminar
+                      </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -208,6 +217,13 @@ export default function CatalogoProveedores() {
           </div>
         )}
       </div>
+
+      <ModalEliminacion
+        solicitud={eliminacion}
+        addToast={addToast}
+        onCerrar={recargar => { setEliminacion(null); if (recargar) cargar(); }}
+        onEliminado={() => { setEliminacion(null); cargar(); }}
+      />
 
       <Toast toasts={toasts} removeToast={removeToast} />
     </div>

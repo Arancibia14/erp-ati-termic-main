@@ -4,6 +4,7 @@ import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import { IlustracionCatalogoVacio } from '../components/Ilustraciones';
 import Badge from '../components/Badge';
+import ModalEliminacion from '../components/ModalEliminacion';
 
 const UNIDADES = ['Unidad', 'Metro', 'Kg', 'Litro', 'Caja', 'Rollo', 'Par'];
 
@@ -19,6 +20,8 @@ const FORM_VACIO = {
 
 export default function Catalogo() {
   const { toasts, addToast, removeToast } = useToast();
+  // CU 49 - Material cuya eliminación se está validando
+  const [eliminacion, setEliminacion] = useState(null);
   const [materiales, setMateriales] = useState([]);
   const [proveedores, setProveedores] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -240,16 +243,25 @@ export default function Catalogo() {
                     <td style={{ fontSize: 13 }}>{m.Proveedor?.proveedor_razon_social || '—'}</td>
                     <td><Badge value={m.material_activo ? 'Activo' : 'Inactivo'} /></td>
                     <td>
-                      {m.material_activo && (
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                        {m.material_activo && (
+                          <button
+                            className="btn btn-danger"
+                            style={{ padding: '5px 10px', fontSize: 12 }}
+                            onClick={() => desactivarMaterial(m.material_id)}
+                          >
+                            <Trash2 size={13} />
+                            Desactivar
+                          </button>
+                        )}
                         <button
                           className="btn btn-danger"
                           style={{ padding: '5px 10px', fontSize: 12 }}
-                          onClick={() => desactivarMaterial(m.material_id)}
+                          onClick={() => setEliminacion({ ruta: `/material/${m.material_id}`, tipo: 'el material', nombre: m.material_nombre })}
                         >
-                          <Trash2 size={13} />
-                          Desactivar
+                          <Trash2 size={13} /> Eliminar
                         </button>
-                      )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -258,6 +270,13 @@ export default function Catalogo() {
           </div>
         )}
       </div>
+
+      <ModalEliminacion
+        solicitud={eliminacion}
+        addToast={addToast}
+        onCerrar={recargar => { setEliminacion(null); if (recargar) cargarMateriales(); }}
+        onEliminado={() => { setEliminacion(null); cargarMateriales(); }}
+      />
 
       <Toast toasts={toasts} removeToast={removeToast} />
     </div>

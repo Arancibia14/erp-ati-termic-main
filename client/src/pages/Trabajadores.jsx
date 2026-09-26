@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Users, Plus, HeartPulse, Upload, Download } from 'lucide-react';
+import { Users, Plus, HeartPulse, Upload, Download, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import ModalEliminacion from '../components/ModalEliminacion';
 
 const EXAMEN_VACIO = { tipo: 'fisica', fecha_emision: '', fecha_vencimiento: '', archivo: null };
 
@@ -17,6 +18,8 @@ const FORM_VACIO = {
 
 export default function Trabajadores() {
   const { toasts, addToast, removeToast } = useToast();
+  // CU 49 - Trabajador cuya eliminación se está validando
+  const [eliminacion, setEliminacion] = useState(null);
   const [trabajadores, setTrabajadores] = useState([]);
   const [especialidades, setEspecialidades] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -291,6 +294,17 @@ export default function Trabajadores() {
                             Desactivar
                           </button>
                         )}
+                        <button
+                          className="btn btn-danger"
+                          style={{ padding: '5px 10px', fontSize: 12 }}
+                          onClick={() => setEliminacion({
+                            ruta: `/trabajador/${encodeURIComponent(t.trabajador_rut)}`,
+                            tipo: 'el trabajador',
+                            nombre: `${t.trabajador_nombres} ${t.trabajador_apellidos || ''}`.trim()
+                          })}
+                        >
+                          <Trash2 size={13} /> Eliminar
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -399,6 +413,13 @@ export default function Trabajadores() {
           </div>
         </div>
       )}
+
+      <ModalEliminacion
+        solicitud={eliminacion}
+        addToast={addToast}
+        onCerrar={recargar => { setEliminacion(null); if (recargar) cargarTrabajadores(); }}
+        onEliminado={() => { setEliminacion(null); cargarTrabajadores(); }}
+      />
 
       <Toast toasts={toasts} removeToast={removeToast} />
     </div>
