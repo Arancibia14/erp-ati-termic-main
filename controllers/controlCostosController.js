@@ -20,7 +20,7 @@ const redondear = n => Math.round(n * 100) / 100;
 
 // Costo real acumulado del proyecto al cierre de cada mes con movimientos, desde
 // su inicio. Cargos: facturas de las OC del proyecto. Créditos: rebajas por
-// reingreso de sobrantes (CU NUEVO 4, extensión CU32). Un crédito solo descuenta
+// reingreso de sobrantes (CU 62, extensión CU32). Un crédito solo descuenta
 // costo ya facturado: si el material se devuelve antes de que llegue su factura,
 // la rebaja queda pendiente y se descuenta cuando la factura se registra. Por eso
 // el acumulado nunca es negativo.

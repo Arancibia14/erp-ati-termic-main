@@ -415,7 +415,7 @@ sequelize.authenticate()
     ];
     for (const sql of eppMigs) await migrar.sql(sql);
 
-    // CU NUEVO 4 (extensión CU32) - rebaje de costo por reingreso de materiales sobrantes
+    // CU 62 (extensión CU32) - rebaje de costo por reingreso de materiales sobrantes
     const devolucionMigs = [
       "ALTER TABLE DEVOLUCION_OBRA ADD COLUMN devolucion_obra_precio_unitario DECIMAL(15,2) NULL DEFAULT 0",
       "ALTER TABLE DEVOLUCION_OBRA ADD COLUMN devolucion_obra_monto_rebajado DECIMAL(15,2) NULL DEFAULT 0",

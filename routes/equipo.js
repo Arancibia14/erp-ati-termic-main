@@ -15,7 +15,7 @@ function subirArchivo(req, res, next) {
 
 // CU33 - Catálogo de Equipos y documentación técnica adjunta
 router.get('/modelos', verifyToken, requireAdmin, getModelos);
-// CU NUEVO 1 - Dando de alta modelos de equipo HVAC
+// CU 59 - Dando de alta modelos de equipo HVAC
 router.post('/modelos', verifyToken, requireAdmin, crearModelo);
 router.get('/modelos/:id/documentos', verifyToken, requireAdmin, getDocumentosModelo);
 router.post('/modelos/:id/documentos', verifyToken, requireAdmin, subirArchivo, subirDocumento);

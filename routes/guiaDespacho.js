@@ -12,7 +12,7 @@ const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 router.get('/proveedores', verifyToken, getProveedores);
 router.get('/ordenes-compra', verifyToken, getOrdenesCompra);
-// CU NUEVO 3 - Confirmando despacho de guía por el proveedor
+// CU 61 - Confirmando despacho de guía por el proveedor
 router.get('/registradas', verifyToken, requireAdmin, getGuiasRegistradas);
 router.post('/:id/confirmar-despacho', verifyToken, requireAdmin, confirmarDespacho);
 router.get('/', verifyToken, getGuias);

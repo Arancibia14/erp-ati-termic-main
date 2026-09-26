@@ -3,7 +3,7 @@ const router = express.Router();
 const { getUsuarios, crearUsuario, cambiarRol } = require('../controllers/usuarioController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
-// CU NUEVO 5 - Registrando nuevo usuario del sistema
+// CU 63 - Registrando nuevo usuario del sistema
 router.get('/', verifyToken, requireAdmin, getUsuarios);
 router.post('/', verifyToken, requireAdmin, crearUsuario);
 

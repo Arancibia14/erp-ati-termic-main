@@ -130,7 +130,7 @@ async function crearGuia(req, res) {
   }
 }
 
-// CU NUEVO 3 - Confirmando despacho de guía por el proveedor
+// CU 61 - Confirmando despacho de guía por el proveedor
 async function getGuiasRegistradas(req, res) {
   try {
     const guias = await GuiaDespacho.findAll({

@@ -67,7 +67,7 @@ async function getDespachado(req, res) {
   }
 }
 
-// CU NUEVO 4 (extensión CU32) - Precio unitario de referencia del material en la OC del proyecto.
+// CU 62 (extensión CU32) - Precio unitario de referencia del material en la OC del proyecto.
 // Se toma la OC más reciente que tenga precio: una solicitud aprobada sin costo
 // estimado genera una OC en $0, que no sirve como referencia.
 async function precioUnitarioReferencia(proyecto, materialId) {

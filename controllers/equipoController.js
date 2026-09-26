@@ -49,7 +49,7 @@ async function getModelos(req, res) {
   }
 }
 
-// CU NUEVO 1 - Dando de alta modelos de equipo HVAC
+// CU 59 - Dando de alta modelos de equipo HVAC
 async function crearModelo(req, res) {
   try {
     const { nombre } = req.body;

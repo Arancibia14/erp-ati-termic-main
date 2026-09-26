@@ -78,7 +78,7 @@ async function getTrabajadoresActivos(req, res) {
   }
 }
 
-// CU NUEVO 2 - Dando de alta herramientas en el catálogo maestro
+// CU 60 - Dando de alta herramientas en el catálogo maestro
 async function crear(req, res) {
   try {
     const { herramienta_codigo, herramienta_nombre } = req.body;

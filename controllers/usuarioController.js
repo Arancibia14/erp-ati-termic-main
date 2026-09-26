@@ -34,7 +34,7 @@ async function getUsuarios(req, res) {
   }
 }
 
-// CU NUEVO 5 - Registrando nuevo usuario del sistema
+// CU 63 - Registrando nuevo usuario del sistema
 async function crearUsuario(req, res) {
   try {
     const { rut, nombre, correo, password, rol, registro_certificacion, telefono_emergencia } = req.body;
