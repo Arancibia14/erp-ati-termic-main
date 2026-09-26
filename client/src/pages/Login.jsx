@@ -1,17 +1,36 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Building2, UsersRound, Boxes, Banknote, Sun, Moon } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import api from '../api/axios';
 import logo from '../assets/logo.png';
 import Toast, { useToast } from '../components/Toast';
 import { obtenerTema, aplicarTema } from '../utils/tema';
 
-const CARACTERISTICAS = [
-  { icon: Building2, label: 'Obras' },
-  { icon: UsersRound, label: 'Personal' },
-  { icon: Boxes, label: 'Materiales' },
-  { icon: Banknote, label: 'Finanzas' }
-];
+const FECHA_FORMATO = new Intl.DateTimeFormat('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+function capitalizar(texto) {
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+// Reloj en vivo: referencia útil para quien registra bitácora, hitos o
+// despachos con fecha/hora, visible antes incluso de iniciar sesión.
+function RelojEnVivo() {
+  const [ahora, setAhora] = useState(() => new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => setAhora(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const hora = ahora.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+
+  return (
+    <div className="login-clock">
+      <span className="login-clock-time">{hora}</span>
+      <span className="login-clock-date">{capitalizar(FECHA_FORMATO.format(ahora))}</span>
+    </div>
+  );
+}
 
 function FlujoAire() {
   return (
@@ -180,14 +199,7 @@ export default function Login() {
         <p className="login-tagline">
           Plataforma de gestión de obras, personal, materiales y finanzas.
         </p>
-        <div className="login-features">
-          {CARACTERISTICAS.map(({ icon: Icon, label }) => (
-            <div className="login-feature" key={label}>
-              <span><Icon size={18} strokeWidth={1.6} /></span>
-              {label}
-            </div>
-          ))}
-        </div>
+        <RelojEnVivo />
         <div className="login-foot">© {new Date().getFullYear()} ATI Termic SpA</div>
       </div>
 
