@@ -5,7 +5,7 @@ import {
   FileClock, FileInput, Truck, BadgeCheck, Undo2, Warehouse, AirVent, Wrench,
   Wallet, Paperclip, ChartLine, Calculator, HandCoins, FolderSearch, UserCog,
   SlidersHorizontal, Building2, UsersRound, Boxes, Banknote, Settings, ScrollText,
-  ShieldPlus
+  ShieldPlus, Megaphone
 } from 'lucide-react';
 
 export const MODULOS = [
@@ -83,6 +83,7 @@ export const MODULOS = [
     items: [
       { to: '/documentos', icon: FolderSearch, label: 'Buscador Documentos', short: 'Documentos', admin: true },
       { to: '/usuarios', icon: UserCog, label: 'Usuarios del Sistema', short: 'Usuarios', admin: true },
+      { to: '/avisos-internos', icon: Megaphone, label: 'Avisos Internos', short: 'Avisos', admin: true },
       { to: '/auditoria', icon: ScrollText, label: 'Reporte de Auditoría', short: 'Auditoría', admin: true },
       { to: '/configuracion', icon: SlidersHorizontal, label: 'Configuración', short: 'Configuración', admin: true }
     ]

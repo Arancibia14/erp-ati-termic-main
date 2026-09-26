@@ -46,6 +46,7 @@ const CertificadoCalidad = require('./models/CertificadoCalidad');
 const Sesion = require('./models/Sesion');
 const TokenRecuperacion = require('./models/TokenRecuperacion');
 const PlantillaCorreo = require('./models/PlantillaCorreo');
+const Aviso = require('./models/Aviso');
 
 // Associations
 
@@ -191,6 +192,7 @@ app.use('/api/recuperacion', require('./routes/recuperacion'));
 app.use('/api/garantia', require('./routes/garantia'));
 app.use('/api/parametro', require('./routes/parametro'));
 app.use('/api/plantilla-correo', require('./routes/plantillaCorreo'));
+app.use('/api/aviso', require('./routes/aviso'));
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok', timestamp: new Date() } });

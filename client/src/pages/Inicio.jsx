@@ -1,8 +1,10 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   modulosVisibles, buscarItem, leerRecientes, ATAJOS_ADMIN, ATAJOS_SUPERVISOR
 } from '../navigation';
+import api from '../api/axios';
+import AvisoTarjeta from '../components/AvisoTarjeta';
 
 function fechaActual() {
   const texto = new Date().toLocaleDateString('es-CL', {
@@ -29,6 +31,14 @@ export default function Inicio() {
   const usuario = useMemo(() => JSON.parse(localStorage.getItem('usuario') || '{}'), []);
   const esAdmin = usuario.rol === 'admin';
   const modulos = useMemo(() => modulosVisibles(esAdmin), [esAdmin]);
+  // CU 46 - Avisos internos listos para publicar y vigentes hoy
+  const [avisos, setAvisos] = useState([]);
+
+  useEffect(() => {
+    api.get('/aviso/vigentes')
+      .then(r => setAvisos(r.data.data))
+      .catch(() => {});
+  }, []);
 
   const atajos = (esAdmin ? ATAJOS_ADMIN : ATAJOS_SUPERVISOR)
     .map(buscarItem)
@@ -47,6 +57,18 @@ export default function Inicio() {
       <p className="dash-sub">
         {esAdmin ? 'Administrador' : 'Supervisor de Obra'} · {fechaActual()}
       </p>
+
+      {avisos.length > 0 && (
+        <>
+          <div className="dash-title">Avisos</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: 16 }}>
+            {avisos.map(a => (
+              <AvisoTarjeta key={a.aviso_id} titulo={a.aviso_titulo} texto={a.aviso_texto}
+                imagen={a.aviso_url_imagen} fechaTermino={a.aviso_fecha_termino} />
+            ))}
+          </div>
+        </>
+      )}
 
       <div className="dash-title">Accesos rápidos</div>
       <div className="dash-tiles">

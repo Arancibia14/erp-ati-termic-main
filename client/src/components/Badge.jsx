@@ -26,7 +26,13 @@ const TONOS = {
   'Llamada': 'teal',
   'Acta': 'blue',
   'Visita a Terreno': 'orange',
-  'Otro': 'gray'
+  'Otro': 'gray',
+  // CU 46 - Avisos internos
+  'Borrador': 'gray',
+  'Listo para publicar': 'blue',
+  'Programado': 'amber',
+  'Vencido': 'red',
+  'No visible': 'gray'
 };
 
 export default function Badge({ value }) {

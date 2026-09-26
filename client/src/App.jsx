@@ -32,6 +32,7 @@ const ControlPresupuesto = lazy(() => import('./pages/ControlPresupuesto'));
 const Polizas = lazy(() => import('./pages/Polizas'));
 const CertificadoTecnico = lazy(() => import('./pages/CertificadoTecnico'));
 const Configuracion = lazy(() => import('./pages/Configuracion'));
+const AvisosInternos = lazy(() => import('./pages/AvisosInternos'));
 const Catalogo = lazy(() => import('./pages/Catalogo'));
 const SolicitudMateriales = lazy(() => import('./pages/SolicitudMateriales'));
 const AprobacionesPendientes = lazy(() => import('./pages/AprobacionesPendientes'));
@@ -124,6 +125,7 @@ export default function App() {
         <Route path="/control-presupuesto" element={<PrivateLayout><AdminRoute><ControlPresupuesto /></AdminRoute></PrivateLayout>} />
         <Route path="/polizas" element={<PrivateLayout><AdminRoute><Polizas /></AdminRoute></PrivateLayout>} />
         <Route path="/configuracion" element={<PrivateLayout><AdminRoute><Configuracion /></AdminRoute></PrivateLayout>} />
+        <Route path="/avisos-internos" element={<PrivateLayout><AdminRoute><AvisosInternos /></AdminRoute></PrivateLayout>} />
         <Route path="/catalogo" element={<PrivateLayout><AdminRoute><Catalogo /></AdminRoute></PrivateLayout>} />
         <Route path="/proveedores" element={<PrivateLayout><AdminRoute><CatalogoProveedores /></AdminRoute></PrivateLayout>} />
         <Route path="/aprobaciones" element={<PrivateLayout><AdminRoute><AprobacionesPendientes /></AdminRoute></PrivateLayout>} />
