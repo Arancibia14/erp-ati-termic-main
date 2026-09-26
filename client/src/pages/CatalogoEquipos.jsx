@@ -16,7 +16,7 @@ export default function CatalogoEquipos() {
   const [nombreModelo, setNombreModelo] = useState('');
   const [creandoModelo, setCreandoModelo] = useState(false);
 
-  // CU NUEVO 6 - Unidades físicas instaladas del modelo seleccionado
+  // CU 64 - Unidades físicas instaladas del modelo seleccionado
   const [proyectos, setProyectos] = useState([]);
   const [unidades, setUnidades] = useState([]);
   const [mostrarFormUnidad, setMostrarFormUnidad] = useState(false);
@@ -68,7 +68,7 @@ export default function CatalogoEquipos() {
       .catch(() => addToast('Error al cargar las unidades instaladas', 'error'));
   };
 
-  // CU NUEVO 6 - Registrando unidades físicas de equipo HVAC
+  // CU 64 - Registrando unidades físicas de equipo HVAC
   const crearUnidad = () => {
     const faltantes = [];
     if (!formUnidad.numero_serie.trim()) faltantes.push('numero_serie');
@@ -250,7 +250,7 @@ export default function CatalogoEquipos() {
                 {subiendo ? 'Subiendo...' : 'Subir Archivo'}
               </button>
 
-              {/* CU NUEVO 6 - Unidades físicas instaladas de este modelo */}
+              {/* CU 64 - Unidades físicas instaladas de este modelo */}
               <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--color-border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                   <p style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-secondary)', margin: 0 }}>

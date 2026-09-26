@@ -20,7 +20,7 @@ router.post('/modelos', verifyToken, requireAdmin, crearModelo);
 router.get('/modelos/:id/documentos', verifyToken, requireAdmin, getDocumentosModelo);
 router.post('/modelos/:id/documentos', verifyToken, requireAdmin, subirArchivo, subirDocumento);
 
-// CU NUEVO 6 - Registrando unidades físicas de equipo HVAC
+// CU 64 - Registrando unidades físicas de equipo HVAC
 router.get('/modelos/:id/unidades', verifyToken, requireAdmin, getUnidadesModelo);
 router.post('/modelos/:id/unidades', verifyToken, requireAdmin, crearUnidad);
 

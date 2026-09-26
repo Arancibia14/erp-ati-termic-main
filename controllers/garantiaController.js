@@ -51,7 +51,7 @@ const audit = async (accion, modulo, rut) => {
   } catch (_) { /* no bloquear la operación principal */ }
 };
 
-// CU NUEVO 7 - Cargando certificados de garantía de equipos
+// CU 65 - Cargando certificados de garantía de equipos
 async function cargarGarantia(req, res) {
   try {
     const { numero_serie } = req.params;

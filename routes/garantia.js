@@ -16,7 +16,7 @@ function subirArchivo(req, res, next) {
 router.get('/', verifyToken, requireAdmin, buscarGarantias);
 router.post('/:numero_serie/descargar', verifyToken, requireAdmin, descargarGarantia);
 
-// CU NUEVO 7 - Cargando certificados de garantía de equipos
+// CU 65 - Cargando certificados de garantía de equipos
 router.post('/:numero_serie', verifyToken, requireAdmin, subirArchivo, cargarGarantia);
 
 module.exports = router;

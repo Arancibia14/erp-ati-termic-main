@@ -81,7 +81,7 @@ async function crearModelo(req, res) {
   }
 }
 
-// CU NUEVO 6 - Registrando unidades físicas de equipo HVAC
+// CU 64 - Registrando unidades físicas de equipo HVAC
 async function getUnidadesModelo(req, res) {
   try {
     const { id } = req.params;
@@ -97,7 +97,7 @@ async function getUnidadesModelo(req, res) {
   }
 }
 
-// CU NUEVO 6 - Registrando unidades físicas de equipo HVAC
+// CU 64 - Registrando unidades físicas de equipo HVAC
 async function crearUnidad(req, res) {
   try {
     const { id } = req.params;
