@@ -7,6 +7,7 @@ const Trabajador = require('../models/Trabajador');
 const IncidenteSSO = require('../models/IncidenteSSO');
 const Accidente = require('../models/Accidente');
 const LogAuditoria = require('../models/LogAuditoria');
+const { notificar, rutsAdministradores } = require('../utils/notificaciones');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -118,6 +119,18 @@ async function registrarIncidente(req, res) {
       log_auditoria_modulo: 'SSO',
       usuario_rut: req.user.rut
     });
+
+    // CU 57 - Se notifica a los administradores; lo verán en Inicio al iniciar sesión
+    try {
+      const admins = (await rutsAdministradores()).filter(rut => rut !== req.user.rut);
+      await notificar(admins, {
+        tipo: 'incidente_sso',
+        titulo: 'Nuevo incidente SSO',
+        mensaje: `Se registró el incidente #${incidente.incidente_sso_id} de gravedad ${incidente_sso_gravedad} en el proyecto ${proyecto_codigo_correlativo}: ${String(incidente_sso_descripcion).trim()}`
+      });
+    } catch (err) {
+      console.error('[notificaciones] Incidente SSO:', err.message);
+    }
 
     return res.status(201).json({ success: true, data: incidente });
   } catch (err) {

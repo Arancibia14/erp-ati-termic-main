@@ -47,6 +47,8 @@ const Sesion = require('./models/Sesion');
 const TokenRecuperacion = require('./models/TokenRecuperacion');
 const PlantillaCorreo = require('./models/PlantillaCorreo');
 const Aviso = require('./models/Aviso');
+const ProyectoSubcontratista = require('./models/ProyectoSubcontratista');
+const Notificacion = require('./models/Notificacion');
 
 // Associations
 
@@ -100,6 +102,10 @@ ControlCambioPpto.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo
 // CU12 - Historial de detenciones del proyecto (motivo obligatorio por detención)
 Proyecto.hasMany(DetencionProyecto, { foreignKey: 'proyecto_codigo_correlativo' });
 DetencionProyecto.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
+// CU15 - Varios subcontratistas por obra, cada uno con su rol
+Proyecto.hasMany(ProyectoSubcontratista, { foreignKey: 'proyecto_codigo_correlativo' });
+ProyectoSubcontratista.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
+ProyectoSubcontratista.belongsTo(Proveedor, { foreignKey: 'proveedor_rut' });
 
 Proyecto.hasMany(DocumentoLegal, { foreignKey: 'proyecto_codigo_correlativo' });
 DocumentoLegal.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
@@ -193,6 +199,7 @@ app.use('/api/garantia', require('./routes/garantia'));
 app.use('/api/parametro', require('./routes/parametro'));
 app.use('/api/plantilla-correo', require('./routes/plantillaCorreo'));
 app.use('/api/aviso', require('./routes/aviso'));
+app.use('/api/notificacion', require('./routes/notificacion'));
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok', timestamp: new Date() } });
@@ -212,7 +219,6 @@ sequelize.authenticate()
     // Migraciones puntuales: agregar columnas que faltan sin borrar datos
     const migrar = crearMigrador(sequelize);
     const migraciones = [
-      { tabla: 'PROYECTO',   columna: 'proveedor_rut',              tipo: { type: DataTypes.STRING(20),  allowNull: true } },
       { tabla: 'TRABAJADOR', columna: 'proyecto_codigo_correlativo', tipo: { type: DataTypes.STRING(50),  allowNull: true } },
       { tabla: 'CONTRATO_LABORAL', columna: 'proyecto_codigo_correlativo', tipo: { type: DataTypes.STRING(50), allowNull: true } },
       { tabla: 'INCIDENTE_SSO', columna: 'incidente_sso_url_fotos', tipo: { type: DataTypes.TEXT, allowNull: true } },
@@ -245,8 +251,22 @@ sequelize.authenticate()
       { tabla: 'EGRESO_CAJA_CHICA', columna: 'egreso_caja_chica_url_comprobante', tipo: { type: DataTypes.TEXT, allowNull: true } },
       // CU43 - Certificado de garantía ligado a una unidad física específica
       { tabla: 'DOCUMENTO_LEGAL', columna: 'equipo_hvac_numero_serie', tipo: { type: DataTypes.STRING(100), allowNull: true } },
+      // CU 17 - Supervisor que subió cada evidencia, para notificarle si se rechaza
+      { tabla: 'EVIDENCIA_FOTOGRAFICA', columna: 'evidencia_fotografica_usuario_rut', tipo: { type: DataTypes.STRING(20), allowNull: true } },
     ];
     for (const m of migraciones) await migrar.agregarColumna(m.tabla, m.columna, m.tipo);
+
+    // CU15 - La obra pasa de un solo subcontratista (PROYECTO.proveedor_rut) a varios
+    // (PROYECTO_SUBCONTRATISTA). Si la columna antigua sigue existiendo, su vínculo se
+    // traspasa a la tabla nueva y luego la columna se elimina. Solo ocurre una vez.
+    const [colAntigua] = await sequelize.query(
+      "SELECT COUNT(*) AS n FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND LOWER(TABLE_NAME) = 'proyecto' AND COLUMN_NAME = 'proveedor_rut'",
+      { type: sequelize.QueryTypes.SELECT }
+    );
+    if (Number(colAntigua.n) > 0) {
+      await migrar.sql("INSERT IGNORE INTO PROYECTO_SUBCONTRATISTA (proyecto_codigo_correlativo, proveedor_rut, proyecto_subcontratista_rol, proyecto_subcontratista_fecha) SELECT pr.proyecto_codigo_correlativo, pr.proveedor_rut, 'No especificado', CURDATE() FROM PROYECTO pr INNER JOIN PROVEEDOR pv ON pv.proveedor_rut = pr.proveedor_rut WHERE pr.proveedor_rut IS NOT NULL");
+      await migrar.sql('ALTER TABLE PROYECTO DROP COLUMN proveedor_rut');
+    }
 
     // Quitar FKs que bloquean inserts y hacer columnas nullable
     const fkMigs = [

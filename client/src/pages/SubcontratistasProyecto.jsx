@@ -12,6 +12,8 @@ export default function SubcontratistasProyecto() {
   const [codigoSeleccionado, setCodigoSeleccionado] = useState('');
   const [entidades, setEntidades] = useState(null);
   const [proveedorRut, setProveedorRut] = useState('');
+  const [rol, setRol] = useState('');
+  const [invalidos, setInvalidos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingEntidades, setLoadingEntidades] = useState(false);
 
@@ -28,31 +30,43 @@ export default function SubcontratistasProyecto() {
     if (!codigoSeleccionado) { setEntidades(null); return; }
     setLoadingEntidades(true);
     api.get(`/proyecto/config/${codigoSeleccionado}`)
-      .then(r => { setEntidades(r.data.data); setProveedorRut(''); })
+      .then(r => { setEntidades(r.data.data); setProveedorRut(''); setRol(''); setInvalidos([]); })
       .catch(() => addToast('Error al cargar entidades del proyecto', 'error'))
       .finally(() => setLoadingEntidades(false));
   }, [codigoSeleccionado]);
 
+  // CU15 - Una obra puede tener varios subcontratistas, cada uno con su rol
+  const subcontratistas = entidades?.subcontratistas || [];
+
   const handleVincular = async () => {
-    if (!proveedorRut) { addToast('Selecciona un subcontratista', 'error'); return; }
-    if (entidades?.proveedor?.proveedor_rut === proveedorRut) {
-      addToast('Ese subcontratista ya está vinculado a este proyecto', 'warning'); return;
+    const faltan = [];
+    if (!proveedorRut) faltan.push('proveedor_rut');
+    if (!rol.trim()) faltan.push('rol');
+    if (faltan.length) {
+      setInvalidos(faltan);
+      addToast('Selecciona el subcontratista e indica el rol que cumplirá en la obra', 'error'); return;
+    }
+    // Excepción 2 - Vinculación duplicada
+    if (subcontratistas.some(s => s.proveedor_rut === proveedorRut)) {
+      setInvalidos(['proveedor_rut']);
+      addToast('La empresa ya forma parte del proyecto', 'warning'); return;
     }
     setLoading(true);
     try {
-      await api.put(`/proyecto/${codigoSeleccionado}/proveedor`, { proveedor_rut: proveedorRut });
-      addToast('Subcontratista asociado exitosamente', 'success');
+      const res = await api.post(`/proyecto/${codigoSeleccionado}/subcontratistas`, { proveedor_rut: proveedorRut, rol: rol.trim() });
+      addToast(res.data.mensaje || 'Subcontratista asociado exitosamente', 'success');
       const r = await api.get(`/proyecto/config/${codigoSeleccionado}`);
       setEntidades(r.data.data);
       setProveedorRut('');
+      setRol('');
+      setInvalidos([]);
     } catch (err) {
-      addToast(err.response?.data?.error || 'Error al vincular subcontratista', 'error');
+      setInvalidos(err.response?.data?.campos || []);
+      addToast(err.response?.data?.error || 'Error al asociar el subcontratista', 'error');
     } finally {
       setLoading(false);
     }
   };
-
-  const proveedorActual = entidades?.proveedor;
 
   return (
     <div className="page-container">
@@ -96,18 +110,23 @@ export default function SubcontratistasProyecto() {
 
               <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 14, marginTop: 14 }}>
                 <p style={{ fontSize: 12, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8 }}>
-                  Subcontratista Actual
+                  Subcontratistas Asociados ({subcontratistas.length})
                 </p>
-                {proveedorActual ? (
-                  <div style={{ background: 'var(--color-bg-elevated)', borderRadius: 4, padding: '10px 14px', border: '1px solid var(--color-border)' }}>
-                    <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 2 }}>{proveedorActual.proveedor_razon_social}</div>
-                    <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>RUT: {proveedorActual.proveedor_rut}</div>
-                    {proveedorActual.proveedor_correo && (
-                      <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>{proveedorActual.proveedor_correo}</div>
-                    )}
+                {subcontratistas.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {subcontratistas.map(s => (
+                      <div key={s.proyecto_subcontratista_id} style={{ background: 'var(--color-bg-elevated)', borderRadius: 4, padding: '10px 14px', border: '1px solid var(--color-border)' }}>
+                        <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 2 }}>{s.Proveedor?.proveedor_razon_social}</div>
+                        <div style={{ fontSize: 13, marginBottom: 2 }}>Rol: {s.proyecto_subcontratista_rol}</div>
+                        <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>RUT: {s.proveedor_rut} · desde {s.proyecto_subcontratista_fecha?.split('-').reverse().join('-')}</div>
+                        {s.Proveedor?.proveedor_correo && (
+                          <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>{s.Proveedor.proveedor_correo}</div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 ) : (
-                  <p style={{ fontSize: 13, color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Sin subcontratista asignado</p>
+                  <p style={{ fontSize: 13, color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Sin subcontratistas asociados</p>
                 )}
               </div>
             </div>
@@ -131,9 +150,9 @@ export default function SubcontratistasProyecto() {
               <div className="form-group">
                 <label className="form-label">Subcontratista</label>
                 <Select
-                  className="form-select"
+                  className={`form-select${invalidos.includes('proveedor_rut') ? ' is-invalid' : ''}`}
                   value={proveedorRut}
-                  onChange={e => setProveedorRut(e.target.value)}
+                  onChange={e => { setProveedorRut(e.target.value); setInvalidos(prev => prev.filter(c => c !== 'proveedor_rut')); }}
                 >
                   <option value="">Selecciona un proveedor...</option>
                   {proveedores.map(p => (
@@ -142,6 +161,17 @@ export default function SubcontratistasProyecto() {
                     </option>
                   ))}
                 </Select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Rol en la obra</label>
+                <input
+                  className={`form-input${invalidos.includes('rol') ? ' is-invalid' : ''}`}
+                  placeholder="Ej. Instalación de ductos"
+                  maxLength={150}
+                  value={rol}
+                  onChange={e => { setRol(e.target.value); setInvalidos(prev => prev.filter(c => c !== 'rol')); }}
+                />
               </div>
 
               {proveedores.length === 0 && (
@@ -168,10 +198,10 @@ export default function SubcontratistasProyecto() {
               <button
                 className="btn btn-primary btn-full"
                 onClick={handleVincular}
-                disabled={loading || !proveedorRut}
+                disabled={loading}
               >
                 <Link2 size={15} />
-                {loading ? 'Vinculando...' : 'Asociar Subcontratista'}
+                {loading ? 'Asociando...' : 'Asociar Subcontratista'}
               </button>
             </>
           )}

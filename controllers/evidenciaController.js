@@ -4,6 +4,7 @@ const fs = require('fs');
 const HitoTecnico = require('../models/HitoTecnico');
 const EvidenciaFotografica = require('../models/EvidenciaFotografica');
 const LogAuditoria = require('../models/LogAuditoria');
+const { notificar } = require('../utils/notificaciones');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -65,7 +66,8 @@ async function subirEvidencia(req, res) {
       evidencia_fotografica_latitud: parseFloat(evidencia_fotografica_latitud) || 0,
       evidencia_fotografica_longitud: parseFloat(evidencia_fotografica_longitud) || 0,
       evidencia_fotografica_estado_aprobacion: 'pendiente',
-      hito_tecnico_id: parseInt(hito_tecnico_id)
+      hito_tecnico_id: parseInt(hito_tecnico_id),
+      evidencia_fotografica_usuario_rut: req.user.rut
     });
 
     try {
@@ -119,6 +121,19 @@ async function validarEvidencia(req, res) {
     await evidencia.update({
       evidencia_fotografica_estado_aprobacion: estado
     });
+
+    // CU 17 Excepción 1 - Al rechazar, se notifica al supervisor que subió la foto;
+    // lo verá en Inicio al iniciar sesión
+    if (estado === 'rechazado') {
+      const hito = await HitoTecnico.findByPk(evidencia.hito_tecnico_id).catch(() => null);
+      await notificar([evidencia.evidencia_fotografica_usuario_rut], {
+        tipo: 'evidencia_rechazada',
+        titulo: 'Evidencia rechazada',
+        mensaje: `El administrador rechazó tu evidencia #${id}` +
+          (hito ? ` del hito "${hito.hito_tecnico_nombre_hito}" del proyecto ${hito.proyecto_codigo_correlativo}` : '') +
+          `. Motivo: ${comentario.trim()}`
+      });
+    }
 
     await LogAuditoria.create({
       log_auditoria_fecha_hora: new Date(),

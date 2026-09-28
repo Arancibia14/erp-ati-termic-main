@@ -5,6 +5,8 @@ import {
 } from '../navigation';
 import api from '../api/axios';
 import AvisoTarjeta from '../components/AvisoTarjeta';
+import PanelNotificaciones from '../components/PanelNotificaciones';
+import Toast, { useToast } from '../components/Toast';
 
 function fechaActual() {
   const texto = new Date().toLocaleDateString('es-CL', {
@@ -31,6 +33,7 @@ export default function Inicio() {
   const usuario = useMemo(() => JSON.parse(localStorage.getItem('usuario') || '{}'), []);
   const esAdmin = usuario.rol === 'admin';
   const modulos = useMemo(() => modulosVisibles(esAdmin), [esAdmin]);
+  const { toasts, addToast, removeToast } = useToast();
   // CU 46 - Avisos internos listos para publicar y vigentes hoy
   const [avisos, setAvisos] = useState([]);
 
@@ -57,6 +60,8 @@ export default function Inicio() {
       <p className="dash-sub">
         {esAdmin ? 'Administrador' : 'Supervisor de Obra'} · {fechaActual()}
       </p>
+
+      <PanelNotificaciones addToast={addToast} />
 
       {avisos.length > 0 && (
         <>
@@ -122,6 +127,8 @@ export default function Inicio() {
           );
         })}
       </div>
+
+      <Toast toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }

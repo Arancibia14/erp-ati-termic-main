@@ -19,7 +19,7 @@ const GuiaDespacho = require('../models/GuiaDespacho');
 const DevolucionObra = require('../models/DevolucionObra');
 const CertificadoCalidad = require('../models/CertificadoCalidad');
 const OrdenCompra = require('../models/OrdenCompra');
-const Proyecto = require('../models/Proyecto');
+const ProyectoSubcontratista = require('../models/ProyectoSubcontratista');
 const { normalizarRut } = require('./rut');
 
 // Cada vínculo indica la tabla, la columna que apunta al registro maestro y
@@ -63,7 +63,7 @@ const MAESTROS = {
       { modelo: OrdenCompra, campo: 'proveedor_rut', uno: 'orden de compra', varios: 'órdenes de compra' },
       { modelo: GuiaDespacho, campo: 'proveedor_rut', uno: 'guía de despacho', varios: 'guías de despacho' },
       { modelo: Material, campo: 'material_proveedor_rut', uno: 'material del catálogo', varios: 'materiales del catálogo' },
-      { modelo: Proyecto, campo: 'proveedor_rut', uno: 'proyecto', varios: 'proyectos' }
+      { modelo: ProyectoSubcontratista, campo: 'proveedor_rut', uno: 'proyecto donde es subcontratista', varios: 'proyectos donde es subcontratista' }
     ]
   }
 };
