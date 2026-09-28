@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Image, Edit3, Save, ChevronDown, ChevronUp, Repeat } from 'lucide-react';
+import { Image, Edit3, Save, ChevronDown, ChevronUp, Repeat, Briefcase } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 // CU11 - Próximos estados válidos desde el estado actual del proyecto.
 // "Detenido" no aparece nunca como destino: eso lo cubre el CU12 (exige motivo).
@@ -143,7 +145,7 @@ export default function Portafolio() {
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>{p.proyecto_nombre_obra}</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ fontSize: 11, fontFamily: 'monospace', color: 'var(--color-text-muted)' }}>
+                    <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', ui-monospace, monospace", color: 'var(--color-text-muted)' }}>
                       {p.proyecto_codigo_correlativo}
                     </span>
                     <Badge value={p.EstadoProyecto?.estado_proyecto_nombre} />
@@ -175,7 +177,7 @@ export default function Portafolio() {
                     </p>
                   ) : (
                     <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-                      <select
+                      <Select
                         className={'form-select' + (erroresEstado.includes('estado_proyecto_nombre') ? ' is-invalid' : '')}
                         style={{ maxWidth: 220 }}
                         value={nuevoEstado}
@@ -184,7 +186,7 @@ export default function Portafolio() {
                         {opcionesEstado(p.EstadoProyecto?.estado_proyecto_nombre).map(op => (
                           <option key={op} value={op}>{op}</option>
                         ))}
-                      </select>
+                      </Select>
                       <button
                         type="button"
                         className="btn btn-secondary"
@@ -291,7 +293,9 @@ export default function Portafolio() {
         ))}
 
         {!loading && proyectos.length === 0 && (
-          <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>No hay proyectos registrados.</p>
+          <div className="card" style={{ padding: 0 }}>
+            <EstadoVacio icon={Briefcase}>No hay proyectos registrados.</EstadoVacio>
+          </div>
         )}
       </div>
 

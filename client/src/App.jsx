@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './styles/index.css';
 import Sidebar from './components/Sidebar';
+import Migas from './components/Migas';
 import { CargaPagina } from './components/IndicadorCarga';
 import EstadoConexion from './components/EstadoConexion';
 import { iniciarVigilanciaInactividad } from './utils/inactividad';
@@ -69,6 +70,7 @@ function PrivateLayout({ children }) {
       <Sidebar />
       <EstadoConexion />
       <main className="main-content">
+        <Migas />
         <Suspense fallback={<CargaPagina />}>
           {children}
         </Suspense>

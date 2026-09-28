@@ -2,6 +2,7 @@ import { useState, useEffect, Fragment } from 'react';
 import { CheckSquare, AlertTriangle, Check, X } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import EstadoVacio from '../components/EstadoVacio';
 
 export default function AprobacionesPendientes() {
   const { toasts, addToast, removeToast } = useToast();
@@ -111,9 +112,7 @@ export default function AprobacionesPendientes() {
         {loading ? (
           <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
         ) : solicitudes.length === 0 ? (
-          <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13, fontStyle: 'italic' }}>
-            No hay solicitudes pendientes de validación
-          </p>
+          <EstadoVacio icon={CheckSquare}>No hay solicitudes pendientes de validación</EstadoVacio>
         ) : (
           <div className="table-container">
             <table>
@@ -134,7 +133,7 @@ export default function AprobacionesPendientes() {
                       onClick={() => seleccionarSolicitud(s)}
                       style={{ cursor: 'pointer', background: expandidaId === s.solicitud_material_id ? 'var(--color-bg-elevated)' : 'transparent' }}
                     >
-                      <td style={{ fontFamily: 'monospace', fontSize: 13 }}>#{s.solicitud_material_id}</td>
+                      <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13 }}>#{s.solicitud_material_id}</td>
                       <td style={{ fontSize: 13 }}>{s.usuario_nombre}</td>
                       <td style={{ fontSize: 13 }}>{s.Proyecto?.proyecto_nombre_obra || s.proyecto_codigo_correlativo}</td>
                       <td style={{ fontSize: 13 }}>{s.solicitud_material_descripcion}</td>

@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
-import { ShieldPlus, Upload } from 'lucide-react';
+import { ShieldPlus, Upload, AirVent } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import Select from '../components/Select';
+import Badge from '../components/Badge';
+import EstadoVacio from '../components/EstadoVacio';
 
 export default function CargarGarantia() {
   const { toasts, addToast, removeToast } = useToast();
@@ -71,23 +74,25 @@ export default function CargarGarantia() {
         Cargar Garantía
       </h1>
 
-      <div className="card" style={{ maxWidth: 480 }}>
+      <div className="layout-form-lista">
+      <div>
+      <div className="card">
         <div className="form-group">
           <label className="form-label">Proyecto</label>
-          <select className="form-select" value={proyectoSeleccionado} onChange={handleProyecto}>
+          <Select className="form-select" value={proyectoSeleccionado} onChange={handleProyecto}>
             <option value="">Selecciona un proyecto...</option>
             {proyectos.map(p => (
               <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
                 {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {proyectoSeleccionado && (
           <div className="form-group">
             <label className="form-label">Equipo (Número de Serie)</label>
-            <select
+            <Select
               className={'form-select' + (errores.includes('numero_serie') ? ' is-invalid' : '')}
               value={numeroSerie}
               onChange={e => { setNumeroSerie(e.target.value); setErrores([]); }}
@@ -99,12 +104,7 @@ export default function CargarGarantia() {
                   {eq.equipo_hvac_numero_serie} — {eq.modelo_hvac_nombre}
                 </option>
               ))}
-            </select>
-            {!loadingEquipos && proyectoSeleccionado && equipos.length === 0 && (
-              <span style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>
-                Este proyecto no tiene equipos registrados. Regístralos primero en Catálogo de Equipos.
-              </span>
-            )}
+            </Select>
           </div>
         )}
 
@@ -132,6 +132,50 @@ export default function CargarGarantia() {
           <Upload size={15} />
           {cargando ? 'Cargando...' : 'Cargar Certificado'}
         </button>
+      </div>
+      </div>
+
+      {proyectoSeleccionado && (
+        <div className="card" style={{ padding: 0 }}>
+          <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--color-border)' }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Equipos y su garantía en esta obra
+            </h3>
+          </div>
+          {loadingEquipos ? (
+            <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando equipos...</p>
+          ) : equipos.length === 0 ? (
+            <EstadoVacio icon={AirVent}>Este proyecto no tiene equipos registrados. Regístralos primero en Catálogo de Equipos.</EstadoVacio>
+          ) : (
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>N° de Serie</th>
+                    <th>Modelo</th>
+                    <th>Garantía</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {equipos.map(eq => (
+                    <tr key={eq.equipo_hvac_numero_serie}>
+                      <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>{eq.equipo_hvac_numero_serie}</td>
+                      <td style={{ fontSize: 13 }}>{eq.modelo_hvac_nombre}</td>
+                      <td>
+                        {!eq.garantia ? (
+                          <Badge value="Sin registrar" />
+                        ) : (
+                          <Badge value={eq.garantia.vigente ? 'Vigente' : 'Vencido'} />
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
       </div>
 
       <Toast toasts={toasts} removeToast={removeToast} />

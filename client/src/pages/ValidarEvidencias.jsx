@@ -3,6 +3,7 @@ import { CheckSquare, Check, X, RefreshCw, RotateCcw, ZoomIn } from 'lucide-reac
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import EstadoVacio from '../components/EstadoVacio';
 
 export default function ValidarEvidencias() {
   const { toasts, addToast, removeToast } = useToast();
@@ -76,8 +77,8 @@ export default function ValidarEvidencias() {
       {loading ? (
         <div style={{ color: 'var(--color-text-secondary)', padding: 32, textAlign: 'center' }}>Cargando evidencias...</div>
       ) : evidencias.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: 40, color: 'var(--color-text-secondary)' }}>
-          No hay evidencias pendientes de validación.
+        <div className="card" style={{ padding: 0 }}>
+          <EstadoVacio icon={CheckSquare}>No hay evidencias pendientes de validación.</EstadoVacio>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>

@@ -4,6 +4,8 @@ import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
 import { fechaLocal } from '../utils/fecha';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 export default function IngresoGuia() {
   const { toasts, addToast, removeToast } = useToast();
@@ -136,7 +138,9 @@ export default function IngresoGuia() {
         Ingreso por Guía
       </h1>
 
-      <div className="card" style={{ maxWidth: 640, marginBottom: 24 }}>
+      <div className="layout-form-lista">
+      <div>
+      <div className="card" style={{ marginBottom: 24 }}>
         <div className="form-group">
           <label className="form-label">Número de Guía de Despacho</label>
           <input
@@ -154,7 +158,7 @@ export default function IngresoGuia() {
         <div className="form-grid-2" style={{ marginBottom: 16 }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Proveedor</label>
-            <select
+            <Select
               className="form-select"
               value={proveedorSeleccionado}
               onChange={e => setProveedorSeleccionado(e.target.value)}
@@ -163,11 +167,11 @@ export default function IngresoGuia() {
               {proveedores.map(p => (
                 <option key={p.proveedor_rut} value={p.proveedor_rut}>{p.proveedor_razon_social}</option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">OC Asociada</label>
-            <select
+            <Select
               className="form-select"
               value={ordenCompraSeleccionada}
               onChange={e => setOrdenCompraSeleccionada(e.target.value)}
@@ -176,7 +180,7 @@ export default function IngresoGuia() {
               {ordenesCompra.map(o => (
                 <option key={o.orden_compra_id} value={o.orden_compra_id}>{o.orden_compra_folio}</option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
 
@@ -252,9 +256,10 @@ export default function IngresoGuia() {
           {confirmando ? 'Registrando...' : 'Registrar Guía'}
         </button>
       </div>
+      </div>
 
       {usuario.rol === 'admin' && (
-        <div className="card" style={{ padding: 0, marginBottom: 24 }}>
+        <div className="card" style={{ padding: 0 }}>
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--color-border)' }}>
             <h3 style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Guías Pendientes de Confirmar Despacho
@@ -263,9 +268,7 @@ export default function IngresoGuia() {
           {loadingRegistradas ? (
             <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
           ) : registradas.length === 0 ? (
-            <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13, fontStyle: 'italic' }}>
-              No hay guías registradas a la espera de que el proveedor confirme el despacho.
-            </p>
+            <EstadoVacio icon={Truck}>No hay guías registradas a la espera de que el proveedor confirme el despacho.</EstadoVacio>
           ) : (
             <div className="table-container">
               <table>
@@ -282,7 +285,7 @@ export default function IngresoGuia() {
                 <tbody>
                   {registradas.map(g => (
                     <tr key={g.guia_despacho_id}>
-                      <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{g.guia_despacho_numero}</td>
+                      <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13 }}>{g.guia_despacho_numero}</td>
                       <td style={{ fontSize: 13 }}>{g.Proveedor?.proveedor_razon_social || '—'}</td>
                       <td style={{ fontSize: 13 }}>{g.Material?.material_nombre || '—'}</td>
                       <td style={{ fontSize: 13 }}>{g.OrdenCompra?.orden_compra_folio || '—'}</td>
@@ -306,8 +309,9 @@ export default function IngresoGuia() {
           )}
         </div>
       )}
+      </div>
 
-      <div className="card" style={{ padding: 0 }}>
+      <div className="card" style={{ padding: 0, marginTop: 24 }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--color-border)' }}>
           <h3 style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Historial de Guías
@@ -316,9 +320,7 @@ export default function IngresoGuia() {
         {loadingGuias ? (
           <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
         ) : guias.length === 0 ? (
-          <div className="estado-vacio">
-            <p>Aún no se ha registrado ninguna guía de despacho.</p>
-          </div>
+          <EstadoVacio icon={Truck}>Aún no se ha registrado ninguna guía de despacho.</EstadoVacio>
         ) : (
           <div className="table-container">
             <table>
@@ -336,7 +338,7 @@ export default function IngresoGuia() {
               <tbody>
                 {guias.map(g => (
                   <tr key={g.guia_despacho_id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{g.guia_despacho_numero}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13 }}>{g.guia_despacho_numero}</td>
                     <td style={{ fontSize: 13 }}>{g.Proveedor?.proveedor_razon_social || '—'}</td>
                     <td style={{ fontSize: 13 }}>{g.Material?.material_nombre || '—'}</td>
                     <td style={{ fontSize: 13 }}>{g.guia_despacho_cantidad_recibida}</td>

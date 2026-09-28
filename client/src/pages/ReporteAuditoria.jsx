@@ -3,6 +3,8 @@ import { ScrollText, Search, X, ShieldCheck, ShieldAlert, ShieldQuestion } from 
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 const FILTROS_VACIOS = { fecha_inicio: '', fecha_termino: '', usuario_rut: '', modulo: '' };
 
@@ -93,7 +95,7 @@ export default function ReporteAuditoria() {
         <div className="form-grid-2" style={{ marginBottom: 16 }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Usuario</label>
-            <select
+            <Select
               className="form-select"
               value={filtros.usuario_rut}
               onChange={e => setFiltros(f => ({ ...f, usuario_rut: e.target.value }))}
@@ -102,18 +104,18 @@ export default function ReporteAuditoria() {
               {usuarios.map(u => (
                 <option key={u.usuario_rut} value={u.usuario_rut}>{u.usuario_nombre} ({u.usuario_rut})</option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Tipo de Acción</label>
-            <select
+            <Select
               className="form-select"
               value={filtros.modulo}
               onChange={e => setFiltros(f => ({ ...f, modulo: e.target.value }))}
             >
               <option value="">Todos los tipos</option>
               {modulos.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
+            </Select>
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
@@ -134,13 +136,11 @@ export default function ReporteAuditoria() {
         {loading ? (
           <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
         ) : !logs || logs.length === 0 ? (
-          <div className="estado-vacio">
-            <p>
-              {hayFiltrosActivos
-                ? 'No existen registros de actividad para los filtros seleccionados.'
-                : 'Todavía no hay registros de auditoría.'}
-            </p>
-          </div>
+          <EstadoVacio icon={ScrollText}>
+            {hayFiltrosActivos
+              ? 'No existen registros de actividad para los filtros seleccionados.'
+              : 'Todavía no hay registros de auditoría.'}
+          </EstadoVacio>
         ) : (
           <div className="table-container">
             <table>

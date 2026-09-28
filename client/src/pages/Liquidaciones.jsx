@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Receipt, Upload, AlertTriangle } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 const now = new Date();
 const periodoActual = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -67,18 +69,20 @@ export default function Liquidaciones() {
         Liquidaciones de Sueldo
       </h1>
 
-      <div className="card" style={{ maxWidth: 640, marginBottom: 24 }}>
+      <div className="layout-form-lista">
+      <div>
+      <div className="card" style={{ marginBottom: 24 }}>
         <div className="form-grid-2" style={{ marginBottom: 16 }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Trabajador</label>
-            <select className="form-select" value={trabajadorSeleccionado} onChange={handleTrabajador}>
+            <Select className="form-select" value={trabajadorSeleccionado} onChange={handleTrabajador}>
               <option value="">Selecciona un trabajador...</option>
               {trabajadores.map(t => (
                 <option key={t.trabajador_rut} value={t.trabajador_rut}>
                   {t.trabajador_rut} — {t.trabajador_nombres} {t.trabajador_apellidos}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Periodo</label>
@@ -128,6 +132,7 @@ export default function Liquidaciones() {
           </div>
         )}
       </div>
+      </div>
 
       {trabajadorSeleccionado && (
         <div className="card" style={{ padding: 0 }}>
@@ -137,9 +142,7 @@ export default function Liquidaciones() {
             </h3>
           </div>
           {liquidaciones.length === 0 ? (
-            <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13, fontStyle: 'italic' }}>
-              Sin liquidaciones registradas
-            </p>
+            <EstadoVacio icon={Receipt}>Sin liquidaciones registradas.</EstadoVacio>
           ) : (
             <div className="table-container">
               <table>
@@ -168,6 +171,7 @@ export default function Liquidaciones() {
           )}
         </div>
       )}
+      </div>
 
       <Toast toasts={toasts} removeToast={removeToast} />
     </div>

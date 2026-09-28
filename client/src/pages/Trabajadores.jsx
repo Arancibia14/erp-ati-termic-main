@@ -4,6 +4,8 @@ import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
 import ModalEliminacion from '../components/ModalEliminacion';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 const EXAMEN_VACIO = { tipo: 'fisica', fecha_emision: '', fecha_vencimiento: '', archivo: null };
 
@@ -177,7 +179,7 @@ export default function Trabajadores() {
             </div>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Especialidad Técnica</label>
-              <select
+              <Select
                 className="form-select"
                 style={inputStyle('especialidad_id')}
                 value={form.especialidad_id}
@@ -187,7 +189,7 @@ export default function Trabajadores() {
                 {especialidades.map(e => (
                   <option key={e.especialidad_id} value={e.especialidad_id}>{e.especialidad_nombre}</option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
 
@@ -250,9 +252,7 @@ export default function Trabajadores() {
         {loading ? (
           <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
         ) : trabajadores.length === 0 ? (
-          <div className="estado-vacio">
-            <p>Todavía no hay trabajadores registrados. Crea el primer expediente para comenzar.</p>
-          </div>
+          <EstadoVacio icon={Users}>Todavía no hay trabajadores registrados. Crea el primer expediente para comenzar.</EstadoVacio>
         ) : (
           <div className="table-container">
             <table>
@@ -270,7 +270,7 @@ export default function Trabajadores() {
               <tbody>
                 {trabajadores.map(t => (
                   <tr key={t.trabajador_rut}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{t.trabajador_rut}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13 }}>{t.trabajador_rut}</td>
                     <td style={{ fontWeight: 600, fontSize: 13 }}>{t.trabajador_nombres} {t.trabajador_apellidos}</td>
                     <td style={{ fontSize: 13 }}>{t.Especialidad?.especialidad_nombre || '—'}</td>
                     <td style={{ fontSize: 13 }}>{t.trabajador_telefono || '—'}</td>
@@ -376,11 +376,11 @@ export default function Trabajadores() {
             <div className="form-grid-2" style={{ marginBottom: 12 }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label">Tipo de examen</label>
-                <select className="form-select" value={examenForm.tipo}
+                <Select className="form-select" value={examenForm.tipo}
                         onChange={e => setExamenForm(f => ({ ...f, tipo: e.target.value }))}>
                   <option value="fisica">Altura Física</option>
                   <option value="geografica">Altura Geográfica</option>
-                </select>
+                </Select>
               </div>
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label">Archivo (PDF o imagen)</label>

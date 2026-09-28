@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { ShoppingCart, Plus, Trash2, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 const DETALLE_VACIO = { descripcion_material: '', cantidad: '', precio_unitario: '' };
 
@@ -120,8 +122,8 @@ export default function OrdenCompra() {
       {loading ? (
         <div style={{ color: 'var(--color-text-secondary)', padding: 32, textAlign: 'center' }}>Cargando solicitudes...</div>
       ) : solicitudes.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: 40, color: 'var(--color-text-secondary)' }}>
-          No hay solicitudes de materiales pendientes.
+        <div className="card" style={{ padding: 0 }}>
+          <EstadoVacio icon={ShoppingCart}>No hay solicitudes de materiales pendientes.</EstadoVacio>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -155,7 +157,7 @@ export default function OrdenCompra() {
                     {/* Proveedor */}
                     <div className="form-group">
                       <label className="form-label">Proveedor *</label>
-                      <select
+                      <Select
                         className="form-select"
                         value={proveedorRut}
                         onChange={e => setProveedorRut(e.target.value)}
@@ -166,7 +168,7 @@ export default function OrdenCompra() {
                             {p.proveedor_razon_social} ({p.proveedor_rut})
                           </option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
 
                     {/* Ítems */}

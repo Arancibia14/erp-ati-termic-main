@@ -3,6 +3,8 @@ import { ClipboardList, PenTool, FileText, Download, Eraser, CheckCircle } from 
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 function SignaturePad({ onReady }) {
   const canvasRef = useRef(null);
@@ -160,7 +162,7 @@ export default function HistorialEntregasEpp() {
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           <div className="form-group" style={{ minWidth: 240, marginBottom: 0 }}>
             <label className="form-label">Filtrar por Trabajador</label>
-            <select
+            <Select
               className="form-select"
               value={trabajadorRut}
               onChange={e => { setTrabajadorRut(e.target.value); setProyectoCodigo(''); }}
@@ -171,12 +173,12 @@ export default function HistorialEntregasEpp() {
                   {t.trabajador_nombres} ({t.trabajador_rut})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div className="form-group" style={{ minWidth: 240, marginBottom: 0 }}>
             <label className="form-label">Filtrar por Obra</label>
-            <select
+            <Select
               className="form-select"
               value={proyectoCodigo}
               onChange={e => { setProyectoCodigo(e.target.value); setTrabajadorRut(''); }}
@@ -187,7 +189,7 @@ export default function HistorialEntregasEpp() {
                   {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
       </div>
@@ -196,9 +198,7 @@ export default function HistorialEntregasEpp() {
         {loading ? (
           <p style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>Cargando...</p>
         ) : lotes.length === 0 ? (
-          <p style={{ fontSize: 13, color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
-            No hay entregas de EPP registradas. Créalas en "Entrega de EPP".
-          </p>
+          <EstadoVacio icon={ClipboardList}>No hay entregas de EPP registradas. Créalas en "Entrega de EPP".</EstadoVacio>
         ) : (
           <div className="table-container">
             <table>

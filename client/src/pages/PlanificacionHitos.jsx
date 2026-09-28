@@ -3,6 +3,8 @@ import { Flag, CalendarRange, MapPin, AirVent, Wallet } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 // CU09 - Definiendo hitos técnicos del proyecto
 const FORM_VACIO = { nombre: '', inicio: '', termino: '', avance: '0' };
@@ -96,14 +98,14 @@ export default function PlanificacionHitos() {
       <div className="card" style={{ marginBottom: 24 }}>
         <div className="form-group" style={{ marginBottom: 0 }}>
           <label className="form-label">Proyecto</label>
-          <select className="form-select" value={codigo} onChange={e => elegirProyecto(e.target.value)}>
+          <Select className="form-select" value={codigo} onChange={e => elegirProyecto(e.target.value)}>
             <option value="">Selecciona un proyecto...</option>
             {proyectos.map(p => (
               <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
                 {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -116,7 +118,7 @@ export default function PlanificacionHitos() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>{proyecto.proyecto_nombre_obra}</h2>
               <Badge value={proyecto.EstadoProyecto?.estado_proyecto_nombre} />
-              <span style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--color-text-muted)' }}>
+              <span style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12, color: 'var(--color-text-muted)' }}>
                 {proyecto.proyecto_codigo_correlativo}
               </span>
             </div>
@@ -150,9 +152,7 @@ export default function PlanificacionHitos() {
               </h3>
             </div>
             {hitos.length === 0 ? (
-              <div className="estado-vacio">
-                <p>Este proyecto todavía no tiene hitos definidos. Agrega el primero para armar su cronograma.</p>
-              </div>
+              <EstadoVacio icon={Flag}>Este proyecto todavía no tiene hitos definidos. Agrega el primero para armar su cronograma.</EstadoVacio>
             ) : (
               <div className="table-container">
                 <table>
@@ -170,10 +170,10 @@ export default function PlanificacionHitos() {
                       <tr key={h.hito_tecnico_id}>
                         <td style={{ color: 'var(--color-text-muted)' }}>{i + 1}</td>
                         <td>{h.hito_tecnico_nombre_hito}</td>
-                        <td style={{ fontFamily: 'monospace', fontSize: 12 }}>
+                        <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>
                           {h.hito_tecnico_fecha_inicio_estimada || '—'}
                         </td>
-                        <td style={{ fontFamily: 'monospace', fontSize: 12 }}>
+                        <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>
                           {h.hito_tecnico_fecha_termino_estimada || '—'}
                         </td>
                         <td>{Number(h.hito_tecnico_avance_fisico).toFixed(0)}%</td>

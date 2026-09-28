@@ -3,6 +3,7 @@ import { Camera, MapPin, Send, Image, X, Circle, CheckCircle2, AlertTriangle, Wi
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import { encolarEvidencia, listarCola, quitarDeCola, vaciarColaLocal } from '../utils/colaEvidencias';
+import Select from '../components/Select';
 
 export default function Evidencia() {
   const { toasts, addToast, removeToast } = useToast();
@@ -258,7 +259,7 @@ export default function Evidencia() {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">Proyecto</label>
-            <select
+            <Select
               className="form-select"
               value={form.proyecto_codigo_correlativo}
               onChange={e => setForm(f => ({ ...f, proyecto_codigo_correlativo: e.target.value, hito_tecnico_id: '' }))}
@@ -269,13 +270,13 @@ export default function Evidencia() {
                   {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {hitos.length > 0 && (
             <div className="form-group">
               <label className="form-label">Hito Técnico</label>
-              <select
+              <Select
                 className="form-select"
                 value={form.hito_tecnico_id}
                 onChange={e => setForm(f => ({ ...f, hito_tecnico_id: e.target.value }))}
@@ -286,7 +287,7 @@ export default function Evidencia() {
                     {h.hito_tecnico_nombre_hito} ({h.hito_tecnico_avance_fisico}%)
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
 

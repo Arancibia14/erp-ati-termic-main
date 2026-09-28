@@ -3,6 +3,8 @@ import { DollarSign, Plus, Send, X, Camera, Paperclip, FileText, RotateCcw } fro
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import { fechaLocal } from '../utils/fecha';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 const fmt = n => n !== undefined && n !== null ? `$${parseFloat(n).toLocaleString('es-CL')}` : '--';
 
@@ -193,18 +195,20 @@ export default function CajaChica() {
         Caja Chica
       </h1>
 
+      <div className="layout-form-lista">
+      <div>
       {/* Selector proyecto */}
-      <div className="card" style={{ maxWidth: 680, marginBottom: 20 }}>
+      <div className="card" style={{ marginBottom: 20 }}>
         <div className="form-group" style={{ marginBottom: 0 }}>
           <label className="form-label">Proyecto</label>
-          <select className="form-select" value={codigoSeleccionado} onChange={handleProyecto}>
+          <Select className="form-select" value={codigoSeleccionado} onChange={handleProyecto}>
             <option value="">Selecciona un proyecto...</option>
             {proyectos.map(p => (
               <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
                 {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {/* Saldo */}
@@ -235,7 +239,7 @@ export default function CajaChica() {
 
       {/* Botón Nuevo Egreso: solo si el proyecto tiene fondo asignado */}
       {codigoSeleccionado && !mostrarForm && saldo && saldo.fondo_caja_chica > 0 && (
-        <div style={{ maxWidth: 680, marginBottom: 20 }}>
+        <div style={{ marginBottom: 20 }}>
           <button className="btn btn-primary" onClick={abrirNuevo}>
             <Plus size={15} />
             Nuevo Egreso de Caja Chica
@@ -245,7 +249,7 @@ export default function CajaChica() {
 
       {/* Formulario nuevo egreso */}
       {mostrarForm && (
-        <div className="card" style={{ maxWidth: 680, marginBottom: 20 }}>
+        <div className="card" style={{ marginBottom: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h3 style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Nuevo Egreso de Caja Chica
@@ -284,7 +288,7 @@ export default function CajaChica() {
             {/* CU53 - Cálculo de impuestos del gasto */}
             <div className="form-group">
               <label className="form-label">¿El monto que ingresaste ya incluye IVA?</label>
-              <select
+              <Select
                 className={`form-select${ivaInvalido ? ' is-invalid' : ''}`}
                 value={form.incluye_iva}
                 onChange={e => { setForm(f => ({ ...f, incluye_iva: e.target.value })); setIvaInvalido(false); }}
@@ -292,7 +296,7 @@ export default function CajaChica() {
                 <option value="">Selecciona una opción</option>
                 <option value="si">Sí, ya incluye IVA</option>
                 <option value="no">No, hay que sumarle el IVA</option>
-              </select>
+              </Select>
               {!iva.configurado && (
                 <span style={{ fontSize: 12, color: 'var(--tone-amber)', display: 'block', marginTop: 4 }}>
                   El IVA no está configurado: el gasto se calculará con 0%.
@@ -329,14 +333,15 @@ export default function CajaChica() {
           </form>
         </div>
       )}
+      </div>
 
       {/* Lista de egresos */}
       {codigoSeleccionado && (
-        <div style={{ maxWidth: 680 }}>
+        <div>
           {loadingEgresos && <p style={{ color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando egresos...</p>}
           {!loadingEgresos && egresos.length === 0 && !mostrarForm && (
-            <div className="card" style={{ textAlign: 'center', padding: 32, color: 'var(--color-text-muted)' }}>
-              No hay egresos registrados para este proyecto.
+            <div className="card" style={{ padding: 0 }}>
+              <EstadoVacio icon={DollarSign}>No hay egresos registrados para este proyecto.</EstadoVacio>
             </div>
           )}
           {egresos.length > 0 && (
@@ -393,6 +398,7 @@ export default function CajaChica() {
           )}
         </div>
       )}
+      </div>
 
       {/* CU40 - Adjuntando comprobante de gasto */}
       {egresoComprobante && (

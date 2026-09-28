@@ -3,6 +3,7 @@ import { ShoppingCart, Eye } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
 
 const clp = n => '$' + Number(n || 0).toLocaleString('es-CL');
 
@@ -61,7 +62,7 @@ export default function HistorialOrdenesCompra() {
           </div>
           <div className="form-group" style={{ marginBottom: 0, minWidth: 240 }}>
             <label className="form-label">Proyecto</label>
-            <select className="form-select" value={filtros.proyecto}
+            <Select className="form-select" value={filtros.proyecto}
                     onChange={e => setFiltros(f => ({ ...f, proyecto: e.target.value }))}>
               <option value="">Todos</option>
               {proyectos.map(p => (
@@ -69,7 +70,7 @@ export default function HistorialOrdenesCompra() {
                   {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <button className="btn btn-primary" onClick={buscar}>Filtrar</button>
         </div>
@@ -99,7 +100,7 @@ export default function HistorialOrdenesCompra() {
               <tbody>
                 {ordenes.map(o => (
                   <tr key={o.orden_compra_id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{o.orden_compra_folio}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>{o.orden_compra_folio}</td>
                     <td style={{ fontSize: 13 }}>{o.orden_compra_fecha}</td>
                     <td style={{ fontSize: 13 }}>{o.proyecto_codigo_correlativo}</td>
                     <td style={{ fontSize: 13 }}>{o.proveedor}</td>

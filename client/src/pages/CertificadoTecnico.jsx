@@ -3,6 +3,7 @@ import { Award, FileCheck, Wrench, Download } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
 
 export default function CertificadoTecnico() {
   const { toasts, addToast, removeToast } = useToast();
@@ -69,7 +70,7 @@ export default function CertificadoTecnico() {
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label className="form-label">Proyecto Finalizado</label>
-              <select
+              <Select
                 className="form-select"
                 value={form.proyecto_codigo_correlativo}
                 onChange={e => {
@@ -86,7 +87,7 @@ export default function CertificadoTecnico() {
                     </option>
                   ))
                 }
-              </select>
+              </Select>
               {proyectos.length > 0 && proyectos.filter(p => p.EstadoProyecto?.estado_proyecto_nombre === 'Finalizado').length === 0 && (
                 <span style={{ fontSize: 12, color: 'var(--color-warning)', display: 'block', marginTop: 6 }}>
                   No hay proyectos en estado "Finalizado". Cambia el estado en Configuración.

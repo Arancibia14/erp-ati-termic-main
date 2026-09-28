@@ -4,6 +4,7 @@ import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import { IlustracionEquipoVacio } from '../components/Ilustraciones';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
 
 export default function Herramientas() {
   const { toasts, addToast, removeToast } = useToast();
@@ -212,7 +213,7 @@ export default function Herramientas() {
         <div className="form-grid-2" style={{ marginBottom: 14 }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Herramienta (código)</label>
-            <select
+            <Select
               className="form-select"
               value={form.herramienta_codigo}
               onChange={e => setForm(f => ({ ...f, herramienta_codigo: e.target.value }))}
@@ -223,7 +224,7 @@ export default function Herramientas() {
                   {h.herramienta_codigo} — {h.herramienta_nombre}
                 </option>
               ))}
-            </select>
+            </Select>
             {disponibles.length === 0 && (
               <span style={{ fontSize: 12, color: 'var(--color-warning)', display: 'block', marginTop: 6 }}>
                 No hay herramientas disponibles en el catálogo maestro.
@@ -233,7 +234,7 @@ export default function Herramientas() {
 
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Técnico (RUT)</label>
-            <select
+            <Select
               className="form-select"
               value={form.tecnico_rut}
               onChange={e => setForm(f => ({ ...f, tecnico_rut: e.target.value }))}
@@ -244,7 +245,7 @@ export default function Herramientas() {
                   {t.trabajador_nombres} {t.trabajador_apellidos || ''} ({t.trabajador_rut})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
 
@@ -285,7 +286,7 @@ export default function Herramientas() {
               <tbody>
                 {herramientas.map(h => (
                   <tr key={h.herramienta_id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{h.herramienta_codigo}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>{h.herramienta_codigo}</td>
                     <td style={{ fontSize: 13 }}>{h.herramienta_nombre}</td>
                     <td><Badge value={h.herramienta_estado} /></td>
                     <td style={{ fontSize: 13 }}>{h.tecnico_nombre || '—'}</td>

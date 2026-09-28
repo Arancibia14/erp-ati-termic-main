@@ -13,6 +13,7 @@ export const MODULOS = [
     id: 'terreno',
     label: 'Proyectos y Terreno',
     icon: Building2,
+    acento: 'blue',
     items: [
       { to: '/bitacora', icon: BookOpen, label: 'Bitácora Diaria', short: 'Bitácora' },
       { to: '/hitos', icon: Flag, label: 'Planificación de Hitos', short: 'Hitos' },
@@ -34,6 +35,7 @@ export const MODULOS = [
     id: 'personal',
     label: 'Personal',
     icon: UsersRound,
+    acento: 'purple',
     items: [
       { to: '/trabajadores', icon: IdCard, label: 'Trabajadores', short: 'Trabajadores', admin: true },
       { to: '/documentacion-laboral', icon: FolderCheck, label: 'Documentación Laboral', short: 'Doc. Laboral' },
@@ -47,6 +49,7 @@ export const MODULOS = [
     id: 'materiales',
     label: 'Materiales y Compras',
     icon: Boxes,
+    acento: 'green',
     items: [
       { to: '/solicitud-materiales', icon: ClipboardPlus, label: 'Nueva Solicitud de Materiales', short: 'Solicitud' },
       { to: '/aprobaciones', icon: ClipboardCheck, label: 'Aprobaciones Pendientes', short: 'Aprobar', admin: true },
@@ -68,6 +71,7 @@ export const MODULOS = [
     id: 'finanzas',
     label: 'Finanzas',
     icon: Banknote,
+    acento: 'orange',
     items: [
       { to: '/caja-chica', icon: Wallet, label: 'Caja Chica', short: 'Caja Chica' },
       { to: '/vincular-factura', icon: Paperclip, label: 'Vincular Facturas', short: 'Facturas', admin: true },
@@ -80,6 +84,7 @@ export const MODULOS = [
     id: 'sistema',
     label: 'Sistema',
     icon: Settings,
+    acento: 'gray',
     items: [
       { to: '/documentos', icon: FolderSearch, label: 'Buscador Documentos', short: 'Documentos', admin: true },
       { to: '/usuarios', icon: UserCog, label: 'Usuarios del Sistema', short: 'Usuarios', admin: true },
@@ -89,6 +94,22 @@ export const MODULOS = [
     ]
   }
 ];
+
+// Color de acento por módulo (wayfinding): cada sección de la app usa un tono
+// propio en la navegación para orientarse de un vistazo, en vez de que todo
+// se vea igual sin importar dónde se está parado.
+const ACENTOS = {
+  blue: 'var(--tone-blue)',
+  purple: 'var(--tone-purple)',
+  green: 'var(--tone-green)',
+  orange: 'var(--tone-orange)',
+  gray: 'var(--tone-gray)'
+};
+
+export function colorAcento(idModulo) {
+  const m = MODULOS.find(mod => mod.id === idModulo);
+  return ACENTOS[m?.acento] || 'var(--color-blue-text)';
+}
 
 export const ATAJOS_ADMIN = [
   '/aprobaciones',

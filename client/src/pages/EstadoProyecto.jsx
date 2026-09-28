@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { PauseCircle, Send, ChevronDown, ChevronUp } from 'lucide-react';
+import { PauseCircle, Send, ChevronDown, ChevronUp, Briefcase } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import EstadoVacio from '../components/EstadoVacio';
 
 const MOTIVO_LARGO_MINIMO = 10;
 
@@ -90,7 +91,7 @@ export default function EstadoProyecto() {
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>{p.proyecto_nombre_obra}</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ fontSize: 11, fontFamily: 'monospace', color: 'var(--color-text-muted)' }}>
+                    <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', ui-monospace, monospace", color: 'var(--color-text-muted)' }}>
                       {p.proyecto_codigo_correlativo}
                     </span>
                     <Badge value={estado} />
@@ -148,7 +149,9 @@ export default function EstadoProyecto() {
         })}
 
         {!loading && proyectos.length === 0 && (
-          <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>No hay proyectos registrados.</p>
+          <div className="card" style={{ padding: 0 }}>
+            <EstadoVacio icon={Briefcase}>No hay proyectos registrados.</EstadoVacio>
+          </div>
         )}
       </div>
 

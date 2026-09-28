@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { KeyRound } from 'lucide-react';
 import api from '../api/axios';
-import logo from '../assets/logo.png';
+import LogoMarca from '../components/LogoMarca';
 import Toast, { useToast } from '../components/Toast';
+import { obtenerTema } from '../utils/tema';
 
 export default function RestablecerContrasena() {
   const navigate = useNavigate();
@@ -57,9 +58,7 @@ export default function RestablecerContrasena() {
       <div className="login-panel" style={{ margin: '0 auto', width: '100%' }}>
         <div className="login-card">
           <div className="login-mobile-logo">
-            <div className="logo-chip hero">
-              <img src={logo} alt="ATI Termic" />
-            </div>
+            <LogoMarca tema={obtenerTema()} variante="hero" />
           </div>
           <h1 className="login-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <KeyRound size={20} />

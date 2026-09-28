@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { TrendingUp, ArrowRight, Send } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 const fmt = n => n !== undefined && n !== null ? `$${parseFloat(n).toLocaleString('es-CL')}` : '--';
 
@@ -77,19 +79,19 @@ export default function ControlPresupuesto() {
       <div className="card" style={{ maxWidth: 420, marginBottom: 24 }}>
         <div className="form-group" style={{ marginBottom: 0 }}>
           <label className="form-label">Proyecto</label>
-          <select className="form-select" value={codigoSeleccionado} onChange={handleProyecto}>
+          <Select className="form-select" value={codigoSeleccionado} onChange={handleProyecto}>
             <option value="">Selecciona un proyecto...</option>
             {proyectos.map(p => (
               <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
                 {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 
       {codigoSeleccionado && (
-        <div className="layout-split" style={{ maxWidth: 900 }}>
+        <div className="layout-split">
           {/* Formulario de cambio */}
           <div className="card">
             <h3 style={{ marginBottom: 16, fontSize: 13, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -171,9 +173,7 @@ export default function ControlPresupuesto() {
               <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
             )}
             {!loadingDatos && datos?.historial?.length === 0 && (
-              <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13, fontStyle: 'italic' }}>
-                Sin cambios registrados
-              </p>
+              <EstadoVacio icon={TrendingUp}>Sin cambios registrados.</EstadoVacio>
             )}
             <div style={{ maxHeight: 420, overflowY: 'auto' }}>
               {datos?.historial?.map((c, i) => {

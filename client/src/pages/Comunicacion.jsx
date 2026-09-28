@@ -4,6 +4,7 @@ import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
 import { fechaLocal } from '../utils/fecha';
+import Select from '../components/Select';
 
 const TIPOS = ['Reunión', 'Correo', 'Llamada', 'Acta', 'Visita a Terreno', 'Otro'];
 
@@ -90,26 +91,26 @@ export default function Comunicacion() {
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label className="form-label">Proyecto</label>
-              <select className="form-select" value={codigoSeleccionado} onChange={handleProyecto}>
+              <Select className="form-select" value={codigoSeleccionado} onChange={handleProyecto}>
                 <option value="">Selecciona un proyecto...</option>
                 {proyectos.map(p => (
                   <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
                     {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div className="form-group">
               <label className="form-label">Tipo de Comunicación</label>
-              <select
+              <Select
                 className="form-select"
                 value={form.tipo}
                 onChange={e => setForm(f => ({ ...f, tipo: e.target.value }))}
               >
                 <option value="">Selecciona un tipo...</option>
                 {TIPOS.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
+              </Select>
             </div>
 
             <div className="form-group">

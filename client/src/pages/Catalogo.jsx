@@ -5,6 +5,7 @@ import Toast, { useToast } from '../components/Toast';
 import { IlustracionCatalogoVacio } from '../components/Ilustraciones';
 import Badge from '../components/Badge';
 import ModalEliminacion from '../components/ModalEliminacion';
+import Select from '../components/Select';
 
 const UNIDADES = ['Unidad', 'Metro', 'Kg', 'Litro', 'Caja', 'Rollo', 'Par'];
 
@@ -151,7 +152,7 @@ export default function Catalogo() {
           <div className="form-grid-2" style={{ marginBottom: 16 }}>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Unidad de Medida</label>
-              <select
+              <Select
                 className="form-select"
                 style={inputStyle('material_unidad_medida')}
                 value={form.material_unidad_medida}
@@ -159,7 +160,7 @@ export default function Catalogo() {
               >
                 <option value="">Selecciona...</option>
                 {UNIDADES.map(u => <option key={u} value={u}>{u}</option>)}
-              </select>
+              </Select>
             </div>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Categoría</label>
@@ -185,7 +186,7 @@ export default function Catalogo() {
             </div>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Proveedor (opcional)</label>
-              <select
+              <Select
                 className="form-select"
                 value={form.material_proveedor_rut}
                 onChange={e => actualizarCampo('material_proveedor_rut', e.target.value)}
@@ -194,7 +195,7 @@ export default function Catalogo() {
                 {proveedores.map(p => (
                   <option key={p.proveedor_rut} value={p.proveedor_rut}>{p.proveedor_razon_social}</option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
 
@@ -235,7 +236,7 @@ export default function Catalogo() {
               <tbody>
                 {materiales.map(m => (
                   <tr key={m.material_id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{m.material_codigo_sku}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13 }}>{m.material_codigo_sku}</td>
                     <td style={{ fontWeight: 600, fontSize: 13 }}>{m.material_nombre}</td>
                     <td style={{ fontSize: 13 }}>{m.material_categoria || '—'}</td>
                     <td style={{ fontSize: 13 }}>{m.material_unidad_medida}</td>

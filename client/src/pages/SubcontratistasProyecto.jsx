@@ -3,6 +3,7 @@ import { Users, Link2, CheckCircle } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
 
 export default function SubcontratistasProyecto() {
   const { toasts, addToast, removeToast } = useToast();
@@ -68,7 +69,7 @@ export default function SubcontratistasProyecto() {
           </h3>
           <div className="form-group">
             <label className="form-label">Seleccionar Proyecto</label>
-            <select
+            <Select
               className="form-select"
               value={codigoSeleccionado}
               onChange={e => setCodigoSeleccionado(e.target.value)}
@@ -79,7 +80,7 @@ export default function SubcontratistasProyecto() {
                   {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {loadingEntidades && (
@@ -129,7 +130,7 @@ export default function SubcontratistasProyecto() {
             <>
               <div className="form-group">
                 <label className="form-label">Subcontratista</label>
-                <select
+                <Select
                   className="form-select"
                   value={proveedorRut}
                   onChange={e => setProveedorRut(e.target.value)}
@@ -140,7 +141,7 @@ export default function SubcontratistasProyecto() {
                       {p.proveedor_razon_social} ({p.proveedor_rut})
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               {proveedores.length === 0 && (
@@ -200,7 +201,7 @@ export default function SubcontratistasProyecto() {
                     style={{ cursor: 'pointer', background: codigoSeleccionado === p.proyecto_codigo_correlativo ? 'var(--color-bg-elevated)' : 'transparent' }}
                     onClick={() => setCodigoSeleccionado(p.proyecto_codigo_correlativo)}
                   >
-                    <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{p.proyecto_codigo_correlativo}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13 }}>{p.proyecto_codigo_correlativo}</td>
                     <td>{p.proyecto_nombre_obra}</td>
                     <td><Badge value={p.EstadoProyecto?.estado_proyecto_nombre} /></td>
                     <td style={{ color: 'var(--color-green)' }}>

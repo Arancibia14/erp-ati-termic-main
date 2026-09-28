@@ -3,6 +3,7 @@ import { FileText, Link, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Packa
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import EstadoVacio from '../components/EstadoVacio';
 
 const FORM_VACIO = { factura_folio: '', factura_monto_total: '', factura_fecha: '', pdf: null };
 
@@ -105,8 +106,8 @@ export default function VincularFactura() {
       {loading ? (
         <div style={{ color: 'var(--color-text-secondary)', padding: 32, textAlign: 'center' }}>Cargando órdenes...</div>
       ) : ordenes.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: 40, color: 'var(--color-text-secondary)' }}>
-          No hay órdenes de compra pendientes de facturación.
+        <div className="card" style={{ padding: 0 }}>
+          <EstadoVacio icon={FileText}>No hay órdenes de compra pendientes de facturación.</EstadoVacio>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -206,7 +207,7 @@ export default function VincularFactura() {
                             <tbody>
                               {orden.GuiaDespachos.map(g => (
                                 <tr key={g.guia_despacho_id}>
-                                  <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{g.guia_despacho_numero}</td>
+                                  <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13 }}>{g.guia_despacho_numero}</td>
                                   <td style={{ fontSize: 13 }}>{g.guia_despacho_fecha}</td>
                                   <td><Badge value={g.guia_despacho_estado} /></td>
                                 </tr>

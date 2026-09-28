@@ -4,6 +4,7 @@ import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
 import ModalEliminacion from '../components/ModalEliminacion';
+import EstadoVacio from '../components/EstadoVacio';
 
 // CU34 - Gestionando catálogo de proveedores
 const FORM_VACIO = { rut: '', razon_social: '', correo: '', telefono: '' };
@@ -165,9 +166,7 @@ export default function CatalogoProveedores() {
         {cargando ? (
           <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
         ) : proveedores.length === 0 ? (
-          <div className="estado-vacio">
-            <p>Todavía no hay proveedores en el catálogo. Registra el primero para poder emitir órdenes de compra.</p>
-          </div>
+          <EstadoVacio icon={Building2}>Todavía no hay proveedores en el catálogo. Registra el primero para poder emitir órdenes de compra.</EstadoVacio>
         ) : (
           <div className="table-container">
             <table>
@@ -184,7 +183,7 @@ export default function CatalogoProveedores() {
               <tbody>
                 {proveedores.map(p => (
                   <tr key={p.proveedor_rut} style={{ opacity: p.proveedor_activo ? 1 : 0.55 }}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{p.proveedor_rut}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>{p.proveedor_rut}</td>
                     <td>{p.proveedor_razon_social}</td>
                     <td style={{ fontSize: 13 }}>{p.proveedor_correo || '—'}</td>
                     <td style={{ fontSize: 13 }}>{p.proveedor_telefono || '—'}</td>

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Undo2, Send } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 const FORM_VACIO = { fase: '', material_id: '', cantidad: '', estado_fisico: 'Operativo', observacion: '' };
 
@@ -88,43 +90,47 @@ export default function DevolucionObra() {
         Devolución de Obra
       </h1>
 
-      <div className="card" style={{ maxWidth: 640, marginBottom: 20 }}>
+      <div className="layout-form-lista">
+      <div>
+      <div className="card" style={{ marginBottom: 20 }}>
         <div className="form-group">
           <label className="form-label">Proyecto / Obra</label>
-          <select className="form-select" value={proyecto} onChange={e => elegirProyecto(e.target.value)}>
+          <Select className="form-select" value={proyecto} onChange={e => elegirProyecto(e.target.value)}>
             <option value="">Selecciona un proyecto...</option>
             {proyectos.map(p => (
               <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
                 {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {proyecto && (
           <>
-            <div className="form-group">
-              <label className="form-label">Fase terminada</label>
-              <input className="form-input" placeholder="Ej. Montaje de ductos"
-                     value={form.fase} onChange={e => setForm(f => ({ ...f, fase: e.target.value }))} />
-            </div>
+            <div className="form-grid-2">
+              <div className="form-group">
+                <label className="form-label">Fase terminada</label>
+                <input className="form-input" placeholder="Ej. Montaje de ductos"
+                       value={form.fase} onChange={e => setForm(f => ({ ...f, fase: e.target.value }))} />
+              </div>
 
-            <div className="form-group">
-              <label className="form-label">Material a reintegrar</label>
-              <select className="form-select" value={form.material_id} onChange={e => elegirMaterial(e.target.value)}>
-                <option value="">Selecciona un material recibido en la obra...</option>
-                {materiales.map(m => (
-                  <option key={m.material_id} value={m.material_id}>
-                    {m.material_codigo_sku} — {m.material_nombre}
-                  </option>
-                ))}
-              </select>
-              {materiales.length === 0 && (
-                <span style={{ fontSize: 12, color: 'var(--color-warning)', display: 'block', marginTop: 6 }}>
-                  No hay materiales recibidos en esta obra. Solo se pueden devolver materiales de guías con la recepción confirmada.
-                </span>
-              )}
+              <div className="form-group">
+                <label className="form-label">Material a reintegrar</label>
+                <Select className="form-select" value={form.material_id} onChange={e => elegirMaterial(e.target.value)}>
+                  <option value="">Selecciona un material recibido en la obra...</option>
+                  {materiales.map(m => (
+                    <option key={m.material_id} value={m.material_id}>
+                      {m.material_codigo_sku} — {m.material_nombre}
+                    </option>
+                  ))}
+                </Select>
+              </div>
             </div>
+            {materiales.length === 0 && (
+              <span style={{ fontSize: 12, color: 'var(--color-warning)', display: 'block', margin: '-8px 0 16px' }}>
+                No hay materiales recibidos en esta obra. Solo se pueden devolver materiales de guías con la recepción confirmada.
+              </span>
+            )}
 
             {despacho && (
               <div style={{ background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)', borderRadius: 4, padding: '10px 14px', marginBottom: 16, fontSize: 12 }}>
@@ -142,11 +148,11 @@ export default function DevolucionObra() {
               </div>
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label">Estado físico del material</label>
-                <select className="form-select" value={form.estado_fisico}
+                <Select className="form-select" value={form.estado_fisico}
                         onChange={e => setForm(f => ({ ...f, estado_fisico: e.target.value }))}>
                   <option value="Operativo">Operativo</option>
                   <option value="Dañado">Dañado</option>
-                </select>
+                </Select>
               </div>
             </div>
 
@@ -180,6 +186,7 @@ export default function DevolucionObra() {
           </>
         )}
       </div>
+      </div>
 
       {proyecto && (
         <div className="card" style={{ padding: 0 }}>
@@ -189,7 +196,7 @@ export default function DevolucionObra() {
             </h3>
           </div>
           {historial.length === 0 ? (
-            <p style={{ padding: 20, fontSize: 13, color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Sin reingresos registrados.</p>
+            <EstadoVacio icon={Undo2}>Sin reingresos registrados.</EstadoVacio>
           ) : (
             <div className="table-container">
               <table>
@@ -199,7 +206,7 @@ export default function DevolucionObra() {
                 <tbody>
                   {historial.map(d => (
                     <tr key={d.devolucion_obra_id}>
-                      <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{d.devolucion_obra_vale}</td>
+                      <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>{d.devolucion_obra_vale}</td>
                       <td style={{ fontSize: 12 }}>{d.devolucion_obra_fecha}</td>
                       <td style={{ fontSize: 12 }}>{d.devolucion_obra_fase || '—'}</td>
                       <td style={{ fontSize: 12 }}>{d.material_nombre}</td>
@@ -214,6 +221,7 @@ export default function DevolucionObra() {
           )}
         </div>
       )}
+      </div>
 
       <Toast toasts={toasts} removeToast={removeToast} />
     </div>

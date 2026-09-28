@@ -3,6 +3,7 @@ import { ClipboardList, Send, Search, X } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
 
 const ESTADO_LABELS = {
   pendiente: 'Pendiente de Validación'
@@ -130,7 +131,7 @@ export default function SolicitudMateriales() {
 
         <div className="form-group">
           <label className="form-label">Proyecto</label>
-          <select
+          <Select
             className="form-select"
             value={proyectoSeleccionado}
             onChange={e => setProyectoSeleccionado(e.target.value)}
@@ -141,7 +142,7 @@ export default function SolicitudMateriales() {
                 {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {!esSolicitudEspecial ? (
@@ -286,7 +287,7 @@ export default function SolicitudMateriales() {
               <tbody>
                 {misSolicitudes.map(s => (
                   <tr key={s.solicitud_material_id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 13 }}>#{s.solicitud_material_id}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13 }}>#{s.solicitud_material_id}</td>
                     <td style={{ fontSize: 13 }}>{s.Proyecto?.proyecto_nombre_obra || s.proyecto_codigo_correlativo}</td>
                     <td style={{ fontSize: 13 }}>{s.solicitud_material_descripcion}</td>
                     <td style={{ fontSize: 13 }}>{s.solicitud_material_cantidad}</td>

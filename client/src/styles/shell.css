@@ -19,6 +19,102 @@
   animation: pageIn 0.25s ease both;
 }
 
+/* Migas de pan + salto rápido entre funciones del mismo módulo */
+.migas {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 10px 36px 0;
+  font-size: 12.5px;
+}
+
+.migas-modulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--acento, var(--color-text-secondary));
+  font-weight: 600;
+}
+
+.migas-sep {
+  color: var(--color-text-muted);
+}
+
+.migas-actual {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 3px 6px;
+  margin-left: -6px;
+  border-radius: 6px;
+  color: var(--color-text-primary);
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.migas-actual:hover {
+  background: var(--color-bg-hover);
+}
+
+.migas-caret {
+  color: var(--color-text-muted);
+  transition: transform 0.15s ease;
+}
+
+.migas-caret.open {
+  transform: rotate(180deg);
+}
+
+.migas-menu {
+  position: absolute;
+  top: 100%;
+  left: 30px;
+  z-index: 90;
+  margin-top: 4px;
+  min-width: 260px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 6px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  animation: selAbrir 0.12s ease;
+}
+
+.migas-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: calc(var(--radius-sm) - 1px);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.migas-item:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.migas-item.active {
+  color: var(--acento, var(--color-blue-text));
+  background: color-mix(in srgb, var(--acento, var(--color-blue)) 12%, transparent);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .migas {
+    display: none;
+  }
+}
+
 .logo-chip {
   background: #ffffff;
   border-radius: 10px;
@@ -32,6 +128,16 @@
   display: block;
   max-width: 150px;
   height: auto;
+}
+
+/* Versión sin fondo: la página ya aporta el fondo claro, así que se quita
+   la caja blanca y su sombra para que el logo se integre en vez de flotar
+   dentro de un recuadro redundante. */
+.logo-chip.transparente {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .logo-chip.small {
@@ -120,11 +226,11 @@
 
 .tb-tab.open {
   background: var(--color-bg-elevated);
-  color: var(--color-text-primary);
+  color: var(--acento, var(--color-text-primary));
 }
 
 .tb-tab.current {
-  color: var(--color-text-primary);
+  color: var(--acento, var(--color-text-primary));
 }
 
 .tb-caret {
@@ -252,6 +358,7 @@ kbd {
   right: 0;
   background: var(--color-bg-surface);
   border-bottom: 1px solid var(--color-border);
+  border-top: 2px solid var(--acento, var(--color-blue));
   box-shadow: var(--shadow-md);
   transform-origin: top center;
   animation: panelSpring 0.34s cubic-bezier(0.34, 1.4, 0.64, 1) both;
@@ -284,10 +391,21 @@ kbd {
 }
 
 .tb-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   font-family: var(--font-display);
   font-size: 17px;
   font-weight: 700;
   color: var(--color-text-primary);
+}
+
+.tb-panel-title::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--acento, var(--color-blue));
 }
 
 .tb-panel-count {
@@ -333,8 +451,8 @@ kbd {
 }
 
 .tb-card.active {
-  background: var(--color-blue-muted);
-  border-color: var(--color-blue);
+  background: color-mix(in srgb, var(--acento, var(--color-blue)) 14%, transparent);
+  border-color: var(--acento, var(--color-blue));
 }
 
 .tb-card-icon {
@@ -346,7 +464,7 @@ kbd {
   justify-content: center;
   border: 1px solid var(--color-border-strong);
   border-radius: 10px;
-  color: var(--color-blue-text);
+  color: var(--acento, var(--color-blue-text));
   background: var(--color-bg-elevated);
 }
 
@@ -365,8 +483,7 @@ kbd {
   align-items: flex-start;
   justify-content: center;
   padding-top: 12vh;
-  background: rgba(3, 7, 14, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(3, 7, 14, 0.72);
   animation: fadeIn 0.15s ease;
 }
 
@@ -852,12 +969,11 @@ kbd {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--color-bg-surface) 70%, transparent);
+  background: color-mix(in srgb, var(--color-bg-surface) 88%, transparent);
   border: 1px solid var(--color-border);
   border-radius: 10px;
   color: var(--color-text-secondary);
   cursor: pointer;
-  backdrop-filter: blur(6px);
 }
 
 .login-tema-btn:hover {
@@ -873,54 +989,59 @@ kbd {
   pointer-events: none;
 }
 
-.flow {
+.circuito {
   fill: none;
   stroke-linecap: round;
+  stroke-width: 2;
 }
 
-.flow.soft {
-  stroke-width: 1.2;
-  opacity: 0.28;
-  animation: derivaFlujo 16s ease-in-out infinite alternate;
-  will-change: transform;
+.circuito.grande {
+  stroke-width: 1.6;
+  opacity: 0.4;
+  stroke-dasharray: 3 14;
 }
 
-.anim-pausada .flow,
-.anim-pausada .login-ring,
-.anim-pausada .login-halo,
-.anim-pausada .logo-chip.hero::after {
-  animation-play-state: paused !important;
+.circuito.mediano {
+  stroke-width: 1.8;
+  opacity: 0.55;
+  stroke-dasharray: 2 12;
 }
 
-.flow.soft.s2 {
-  animation-duration: 21s;
-  animation-delay: -6s;
+.circuito.chico {
+  stroke-width: 2.2;
+  opacity: 0.8;
+  stroke-dasharray: 1 10;
 }
 
-.flow.soft.s3 {
-  animation-duration: 25s;
-  animation-delay: -12s;
+.circuito.cw {
+  animation: fluyeCw 34s linear infinite;
 }
 
-.flow.dots {
-  stroke-width: 2.6;
-  stroke-dasharray: 1 20;
+.circuito.ccw {
+  animation: fluyeCcw 28s linear infinite;
+}
+
+.circuito-marcas line {
+  stroke: var(--color-border-strong);
+  stroke-width: 1.4;
+  opacity: 0.5;
+}
+
+.circuito-nodos circle {
+  fill: var(--color-blue);
   opacity: 0.7;
-  animation: correFlujo 38s linear infinite;
+  animation: latido 4.5s ease-in-out infinite;
 }
 
-.flow.dots.d2 {
-  animation-duration: 46s;
-}
+.circuito-nodos .n2 { animation-delay: -1.1s; }
+.circuito-nodos .n3 { animation-delay: -2.2s; }
+.circuito-nodos .n4 { animation-delay: -3.3s; }
 
-.flow.dots.d3 {
-  animation-duration: 52s;
-  stroke-dasharray: 1 26;
-}
-
-.flow.dots.d4 {
-  animation-duration: 60s;
-  stroke-dasharray: 1 32;
+.anim-pausada .circuito,
+.anim-pausada .circuito-nodos circle,
+.anim-pausada .login-ring,
+.anim-pausada .login-halo {
+  animation-play-state: paused !important;
 }
 
 .login-brand {
@@ -963,6 +1084,8 @@ kbd {
 
 .login-halo {
   position: absolute;
+  inset: 0;
+  margin: auto;
   width: 440px;
   height: 300px;
   border-radius: 50%;
@@ -973,38 +1096,42 @@ kbd {
 
 .login-ring {
   position: absolute;
+  inset: 0;
+  margin: auto;
   width: 400px;
   height: 400px;
   fill: none;
-  stroke: rgba(37, 99, 235, 0.55);
+  stroke: rgba(37, 99, 235, 0.5);
   stroke-width: 0.6;
   stroke-dasharray: 2 5;
   animation: gira 70s linear infinite;
 }
 
+/* Marcas de grado alrededor del anillo, como una esfera de instrumento
+   (termómetro/manómetro industrial) — el detalle que ancla el motivo al
+   rubro de climatización en vez de ser un círculo decorativo cualquiera. */
+.login-ring-marcas {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 400px;
+  height: 400px;
+  fill: none;
+  stroke: rgba(93, 184, 53, 0.4);
+  stroke-width: 1.2;
+}
+
 .logo-chip.hero {
   position: relative;
-  overflow: hidden;
-  padding: 22px 36px;
-  border-radius: 20px;
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4);
+  padding: 20px 34px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14), 0 10px 26px rgba(0, 0, 0, 0.22);
 }
 
 .logo-chip.hero img {
   max-width: 400px;
   width: min(400px, 70vw);
-}
-
-.logo-chip.hero::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -80%;
-  width: 55%;
-  background: linear-gradient(100deg, transparent, rgba(37, 99, 235, 0.16), transparent);
-  transform: skewX(-18deg);
-  animation: brillo 7s ease-in-out 1.4s infinite;
 }
 
 .login-tagline {
@@ -1014,30 +1141,37 @@ kbd {
   color: var(--color-text-secondary);
 }
 
-.login-clock {
+/* Ficha técnica: cajetín de plano — línea fina arriba/abajo, ítems en
+   versalitas separados por barras, como el recuadro de datos de un plano de
+   ingeniería en vez de un widget decorativo suelto. */
+.login-ficha {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 14px 28px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--color-bg-surface) 70%, transparent);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--color-border-strong);
+  border-bottom: 1px solid var(--color-border-strong);
+  max-width: 400px;
 }
 
-.login-clock-time {
-  font-size: 26px;
+.login-ficha-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.03em;
-  color: var(--color-blue-text);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
 }
 
-.login-clock-date {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--color-text-secondary);
+.login-ficha-div {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--color-border-strong);
 }
 
 .login-foot {
@@ -1056,15 +1190,26 @@ kbd {
 }
 
 .login-card {
+  position: relative;
   width: 100%;
   max-width: 420px;
-  padding: 36px 34px 34px;
-  background: color-mix(in srgb, var(--color-bg-surface) 78%, transparent);
-  border: 1px solid var(--color-border);
-  border-radius: 22px;
-  backdrop-filter: blur(16px);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+  padding: 38px 34px 34px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 10px 30px rgba(0, 0, 0, 0.22);
   animation: riseIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s both;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-blue), var(--color-green));
+  border-radius: 0 0 3px 3px;
 }
 
 .login-mobile-logo {
@@ -1132,8 +1277,7 @@ kbd {
   align-items: flex-start;
   justify-content: center;
   padding-top: 18vh;
-  background: color-mix(in srgb, var(--color-bg-base) 62%, transparent);
-  backdrop-filter: blur(3px);
+  background: color-mix(in srgb, var(--color-bg-base) 78%, transparent);
   pointer-events: none;
   animation: fadeIn 0.2s ease;
 }
@@ -1178,18 +1322,15 @@ kbd {
   }
 }
 
-@keyframes correFlujo {
+@keyframes fluyeCw {
   to {
-    stroke-dashoffset: -1400;
+    stroke-dashoffset: -400;
   }
 }
 
-@keyframes derivaFlujo {
-  from {
-    transform: translateY(-14px);
-  }
+@keyframes fluyeCcw {
   to {
-    transform: translateY(14px);
+    stroke-dashoffset: 400;
   }
 }
 
@@ -1208,16 +1349,6 @@ kbd {
 @keyframes gira {
   to {
     transform: rotate(360deg);
-  }
-}
-
-@keyframes brillo {
-  0% {
-    left: -80%;
-  }
-  30%,
-  100% {
-    left: 150%;
   }
 }
 
@@ -1488,6 +1619,18 @@ kbd {
     display: flex;
   }
 
+  /* El chip "hero" está pensado para el panel ancho de escritorio; aquí
+     convive con la tarjeta angosta del formulario, así que se achica. */
+  .login-mobile-logo .logo-chip.hero {
+    padding: 12px 18px;
+    border-radius: 14px;
+  }
+
+  .login-mobile-logo .logo-chip.hero img {
+    width: min(220px, 55vw);
+    max-width: 220px;
+  }
+
   .login-title {
     text-align: center;
   }
@@ -1590,8 +1733,7 @@ kbd {
     position: fixed;
     inset: 0;
     z-index: 400;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(3px);
+    background: rgba(0, 0, 0, 0.68);
     animation: fadeIn 0.2s ease;
   }
 
@@ -1663,7 +1805,7 @@ kbd {
     border: 1px solid var(--color-border-strong);
     border-radius: 12px;
     background: var(--color-bg-elevated);
-    color: var(--color-blue-text);
+    color: var(--acento, var(--color-blue-text));
   }
 
   .sheet-module-label {
@@ -1838,9 +1980,7 @@ kbd {
     grid-template-columns: 1fr;
   }
 
-  .flow.soft.s3,
-  .flow.dots.d3,
-  .flow.dots.d4 {
+  .circuito.chico {
     display: none;
   }
 
@@ -1875,10 +2015,10 @@ kbd {
   .carga-barra::after,
   .login-brand > *,
   .login-card,
-  .logo-chip.hero::after,
   .login-ring,
   .login-halo,
-  .flow,
+  .circuito,
+  .circuito-nodos circle,
   .spinner,
   .btn.is-loading::before,
   .dash-hello,

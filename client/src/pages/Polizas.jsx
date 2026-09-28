@@ -3,6 +3,7 @@ import { Shield, Upload, User } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import { fechaLocal } from '../utils/fecha';
+import Select from '../components/Select';
 
 export default function Polizas() {
   const { toasts, addToast, removeToast } = useToast();
@@ -90,14 +91,14 @@ export default function Polizas() {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">Proyecto / Faena</label>
-            <select className="form-select" value={codigoSeleccionado} onChange={handleProyecto}>
+            <Select className="form-select" value={codigoSeleccionado} onChange={handleProyecto}>
               <option value="">Selecciona un proyecto...</option>
               {proyectos.map(p => (
                 <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
                   {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {codigoSeleccionado && (
@@ -110,7 +111,7 @@ export default function Polizas() {
                   Sin trabajadores asignados a este proyecto
                 </p>
               ) : (
-                <select
+                <Select
                   className="form-select"
                   value={form.trabajador_rut}
                   onChange={e => setForm(f => ({ ...f, trabajador_rut: e.target.value }))}
@@ -121,7 +122,7 @@ export default function Polizas() {
                       {t.trabajador_nombres} ({t.trabajador_rut})
                     </option>
                   ))}
-                </select>
+                </Select>
               )}
             </div>
           )}

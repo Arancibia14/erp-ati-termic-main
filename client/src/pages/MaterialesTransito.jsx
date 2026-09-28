@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Truck, PackageSearch } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import Select from '../components/Select';
 
 export default function MaterialesTransito() {
   const { toasts, addToast, removeToast } = useToast();
@@ -37,14 +38,14 @@ export default function MaterialesTransito() {
       <div className="card" style={{ marginBottom: 16, maxWidth: 420 }}>
         <div className="form-group" style={{ marginBottom: 0 }}>
           <label className="form-label">Proyecto</label>
-          <select className="form-select" value={proyecto} onChange={e => setProyecto(e.target.value)}>
+          <Select className="form-select" value={proyecto} onChange={e => setProyecto(e.target.value)}>
             <option value="">Todos mis proyectos</option>
             {proyectos.map(p => (
               <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
                 {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -72,7 +73,7 @@ export default function MaterialesTransito() {
               <tbody>
                 {envios.map(e => (
                   <tr key={e.guia_despacho_id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{e.guia_despacho_numero}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>{e.guia_despacho_numero}</td>
                     <td style={{ fontSize: 12 }}>{e.proyecto_codigo_correlativo || '—'}</td>
                     <td style={{ fontSize: 13 }}>{e.proveedor}</td>
                     <td style={{ fontSize: 13 }}>{e.material_nombre}</td>

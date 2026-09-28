@@ -6,6 +6,7 @@ import {
 } from 'recharts';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import Select from '../components/Select';
 
 const formatPeso = v => {
   if (Math.abs(v) >= 1_000_000) return `$${(v / 1_000_000).toFixed(1)}M`;
@@ -167,7 +168,7 @@ export default function ControlCostos() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'end' }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Proyecto a analizar</label>
-            <select
+            <Select
               className="form-select"
               value={codigoSel}
               onChange={handleProyecto}
@@ -179,11 +180,11 @@ export default function ControlCostos() {
                   {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Año</label>
-            <select
+            <Select
               className="form-select"
               value={yearSel}
               onChange={handleYear}
@@ -192,7 +193,7 @@ export default function ControlCostos() {
               {anios.map(y => (
                 <option key={y} value={y}>{y}</option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
       </div>

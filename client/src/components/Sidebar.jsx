@@ -4,11 +4,11 @@ import {
   Home, Search, ChevronDown, ChevronRight, LogOut, Sun, Moon, Menu, X,
   ArrowLeft, CornerDownLeft
 } from 'lucide-react';
-import logo from '../assets/logo.png';
+import LogoMarca from './LogoMarca';
 import avatarAdministrador from '../assets/avatar-administrador.png';
 import avatarSupervisor from '../assets/avatar-supervisor.png';
 import {
-  modulosVisibles, buscarItem, moduloDeRuta, normalizar,
+  modulosVisibles, buscarItem, moduloDeRuta, normalizar, colorAcento,
   registrarReciente, BARRA_ADMIN, BARRA_SUPERVISOR
 } from '../navigation';
 import { obtenerTema, aplicarTema } from '../utils/tema';
@@ -244,9 +244,7 @@ export default function Sidebar() {
       <header className="tb" ref={tbRef}>
         <div className="tb-inner">
           <NavLink to="/inicio" className="tb-brand" aria-label="Inicio">
-            <div className="logo-chip small">
-              <img src={logo} alt="ATI Termic" />
-            </div>
+            <LogoMarca tema={tema} variante="small" />
           </NavLink>
 
           <nav className="tb-tabs" ref={tabsRef} aria-label="Módulos">
@@ -269,6 +267,7 @@ export default function Sidebar() {
                   title={m.label}
                   ref={el => { tabRefs.current[m.id] = el; }}
                   className={`tb-tab${abierto ? ' open' : ''}${moduloActual === m.id ? ' current' : ''}`}
+                  style={{ '--acento': colorAcento(m.id) }}
                   aria-expanded={abierto}
                   onClick={() => {
                     setMenuUsuario(false);
@@ -284,7 +283,7 @@ export default function Sidebar() {
             {marcador && (
               <span
                 className="tb-indicador"
-                style={{ left: marcador.left, width: marcador.width }}
+                style={{ left: marcador.left, width: marcador.width, background: idResaltado === 'inicio' ? 'var(--color-blue-text)' : colorAcento(idResaltado) }}
                 aria-hidden="true"
               />
             )}
@@ -332,7 +331,7 @@ export default function Sidebar() {
         </div>
 
         {moduloPanel && (
-          <div className="tb-panel">
+          <div className="tb-panel" style={{ '--acento': colorAcento(moduloPanel.id) }}>
             {marcador && panel && (
               <span className="tb-panel-flecha" style={{ left: marcador.flecha }} aria-hidden="true" />
             )}
@@ -369,9 +368,7 @@ export default function Sidebar() {
       <header className="mobile-header">
         {enInicio ? (
           <NavLink to="/inicio" aria-label="Inicio" className="mh-brand">
-            <div className="logo-chip small">
-              <img src={logo} alt="ATI Termic" />
-            </div>
+            <LogoMarca tema={tema} variante="small" />
           </NavLink>
         ) : (
           <>
@@ -443,6 +440,7 @@ export default function Sidebar() {
                         key={m.id}
                         type="button"
                         className="sheet-module"
+                        style={{ '--acento': colorAcento(m.id) }}
                         onClick={() => setModuloHoja(m.id)}
                       >
                         <span className="sheet-module-icon"><Icon size={22} strokeWidth={1.6} /></span>

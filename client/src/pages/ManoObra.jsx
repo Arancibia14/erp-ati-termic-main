@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Briefcase, User, ChevronRight, Calendar, Calculator } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 const fmt = n => n !== undefined && n !== null ? `$${parseFloat(n).toLocaleString('es-CL')}` : '--';
 
@@ -77,7 +79,7 @@ export default function ManoObra() {
         <div className="form-grid-2" style={{ marginBottom: 16 }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Proyecto</label>
-            <select
+            <Select
               className="form-select"
               value={codigoSeleccionado}
               onChange={e => { setCodigoSeleccionado(e.target.value); setResumen(null); }}
@@ -88,7 +90,7 @@ export default function ManoObra() {
                   {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -126,9 +128,7 @@ export default function ManoObra() {
             )}
 
             {!loadingResumen && resumen && resumen.trabajadores.length === 0 && (
-              <p style={{ color: 'var(--color-text-muted)', fontSize: 13, fontStyle: 'italic' }}>
-                No hay trabajadores con contratos activos en este período.
-              </p>
+              <EstadoVacio icon={User}>No hay trabajadores con contratos activos en este período.</EstadoVacio>
             )}
 
             {!loadingResumen && resumen && resumen.trabajadores.length > 0 && (
@@ -148,7 +148,7 @@ export default function ManoObra() {
                       {resumen.trabajadores.map((t, i) => (
                         <tr key={t.trabajador?.trabajador_rut || i}>
                           <td style={{ fontWeight: 600, fontSize: 13 }}>{t.trabajador?.trabajador_nombres || '—'}</td>
-                          <td style={{ fontSize: 12, fontFamily: 'monospace', color: 'var(--color-text-secondary)' }}>
+                          <td style={{ fontSize: 12, fontFamily: "'JetBrains Mono', ui-monospace, monospace", color: 'var(--color-text-secondary)' }}>
                             {t.trabajador?.trabajador_rut || '—'}
                           </td>
                           <td style={{ textAlign: 'right', fontSize: 13 }}>{fmt(t.sueldo_base)}</td>

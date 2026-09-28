@@ -6,6 +6,7 @@ import {
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
 
 const TABS = [
   { id: 'proyecto',   label: 'Proyectos',       icon: FolderPlus },
@@ -410,14 +411,14 @@ export default function Configuracion() {
   const ProyectoSelect = ({ value, onChange, required = false }) => (
     <div className="form-group" style={fieldStyle}>
       <label className="form-label">Proyecto {!required && <span style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}>(opcional)</span>}</label>
-      <select className="form-select" value={value} onChange={onChange}>
+      <Select className="form-select" value={value} onChange={onChange}>
         <option value="">Sin proyecto asignado</option>
         {proyectos.map(p => (
           <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
             {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
           </option>
         ))}
-      </select>
+      </Select>
     </div>
   );
 
@@ -511,10 +512,10 @@ export default function Configuracion() {
                     <tbody>
                       {proyectos.map(p => (
                         <tr key={p.proyecto_codigo_correlativo}>
-                          <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{p.proyecto_codigo_correlativo}</td>
+                          <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>{p.proyecto_codigo_correlativo}</td>
                           <td style={{ fontSize: 13 }}>{p.proyecto_nombre_obra}</td>
                           <td><Badge value={p.EstadoProyecto?.estado_proyecto_nombre} /></td>
-                          <td style={{ fontSize: 11, fontFamily: 'monospace', color: p.proyecto_latitud ? 'var(--color-green)' : 'var(--color-text-muted)' }}>
+                          <td style={{ fontSize: 11, fontFamily: "'JetBrains Mono', ui-monospace, monospace", color: p.proyecto_latitud ? 'var(--color-green)' : 'var(--color-text-muted)' }}>
                             {p.proyecto_latitud ? `${parseFloat(p.proyecto_latitud).toFixed(4)}, ${parseFloat(p.proyecto_longitud).toFixed(4)}` : '—'}
                           </td>
                         </tr>
@@ -538,7 +539,7 @@ export default function Configuracion() {
               <form onSubmit={submitPlazo}>
                 <div className="form-group">
                   <label className="form-label">Proyecto</label>
-                  <select className="form-select" value={fPlazo.codigo}
+                  <Select className="form-select" value={fPlazo.codigo}
                     onChange={e => elegirProyectoPlazo(e.target.value)}>
                     <option value="">Selecciona un proyecto...</option>
                     {proyectos.map(p => (
@@ -547,7 +548,7 @@ export default function Configuracion() {
                         {p.proyecto_fecha_inicio ? ' ✓' : ' (sin plazo)'}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
                 <div className="form-grid-2">
                   <div className="form-group" style={fieldStyle}>
@@ -578,7 +579,7 @@ export default function Configuracion() {
                 <div className="form-grid-2">
                   <div className="form-group" style={fieldStyle}>
                     <label className="form-label">Proyecto</label>
-                    <select className="form-select" value={fCaja.codigo}
+                    <Select className="form-select" value={fCaja.codigo}
                       onChange={e => elegirProyectoCaja(e.target.value)}>
                       <option value="">Selecciona un proyecto...</option>
                       {proyectos.map(p => (
@@ -587,7 +588,7 @@ export default function Configuracion() {
                           {parseFloat(p.proyecto_presupuesto_caja_chica) > 0 ? ' ✓' : ' (sin fondo)'}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                   <div className="form-group" style={fieldStyle}>
                     <label className="form-label">Fondo de Caja Chica ($)</label>
@@ -640,11 +641,11 @@ export default function Configuracion() {
               <div className="form-grid-2">
                 <div className="form-group" style={fieldStyle}>
                   <label className="form-label">Especialidad</label>
-                  <select className="form-select" value={fTrabajador.especialidad_id}
+                  <Select className="form-select" value={fTrabajador.especialidad_id}
                     onChange={e => setFTrabajador(f => ({ ...f, especialidad_id: e.target.value }))}>
                     <option value="">Seleccionar...</option>
                     {especialidades.map(s => <option key={s.especialidad_id} value={s.especialidad_id}>{s.especialidad_nombre}</option>)}
-                  </select>
+                  </Select>
                 </div>
                 <ProyectoSelect value={fTrabajador.proyecto_codigo}
                   onChange={e => setFTrabajador(f => ({ ...f, proyecto_codigo: e.target.value }))} />
@@ -715,7 +716,7 @@ export default function Configuracion() {
                 </div>
                 <div className="form-group" style={{ marginTop: 14 }}>
                   <label className="form-label">Orden de Compra asociada</label>
-                  <select className="form-select" value={fGuia.orden_id}
+                  <Select className="form-select" value={fGuia.orden_id}
                     onChange={e => setFGuia(f => ({ ...f, orden_id: e.target.value }))}>
                     <option value="">Seleccionar OC...</option>
                     {ordenes.map(o => (
@@ -723,7 +724,7 @@ export default function Configuracion() {
                         OC #{o.orden_compra_id} — Folio: {o.orden_compra_folio} ({o.orden_compra_estado})
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
                 <button type="submit" className="btn btn-primary" style={{ marginTop: 16 }} disabled={loading}>
                   <Truck size={15} /> {loading ? 'Creando...' : 'Crear Guía de Despacho'}
@@ -748,7 +749,7 @@ export default function Configuracion() {
               <form onSubmit={submitContrato} style={{ maxWidth: 568 }}>
                 <div className="form-group">
                   <label className="form-label">Trabajador</label>
-                  <select className="form-select" value={fContrato.rut} disabled={!!editandoContrato}
+                  <Select className="form-select" value={fContrato.rut} disabled={!!editandoContrato}
                     onChange={e => setFContrato(f => ({ ...f, rut: e.target.value }))}>
                     <option value="">Seleccionar trabajador...</option>
                     {trabajadores.map(t => (
@@ -756,7 +757,7 @@ export default function Configuracion() {
                         {t.trabajador_nombres} — {t.trabajador_rut}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                   {editandoContrato && (
                     <p style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 4 }}>
                       El trabajador de un contrato no se puede cambiar; elimina y crea uno nuevo si te equivocaste de persona.
@@ -821,7 +822,7 @@ export default function Configuracion() {
                         <tr key={c.contrato_laboral_id_contrato}>
                           <td style={{ fontSize: 13 }}>
                             {c.Trabajador ? `${c.Trabajador.trabajador_nombres} ${c.Trabajador.trabajador_apellidos || ''}`.trim() : c.trabajador_rut}
-                            <span style={{ display: 'block', fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'monospace' }}>{c.trabajador_rut}</span>
+                            <span style={{ display: 'block', fontSize: 11, color: 'var(--color-text-muted)', fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>{c.trabajador_rut}</span>
                           </td>
                           <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>${parseFloat(c.contrato_laboral_sueldo_base).toLocaleString('es-CL')}</td>
                           <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>${parseFloat(c.contrato_laboral_leyes_sociales).toLocaleString('es-CL')}</td>
@@ -893,11 +894,11 @@ export default function Configuracion() {
 
             <div className="form-group" style={{ maxWidth: 360 }}>
               <label className="form-label">Evento a editar</label>
-              <select className="form-select" value={eventoActivo} onChange={e => setEventoActivo(e.target.value)}>
+              <Select className="form-select" value={eventoActivo} onChange={e => setEventoActivo(e.target.value)}>
                 {eventosCorreo.map(ev => (
                   <option key={ev.evento} value={ev.evento}>{ev.nombre}</option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             {loadingPlantilla ? (
@@ -929,7 +930,7 @@ export default function Configuracion() {
                   <div className="form-group" style={fieldStyle}>
                     <label className="form-label">Contenido (HTML)</label>
                     <textarea ref={htmlRef} className={`form-textarea${errPlantilla.includes('contenido_html') ? ' is-invalid' : ''}`}
-                      rows={12} style={{ fontFamily: 'monospace', fontSize: 12 }}
+                      rows={12} style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}
                       value={fPlantilla.contenido_html}
                       onChange={e => { setFPlantilla(f => ({ ...f, contenido_html: e.target.value })); setErrPlantilla(p => p.filter(c => c !== 'contenido_html')); }} />
                   </div>

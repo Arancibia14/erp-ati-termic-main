@@ -3,6 +3,7 @@ import { BadgeCheck, Upload, Download } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import EstadoVacio from '../components/EstadoVacio';
 
 export default function CertificadosCalidad() {
   const { toasts, addToast, removeToast } = useToast();
@@ -68,9 +69,7 @@ export default function CertificadosCalidad() {
         {loading ? (
           <p style={{ padding: 20, fontSize: 13, color: 'var(--color-text-muted)' }}>Cargando...</p>
         ) : ingresos.length === 0 ? (
-          <p style={{ padding: 20, fontSize: 13, color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
-            No hay ingresos de materiales registrados. Créalos en "Ingreso por Guía".
-          </p>
+          <EstadoVacio icon={BadgeCheck}>No hay ingresos de materiales registrados. Créalos en "Ingreso por Guía".</EstadoVacio>
         ) : (
           <div className="table-container">
             <table>
@@ -88,7 +87,7 @@ export default function CertificadosCalidad() {
               <tbody>
                 {ingresos.map(i => (
                   <tr key={i.guia_despacho_id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{i.guia_despacho_numero}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>{i.guia_despacho_numero}</td>
                     <td style={{ fontSize: 13 }}>{i.material_nombre}</td>
                     <td style={{ fontSize: 13 }}>{i.proveedor}</td>
                     <td style={{ fontSize: 13 }}>{i.cantidad}</td>

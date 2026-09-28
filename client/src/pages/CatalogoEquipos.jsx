@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Package, Upload, Download, FileText, Plus, HardHat } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import Select from '../components/Select';
 
 export default function CatalogoEquipos() {
   const { toasts, addToast, removeToast } = useToast();
@@ -274,7 +275,7 @@ export default function CatalogoEquipos() {
                       <tbody>
                         {unidades.map(u => (
                           <tr key={u.equipo_hvac_numero_serie}>
-                            <td style={{ fontSize: 12, fontFamily: 'monospace' }}><HardHat size={12} /> {u.equipo_hvac_numero_serie}</td>
+                            <td style={{ fontSize: 12, fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}><HardHat size={12} /> {u.equipo_hvac_numero_serie}</td>
                             <td style={{ fontSize: 12 }}>{u.Proyecto?.proyecto_nombre_obra || u.proyecto_codigo_correlativo}</td>
                             <td style={{ fontSize: 12 }}>{u.equipo_hvac_fecha_instalacion}</td>
                           </tr>
@@ -308,7 +309,7 @@ export default function CatalogoEquipos() {
                     </div>
                     <div className="form-group">
                       <label className="form-label">Proyecto</label>
-                      <select
+                      <Select
                         className={'form-select' + (erroresUnidad.includes('proyecto_codigo_correlativo') ? ' is-invalid' : '')}
                         value={formUnidad.proyecto_codigo_correlativo}
                         onChange={e => { setFormUnidad(f => ({ ...f, proyecto_codigo_correlativo: e.target.value })); setErroresUnidad([]); }}
@@ -319,7 +320,7 @@ export default function CatalogoEquipos() {
                             {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
                           </option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
                     <div style={{ display: 'flex', gap: 8 }}>
                       <button className="btn btn-primary" style={{ padding: '5px 10px', fontSize: 12 }} onClick={crearUnidad} disabled={creandoUnidad}>

@@ -216,7 +216,7 @@ export default function RecepcionInsumos() {
                       <div style={{ fontWeight: 600, marginBottom: 4, color: 'var(--color-text-primary)' }}>
                         Ubicación de la Obra (configurada por el administrador)
                       </div>
-                      <div style={{ fontFamily: 'monospace' }}>
+                      <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
                         {parseFloat(proyecto.proyecto_latitud).toFixed(6)}, {parseFloat(proyecto.proyecto_longitud).toFixed(6)}
                       </div>
                     </div>
@@ -271,7 +271,7 @@ export default function RecepcionInsumos() {
                           <div style={{ fontSize: 12, color: 'var(--color-green)', fontWeight: 600, marginBottom: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
                             <CheckCircle2 size={13} /> Ubicación detectada
                           </div>
-                          <div style={{ fontSize: 12, fontFamily: 'monospace', color: 'var(--color-text-primary)' }}>
+                          <div style={{ fontSize: 12, fontFamily: "'JetBrains Mono', ui-monospace, monospace", color: 'var(--color-text-primary)' }}>
                             {gpsSupervisor.lat.toFixed(6)}, {gpsSupervisor.lon.toFixed(6)}
                           </div>
                           <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 2 }}>

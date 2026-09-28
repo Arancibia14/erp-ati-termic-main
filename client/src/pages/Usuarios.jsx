@@ -3,6 +3,8 @@ import { UserCog, Plus, KeyRound } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 const FORM_VACIO = {
   rut: '',
@@ -180,14 +182,14 @@ export default function Usuarios() {
             </div>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Rol</label>
-              <select
+              <Select
                 className="form-select"
                 value={form.rol}
                 onChange={e => actualizarCampo('rol', e.target.value)}
               >
                 <option value="supervisor">Supervisor de Obra</option>
                 <option value="admin">Administrador Total</option>
-              </select>
+              </Select>
             </div>
           </div>
 
@@ -262,9 +264,7 @@ export default function Usuarios() {
         {loading ? (
           <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
         ) : usuarios.length === 0 ? (
-          <div className="estado-vacio">
-            <p>Todavía no hay usuarios registrados en el sistema.</p>
-          </div>
+          <EstadoVacio icon={UserCog}>Todavía no hay usuarios registrados en el sistema.</EstadoVacio>
         ) : (
           <div className="table-container">
             <table>
@@ -280,7 +280,7 @@ export default function Usuarios() {
               <tbody>
                 {usuarios.map(u => (
                   <tr key={u.usuario_rut}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{u.usuario_rut}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13 }}>{u.usuario_rut}</td>
                     <td style={{ fontWeight: 600, fontSize: 13 }}>
                       {u.usuario_nombre}
                       {u.usuario_rut === rutPropio && (
@@ -319,7 +319,7 @@ export default function Usuarios() {
 
             <div className="form-group">
               <label className="form-label">Nuevo nivel de acceso</label>
-              <select
+              <Select
                 className={`form-select${rolInvalido ? ' is-invalid' : ''}`}
                 value={nuevoRol}
                 onChange={e => { setNuevoRol(e.target.value); setRolInvalido(false); setErrorRol(null); }}
@@ -328,7 +328,7 @@ export default function Usuarios() {
                 {['admin', 'supervisor'].filter(r => r !== rolModal.rol).map(r => (
                   <option key={r} value={r}>{ROL_LABEL[r]}</option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 14 }}>

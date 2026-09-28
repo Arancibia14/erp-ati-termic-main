@@ -3,6 +3,7 @@ import { Search, Download, AlertTriangle, FileText, Eye, X } from 'lucide-react'
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import EstadoVacio from '../components/EstadoVacio';
 
 const TIPO_LABELS = {
   poliza: 'Póliza de Seguro',
@@ -98,7 +99,7 @@ export default function BuscadorDocumentos() {
       </div>
 
       {buscado && (
-        <div className="card" style={{ maxWidth: 900, padding: 0 }}>
+        <div className="card" style={{ padding: 0 }}>
           <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <h3 style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Resultados ({resultados.length})
@@ -106,9 +107,7 @@ export default function BuscadorDocumentos() {
           </div>
 
           {resultados.length === 0 ? (
-            <p style={{ padding: 20, color: 'var(--color-text-muted)', fontStyle: 'italic', fontSize: 13 }}>
-              No se encontraron documentos vinculados a ese criterio.
-            </p>
+            <EstadoVacio icon={Search}>No se encontraron documentos vinculados a ese criterio.</EstadoVacio>
           ) : (
             <div className="table-container">
               <table>
@@ -134,10 +133,10 @@ export default function BuscadorDocumentos() {
                           </span>
                         </div>
                       </td>
-                      <td style={{ fontSize: 12, fontFamily: 'monospace', color: 'var(--color-text-secondary)' }}>
+                      <td style={{ fontSize: 12, fontFamily: "'JetBrains Mono', ui-monospace, monospace", color: 'var(--color-text-secondary)' }}>
                         {doc.trabajador_rut || '—'}
                       </td>
-                      <td style={{ fontSize: 12, fontFamily: 'monospace', color: 'var(--color-text-secondary)' }}>
+                      <td style={{ fontSize: 12, fontFamily: "'JetBrains Mono', ui-monospace, monospace", color: 'var(--color-text-secondary)' }}>
                         {doc.proyecto_codigo_correlativo || '—'}
                       </td>
                       <td style={{ fontSize: 13 }}>{doc.documento_legal_fecha_emision}</td>

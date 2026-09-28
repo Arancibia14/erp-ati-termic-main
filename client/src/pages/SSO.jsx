@@ -4,6 +4,7 @@ import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
 import { fechaHoraLocal } from '../utils/fecha';
+import Select from '../components/Select';
 
 const GRAVEDADES = ['leve', 'grave', 'fatal'];
 const TIPOS = ['Accidente', 'Incidente', 'Enfermedad Laboral'];
@@ -86,7 +87,7 @@ export default function SSO() {
           <div className="form-grid-2">
             <div className="form-group">
               <label className="form-label">Proyecto</label>
-              <select
+              <Select
                 className="form-select"
                 value={form.proyecto_codigo_correlativo}
                 onChange={e => setForm(f => ({ ...f, proyecto_codigo_correlativo: e.target.value }))}
@@ -97,12 +98,12 @@ export default function SSO() {
                     {p.proyecto_codigo_correlativo}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div className="form-group">
               <label className="form-label">Tipo de Incidente *</label>
-              <select
+              <Select
                 className="form-select"
                 value={form.incidente_sso_tipo}
                 onChange={e => setForm(f => ({ ...f, incidente_sso_tipo: e.target.value }))}
@@ -111,14 +112,14 @@ export default function SSO() {
                 {TIPOS.map(t => (
                   <option key={t} value={t}>{t}</option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
 
           <div className="form-grid-2">
             <div className="form-group">
               <label className="form-label">Gravedad *</label>
-              <select
+              <Select
                 className="form-select"
                 value={form.incidente_sso_gravedad}
                 onChange={e => setForm(f => ({ ...f, incidente_sso_gravedad: e.target.value }))}
@@ -126,12 +127,12 @@ export default function SSO() {
                 {GRAVEDADES.map(g => (
                   <option key={g} value={g}>{g.charAt(0).toUpperCase() + g.slice(1)}</option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div className="form-group">
               <label className="form-label">Lugar dentro de la Obra</label>
-              <select
+              <Select
                 className="form-select"
                 value={form.incidente_sso_lugar}
                 onChange={e => setForm(f => ({ ...f, incidente_sso_lugar: e.target.value }))}
@@ -144,7 +145,7 @@ export default function SSO() {
                 <option value="Acceso / Pasillo">Acceso / Pasillo</option>
                 <option value="Exterior obra">Exterior obra</option>
                 <option value="Otro">Otro</option>
-              </select>
+              </Select>
             </div>
           </div>
 
@@ -186,7 +187,7 @@ export default function SSO() {
               }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label" style={{ fontSize: 11 }}>RUT Trabajador</label>
-                  <select
+                  <Select
                     className="form-select"
                     value={inv.rut}
                     onChange={e => updateInvolucrado(idx, 'rut', e.target.value)}
@@ -197,7 +198,7 @@ export default function SSO() {
                         {t.trabajador_rut} — {t.trabajador_nombres}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label" style={{ fontSize: 11 }}>Días perdidos</label>

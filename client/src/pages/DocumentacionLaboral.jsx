@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { FileCheck, Upload, AlertTriangle } from 'lucide-react';
+import { FileCheck, Upload, AlertTriangle, Check, Minus } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 const now = new Date();
 const periodoActual = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -72,18 +74,20 @@ export default function DocumentacionLaboral() {
         Documentación Laboral
       </h1>
 
-      <div className="card" style={{ maxWidth: 640, marginBottom: 24 }}>
+      <div className="layout-form-lista">
+      <div>
+      <div className="card" style={{ marginBottom: 24 }}>
         <div className="form-grid-2" style={{ marginBottom: 16 }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Proyecto</label>
-            <select className="form-select" value={proyectoSeleccionado} onChange={handleProyecto}>
+            <Select className="form-select" value={proyectoSeleccionado} onChange={handleProyecto}>
               <option value="">Selecciona un proyecto...</option>
               {proyectos.map(p => (
                 <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
                   {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Periodo</label>
@@ -154,6 +158,50 @@ export default function DocumentacionLaboral() {
             </button>
           </div>
         )}
+      </div>
+      </div>
+
+      {proyectoSeleccionado && (
+        <div className="card" style={{ padding: 0 }}>
+          <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--color-border)' }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Certificados cargados en esta obra ({certificados.length})
+            </h3>
+          </div>
+          {certificados.length === 0 ? (
+            <EstadoVacio icon={FileCheck}>Todavía no se ha cargado ningún certificado laboral para este proyecto.</EstadoVacio>
+          ) : (
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Periodo</th>
+                    <th style={{ textAlign: 'center' }}>F30</th>
+                    <th style={{ textAlign: 'center' }}>F30-1</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...certificados].reverse().map(c => (
+                    <tr key={c.certificado_laboral_periodo}>
+                      <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>{c.certificado_laboral_periodo}</td>
+                      <td style={{ textAlign: 'center' }}>
+                        {c.certificado_laboral_url_f30
+                          ? <Check size={15} color="var(--color-green)" style={{ verticalAlign: 'middle' }} />
+                          : <Minus size={15} color="var(--color-text-muted)" style={{ verticalAlign: 'middle' }} />}
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        {c.certificado_laboral_url_f30_1
+                          ? <Check size={15} color="var(--color-green)" style={{ verticalAlign: 'middle' }} />
+                          : <Minus size={15} color="var(--color-text-muted)" style={{ verticalAlign: 'middle' }} />}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
       </div>
 
       <Toast toasts={toasts} removeToast={removeToast} />

@@ -113,7 +113,7 @@ export default function DescargarGarantia() {
                 <tbody>
                   {resultados.map(eq => (
                     <tr key={eq.equipo_hvac_numero_serie}>
-                      <td style={{ fontSize: 12, fontFamily: 'monospace' }}>{eq.equipo_hvac_numero_serie}</td>
+                      <td style={{ fontSize: 12, fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>{eq.equipo_hvac_numero_serie}</td>
                       <td style={{ fontSize: 13 }}>{eq.modelo_hvac_nombre}</td>
                       <td style={{ fontSize: 13 }}>{eq.proyecto_nombre_obra || eq.proyecto_codigo_correlativo}</td>
                       <td>

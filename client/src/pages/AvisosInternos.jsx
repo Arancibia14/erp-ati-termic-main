@@ -5,6 +5,8 @@ import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
 import AvisoTarjeta from '../components/AvisoTarjeta';
 import { fechaLocal } from '../utils/fecha';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 // CU 46 - Gestionando avisos temporales (módulo "Avisos Internos")
 const TITULO_MAX = 100;
@@ -270,9 +272,9 @@ export default function AvisosInternos() {
                 </div>
                 <div className="form-group">
                   <label className="form-label">Estado</label>
-                  <select className={clase('form-select', 'estado')} value={form.estado} onChange={e => cambiar('estado', e.target.value)}>
+                  <Select className={clase('form-select', 'estado')} value={form.estado} onChange={e => cambiar('estado', e.target.value)}>
                     {ESTADOS.map(e => <option key={e} value={e}>{e}</option>)}
-                  </select>
+                  </Select>
                   <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: 6 }}>
                     {form.estado === 'Borrador'
                       ? 'El borrador no lo ve nadie más: puedes seguir editándolo.'
@@ -304,9 +306,7 @@ export default function AvisosInternos() {
         {cargando ? (
           <p style={{ padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando...</p>
         ) : avisos.length === 0 ? (
-          <div className="estado-vacio">
-            <p>Todavía no hay avisos. Crea el primero con "Nuevo Aviso".</p>
-          </div>
+          <EstadoVacio icon={Megaphone}>Todavía no hay avisos. Crea el primero con "Nuevo Aviso".</EstadoVacio>
         ) : (
           <div className="table-container">
             <table>
@@ -323,7 +323,7 @@ export default function AvisosInternos() {
               <tbody>
                 {avisos.map(a => (
                   <tr key={a.aviso_id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>#{a.aviso_id}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>#{a.aviso_id}</td>
                     <td style={{ fontWeight: 600, fontSize: 13, overflowWrap: 'anywhere' }}>{a.aviso_titulo}</td>
                     <td style={{ fontSize: 13 }}>{fechaCorta(a.aviso_fecha_inicio)} al {fechaCorta(a.aviso_fecha_termino)}</td>
                     <td><Badge value={a.aviso_estado} /></td>

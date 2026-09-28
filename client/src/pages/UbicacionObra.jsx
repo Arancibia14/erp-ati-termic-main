@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
 
 // CU10 - Registrando geolocalización de la obra
 const CENTRO_CHILE = [-33.4489, -70.6693]; // Santiago, cuando el proyecto aún no tiene punto
@@ -172,7 +173,7 @@ export default function UbicacionObra() {
       <div className="card" style={{ marginBottom: 24 }}>
         <div className="form-group" style={{ marginBottom: 0 }}>
           <label className="form-label">Proyecto</label>
-          <select className="form-select" value={codigo} onChange={e => elegirProyecto(e.target.value)}>
+          <Select className="form-select" value={codigo} onChange={e => elegirProyecto(e.target.value)}>
             <option value="">Selecciona un proyecto...</option>
             {proyectos.map(p => (
               <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
@@ -180,7 +181,7 @@ export default function UbicacionObra() {
                 {p.proyecto_latitud ? ' ✓' : ' (sin ubicar)'}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -190,7 +191,7 @@ export default function UbicacionObra() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>{proyecto.proyecto_nombre_obra}</h2>
               <Badge value={proyecto.EstadoProyecto?.estado_proyecto_nombre} />
-              <span style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--color-text-muted)' }}>
+              <span style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12, color: 'var(--color-text-muted)' }}>
                 {proyecto.proyecto_codigo_correlativo}
               </span>
               <span style={{ fontSize: 12, color: yaTenia ? 'var(--color-green)' : 'var(--color-text-muted)' }}>
@@ -233,7 +234,7 @@ export default function UbicacionObra() {
             <div ref={contenedorRef} className="mapa-obra" />
             <div style={{ padding: '14px 20px', borderTop: '1px solid var(--color-border)', display: 'flex',
               alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontFamily: 'monospace' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
                 <Crosshair size={15} />
                 {punto ? `${punto.lat.toFixed(6)}, ${punto.lon.toFixed(6)}` : 'Sin punto marcado'}
               </span>

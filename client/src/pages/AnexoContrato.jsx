@@ -3,6 +3,7 @@ import { ArrowRightLeft, ClipboardCheck, Send, Download, User, MapPin } from 'lu
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
+import Select from '../components/Select';
 
 export default function AnexoContrato() {
   const { toasts, addToast, removeToast } = useToast();
@@ -76,14 +77,14 @@ export default function AnexoContrato() {
 
           <div className="form-group">
             <label className="form-label">Trabajador a Trasladar</label>
-            <select className="form-select" value={trabajadorRut} onChange={handleTrabajador}>
+            <Select className="form-select" value={trabajadorRut} onChange={handleTrabajador}>
               <option value="">Selecciona un trabajador...</option>
               {trabajadores.map(t => (
                 <option key={t.trabajador_rut} value={t.trabajador_rut}>
                   {t.trabajador_nombres} ({t.trabajador_rut})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {loadingInfo && (
@@ -127,7 +128,7 @@ export default function AnexoContrato() {
             <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
               <div className="form-group">
                 <label className="form-label">Obra de Destino</label>
-                <select
+                <Select
                   className="form-select"
                   value={form.proyecto_destino_codigo}
                   onChange={e => setForm(f => ({ ...f, proyecto_destino_codigo: e.target.value }))}
@@ -139,7 +140,7 @@ export default function AnexoContrato() {
                       {!p.proyecto_ubicacion ? ' (sin dirección)' : ''}
                     </option>
                   ))}
-                </select>
+                </Select>
                 {proyectosActivos.length === 0 && (
                   <span style={{ fontSize: 12, color: 'var(--color-warning)', display: 'block', marginTop: 6 }}>
                     No hay proyectos en estado "En Ejecución" disponibles como destino.

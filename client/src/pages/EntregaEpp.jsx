@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { HardHat, Send, User } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
+import Select from '../components/Select';
+import EstadoVacio from '../components/EstadoVacio';
 
 export default function EntregaEpp() {
   const { toasts, addToast, removeToast } = useToast();
@@ -70,18 +72,18 @@ export default function EntregaEpp() {
         Nueva Entrega de EPP
       </h1>
 
-      <div className="card" style={{ maxWidth: 640 }}>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
+      <div className="card" style={{ marginBottom: 20 }}>
+        <div className="form-grid-2">
+          <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Trabajador Receptor</label>
-            <select className="form-select" value={trabajadorRut} onChange={e => setTrabajadorRut(e.target.value)}>
+            <Select className="form-select" value={trabajadorRut} onChange={e => setTrabajadorRut(e.target.value)}>
               <option value="">Selecciona un trabajador...</option>
               {trabajadores.map(t => (
                 <option key={t.trabajador_rut} value={t.trabajador_rut}>
                   {t.trabajador_nombres} ({t.trabajador_rut})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {trabajadorSeleccionado && (
@@ -90,7 +92,6 @@ export default function EntregaEpp() {
               border: '1px solid var(--color-border)',
               borderRadius: 4,
               padding: '10px 14px',
-              marginBottom: 16,
               display: 'flex',
               alignItems: 'center',
               gap: 10
@@ -104,13 +105,15 @@ export default function EntregaEpp() {
               </div>
             </div>
           )}
+        </div>
+      </div>
 
+      <div className="card">
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">Elementos de Protección Personal</label>
             {catalogo.length === 0 ? (
-              <p style={{ fontSize: 13, color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
-                No hay artículos de EPP en el catálogo. Créalos en "Catálogo Maestro" con la categoría "EPP".
-              </p>
+              <EstadoVacio icon={HardHat}>No hay artículos de EPP en el catálogo. Créalos en "Catálogo Maestro" con la categoría "EPP".</EstadoVacio>
             ) : (
               <div className="table-container">
                 <table>
@@ -125,7 +128,7 @@ export default function EntregaEpp() {
                   <tbody>
                     {catalogo.map(m => (
                       <tr key={m.material_id}>
-                        <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{m.material_codigo_sku}</td>
+                        <td style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12 }}>{m.material_codigo_sku}</td>
                         <td style={{ fontSize: 13 }}>{m.material_nombre}</td>
                         <td style={{ fontSize: 13 }}>{m.material_stock_minimo}</td>
                         <td>
