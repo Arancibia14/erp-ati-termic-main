@@ -5,6 +5,7 @@
 const { Op } = require('sequelize');
 const Trabajador = require('../models/Trabajador');
 const Material = require('../models/Material');
+const LoteMaterial = require('../models/LoteMaterial');
 const Proveedor = require('../models/Proveedor');
 const ContratoLaboral = require('../models/ContratoLaboral');
 const LiquidacionSueldo = require('../models/LiquidacionSueldo');
@@ -51,7 +52,8 @@ const MAESTROS = {
       { modelo: GuiaDespacho, campo: 'material_id', uno: 'guía de despacho', varios: 'guías de despacho' },
       { modelo: DevolucionObra, campo: 'material_id', uno: 'devolución de obra', varios: 'devoluciones de obra' },
       { modelo: CertificadoCalidad, campo: 'material_id', uno: 'certificado de calidad', varios: 'certificados de calidad' },
-      { modelo: EntregaEpp, campo: 'material_id', uno: 'entrega de EPP', varios: 'entregas de EPP' }
+      { modelo: EntregaEpp, campo: 'material_id', uno: 'entrega de EPP', varios: 'entregas de EPP' },
+      { modelo: LoteMaterial, campo: 'material_id', uno: 'lote de inventario', varios: 'lotes de inventario' }
     ]
   },
   proveedor: {

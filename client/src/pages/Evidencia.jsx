@@ -184,11 +184,13 @@ export default function Evidencia() {
     e.preventDefault();
     if (!form.hito_tecnico_id) { addToast('Selecciona un hito técnico', 'error'); return; }
     if (!foto) { addToast('Selecciona una fotografía', 'error'); return; }
+    // CU 16 / UR-F-16 - Sin posición no se puede verificar que la foto sea de la obra
+    if (coords.lat === null) { addToast('Aún no se obtiene la ubicación GPS. Activa el GPS y presiona "Obtener ubicación".', 'error'); return; }
 
     const evidencia = {
       hito_tecnico_id: form.hito_tecnico_id,
-      latitud: coords.lat ?? 0,
-      longitud: coords.lng ?? 0,
+      latitud: coords.lat,
+      longitud: coords.lng,
       foto,
       nombre: foto.name
     };

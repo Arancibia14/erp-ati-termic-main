@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Image, Edit3, Save, ChevronDown, ChevronUp, Repeat, Briefcase } from 'lucide-react';
+import { Image, Edit3, Save, ChevronDown, ChevronUp, Repeat, Briefcase, Archive, ArchiveRestore } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
@@ -30,13 +30,18 @@ export default function Portafolio() {
   const [cambiandoEstado, setCambiandoEstado] = useState(false);
   const [erroresEstado, setErroresEstado] = useState([]);
 
-  useEffect(() => {
-    cargarProyectos();
-  }, []);
+  // CU 11 / UR-F-54 - Archivado lógico de proyectos finalizados
+  const esAdmin = JSON.parse(localStorage.getItem('usuario') || '{}').rol === 'admin';
+  const [verArchivados, setVerArchivados] = useState(false);
+  const [archivando, setArchivando] = useState(false);
 
-  const cargarProyectos = () => {
+  useEffect(() => {
+    cargarProyectos(verArchivados);
+  }, [verArchivados]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const cargarProyectos = (archivados = verArchivados) => {
     setLoading(true);
-    api.get('/portafolio')
+    api.get('/portafolio', { params: archivados ? { archivados: 'solo' } : {} })
       .then(r => setProyectos(r.data.data))
       .catch(() => addToast('Error al cargar portafolio', 'error'))
       .finally(() => setLoading(false));
@@ -119,12 +124,37 @@ export default function Portafolio() {
     }
   };
 
+  const archivar = (p, archivarlo) => {
+    setArchivando(true);
+    api.put(`/portafolio/${p.proyecto_codigo_correlativo}/archivo`, { archivar: archivarlo })
+      .then(r => {
+        addToast(r.data.mensaje, 'success');
+        setEditando(null);
+        cargarProyectos();
+      })
+      .catch(err => addToast(err.response?.data?.error || 'Error al archivar el proyecto', 'error'))
+      .finally(() => setArchivando(false));
+  };
+
   return (
     <div className="page-container">
       <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Image size={20} />
         Portafolio de Obras
       </h1>
+
+      {/* CU 11 / UR-F-54 - Filtro de proyectos archivados */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+        <button type="button" className="btn btn-secondary" onClick={() => { setEditando(null); setVerArchivados(v => !v); }}>
+          {verArchivados ? <><Briefcase size={14} /> Ver proyectos activos</> : <><Archive size={14} /> Ver archivados</>}
+        </button>
+        <span style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>
+          {verArchivados ? 'Mostrando proyectos archivados' : 'Los proyectos archivados no aparecen en esta lista'}
+        </span>
+      </div>
+      {!loading && verArchivados && proyectos.length === 0 && (
+        <p style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>No hay proyectos archivados.</p>
+      )}
 
       {loading && <p style={{ color: 'var(--color-text-muted)', marginBottom: 20 }}>Cargando proyectos...</p>}
 
@@ -149,6 +179,7 @@ export default function Portafolio() {
                       {p.proyecto_codigo_correlativo}
                     </span>
                     <Badge value={p.EstadoProyecto?.estado_proyecto_nombre} />
+                    {p.proyecto_archivado && <Badge value="Archivado" />}
                   </div>
                 </div>
               </div>
@@ -166,6 +197,21 @@ export default function Portafolio() {
             {/* Panel de edición */}
             {editando === p.proyecto_codigo_correlativo && (
               <div style={{ borderTop: '1px solid var(--color-border)', padding: 20 }}>
+                {/* CU 11 / UR-F-54 - Archivar o desarchivar */}
+                {esAdmin && (p.proyecto_archivado || p.EstadoProyecto?.estado_proyecto_nombre === 'Finalizado') && (
+                  <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                    <button type="button" className="btn btn-secondary" disabled={archivando}
+                      onClick={() => archivar(p, !p.proyecto_archivado)}>
+                      {p.proyecto_archivado ? <><ArchiveRestore size={14} /> Desarchivar</> : <><Archive size={14} /> Archivar proyecto</>}
+                    </button>
+                    <span style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
+                      {p.proyecto_archivado
+                        ? `Archivado el ${p.proyecto_fecha_archivado?.split('-').reverse().join('-')}. Al desarchivarlo vuelve a las pantallas de trabajo diario.`
+                        : 'Al archivarlo deja de aparecer en las pantallas de trabajo diario y queda consultable en "Ver archivados".'}
+                    </span>
+                  </div>
+                )}
+
                 {/* CU11 - Actualizando estado del proyecto */}
                 <div className="form-group">
                   <label className="form-label">Estado del Proyecto</label>

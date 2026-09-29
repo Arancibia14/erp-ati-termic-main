@@ -2,6 +2,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const HitoTecnico = require('../models/HitoTecnico');
+const Proyecto = require('../models/Proyecto');
+const { RADIO_MAXIMO_METROS, calcularDistancia, coordenadasValidas } = require('../utils/geo');
 const EvidenciaFotografica = require('../models/EvidenciaFotografica');
 const LogAuditoria = require('../models/LogAuditoria');
 const { notificar } = require('../utils/notificaciones');
@@ -53,9 +55,43 @@ async function subirEvidencia(req, res) {
       return res.status(400).json({ success: false, error: 'Se requiere una imagen' });
     }
 
+    const borrarSubido = () => fs.unlink(req.file.path, () => {});
+
     const hito = await HitoTecnico.findByPk(hito_tecnico_id);
     if (!hito) {
+      borrarSubido();
       return res.status(404).json({ success: false, error: 'Hito técnico no encontrado' });
+    }
+
+    // CU 16 / UR-F-16 - Geocerca: solo se aceptan fotos tomadas dentro del radio de la obra
+    const proyecto = await Proyecto.findByPk(hito.proyecto_codigo_correlativo);
+    if (!proyecto || !coordenadasValidas(proyecto.proyecto_latitud, proyecto.proyecto_longitud)) {
+      borrarSubido();
+      return res.status(400).json({
+        success: false,
+        codigo: 'OBRA_SIN_UBICACION',
+        error: 'La obra no tiene su ubicación registrada. El administrador debe registrarla en "Ubicación de la Obra" antes de cargar evidencias.'
+      });
+    }
+    if (!coordenadasValidas(evidencia_fotografica_latitud, evidencia_fotografica_longitud)) {
+      borrarSubido();
+      return res.status(400).json({
+        success: false,
+        codigo: 'SIN_UBICACION',
+        error: 'No se recibió la ubicación GPS del dispositivo. Activa el GPS y vuelve a intentarlo.'
+      });
+    }
+    const distancia = calcularDistancia(
+      parseFloat(evidencia_fotografica_latitud), parseFloat(evidencia_fotografica_longitud),
+      parseFloat(proyecto.proyecto_latitud), parseFloat(proyecto.proyecto_longitud)
+    );
+    if (distancia > RADIO_MAXIMO_METROS) {
+      borrarSubido();
+      return res.status(400).json({
+        success: false,
+        codigo: 'FUERA_DE_RADIO',
+        error: `Estás a ${(distancia / 1000).toFixed(1).replace('.', ',')} km de la obra "${proyecto.proyecto_nombre_obra}". Las evidencias solo se pueden cargar dentro de un radio de ${RADIO_MAXIMO_METROS / 1000} km.`
+      });
     }
 
     const urlRelativa = `/uploads/evidencias/${req.file.filename}`;
@@ -63,8 +99,8 @@ async function subirEvidencia(req, res) {
     const evidencia = await EvidenciaFotografica.create({
       evidencia_fotografica_url_foto: urlRelativa,
       evidencia_fotografica_fecha_captura: new Date(),
-      evidencia_fotografica_latitud: parseFloat(evidencia_fotografica_latitud) || 0,
-      evidencia_fotografica_longitud: parseFloat(evidencia_fotografica_longitud) || 0,
+      evidencia_fotografica_latitud: parseFloat(evidencia_fotografica_latitud),
+      evidencia_fotografica_longitud: parseFloat(evidencia_fotografica_longitud),
       evidencia_fotografica_estado_aprobacion: 'pendiente',
       hito_tecnico_id: parseInt(hito_tecnico_id),
       evidencia_fotografica_usuario_rut: req.user.rut

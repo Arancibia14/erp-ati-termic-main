@@ -6,6 +6,7 @@ import {
 import api from '../api/axios';
 import AvisoTarjeta from '../components/AvisoTarjeta';
 import PanelNotificaciones from '../components/PanelNotificaciones';
+import ContratosPorVencer from '../components/ContratosPorVencer';
 import Toast, { useToast } from '../components/Toast';
 
 function fechaActual() {
@@ -62,6 +63,8 @@ export default function Inicio() {
       </p>
 
       <PanelNotificaciones addToast={addToast} />
+
+      {esAdmin && <ContratosPorVencer />}
 
       {avisos.length > 0 && (
         <>

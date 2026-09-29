@@ -20,7 +20,10 @@ const Proyecto = sequelize.define('Proyecto', {
   proyecto_fecha_termino: { type: DataTypes.DATEONLY, allowNull: true },
   // Fondo de caja chica (CU 39): lo asigna el administrador y los egresos se
   // descuentan de él, no del presupuesto completo de la obra
-  proyecto_presupuesto_caja_chica: { type: DataTypes.DECIMAL(15, 2), allowNull: false, defaultValue: 0 }
+  proyecto_presupuesto_caja_chica: { type: DataTypes.DECIMAL(15, 2), allowNull: false, defaultValue: 0 },
+  // CU 11 / UR-F-54 - Archivado lógico de proyectos finalizados
+  proyecto_archivado: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+  proyecto_fecha_archivado: { type: DataTypes.DATEONLY, allowNull: true }
 }, {
   tableName: 'PROYECTO',
   timestamps: false

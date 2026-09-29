@@ -32,7 +32,9 @@ const TONOS = {
   'Listo para publicar': 'blue',
   'Programado': 'amber',
   'Vencido': 'red',
-  'No visible': 'gray'
+  'No visible': 'gray',
+  // CU 11 - Proyecto archivado
+  'Archivado': 'gray'
 };
 
 export default function Badge({ value }) {

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getListadoProyectos, getProyecto, actualizarProyecto, detenerProyecto, actualizarEstadoProyecto, upload } = require('../controllers/portafolioController');
+const { getListadoProyectos, getProyecto, actualizarProyecto, detenerProyecto, actualizarEstadoProyecto, archivarProyecto, upload } = require('../controllers/portafolioController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 // CU45 - Gestionando Portafolio de Obras
@@ -13,5 +13,7 @@ router.put('/:codigo/detener', verifyToken, detenerProyecto);
 
 // CU11 - Actualizando estado del proyecto (solo Administrador Total)
 router.put('/:codigo/estado', verifyToken, requireAdmin, actualizarEstadoProyecto);
+// CU 11 / UR-F-54 - Archivado lógico de proyectos finalizados
+router.put('/:codigo/archivo', verifyToken, requireAdmin, archivarProyecto);
 
 module.exports = router;

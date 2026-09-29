@@ -49,6 +49,8 @@ const PlantillaCorreo = require('./models/PlantillaCorreo');
 const Aviso = require('./models/Aviso');
 const ProyectoSubcontratista = require('./models/ProyectoSubcontratista');
 const Notificacion = require('./models/Notificacion');
+const LoteMaterial = require('./models/LoteMaterial');
+const { crearLotesIniciales } = require('./utils/inventarioFifo');
 
 // Associations
 
@@ -89,9 +91,17 @@ OrdenCompra.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
 
 OrdenCompra.hasMany(Factura, { foreignKey: 'orden_compra_id' });
 Factura.belongsTo(OrdenCompra, { foreignKey: 'orden_compra_id' });
+// CU 26 / UR-F-29 - Lotes de inventario de cada material (FIFO)
+Material.hasMany(LoteMaterial, { foreignKey: 'material_id' });
+LoteMaterial.belongsTo(Material, { foreignKey: 'material_id' });
+// CU 37 / UR-F-40 - Cada guía queda vinculada a la factura que la cubre
+Factura.hasMany(GuiaDespacho, { foreignKey: 'factura_id' });
+GuiaDespacho.belongsTo(Factura, { foreignKey: 'factura_id' });
 
 Trabajador.hasMany(ContratoLaboral, { foreignKey: 'trabajador_rut' });
 ContratoLaboral.belongsTo(Trabajador, { foreignKey: 'trabajador_rut' });
+// CU 18 - Obra del contrato, para la alerta de contratos por vencer
+ContratoLaboral.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
 
 Proyecto.hasMany(BitacoraComunicacion, { foreignKey: 'proyecto_codigo_correlativo' });
 BitacoraComunicacion.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
@@ -253,6 +263,11 @@ sequelize.authenticate()
       { tabla: 'DOCUMENTO_LEGAL', columna: 'equipo_hvac_numero_serie', tipo: { type: DataTypes.STRING(100), allowNull: true } },
       // CU 17 - Supervisor que subió cada evidencia, para notificarle si se rechaza
       { tabla: 'EVIDENCIA_FOTOGRAFICA', columna: 'evidencia_fotografica_usuario_rut', tipo: { type: DataTypes.STRING(20), allowNull: true } },
+      // CU 37 / UR-F-40 - Factura que cubre cada guía de despacho
+      { tabla: 'GUIA_DESPACHO', columna: 'factura_id', tipo: { type: DataTypes.INTEGER, allowNull: true } },
+      // CU 11 / UR-F-54 - Archivado lógico de proyectos finalizados
+      { tabla: 'PROYECTO', columna: 'proyecto_archivado', tipo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false } },
+      { tabla: 'PROYECTO', columna: 'proyecto_fecha_archivado', tipo: { type: DataTypes.DATEONLY, allowNull: true } },
     ];
     for (const m of migraciones) await migrar.agregarColumna(m.tabla, m.columna, m.tipo);
 
@@ -263,6 +278,18 @@ sequelize.authenticate()
       "SELECT COUNT(*) AS n FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND LOWER(TABLE_NAME) = 'proyecto' AND COLUMN_NAME = 'proveedor_rut'",
       { type: sequelize.QueryTypes.SELECT }
     );
+    // CU 37 - Llave foránea de la guía hacia su factura (solo se crea si falta)
+    const [fkGuiaFactura] = await sequelize.query(
+      "SELECT COUNT(*) AS n FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND LOWER(TABLE_NAME) = 'guia_despacho' AND COLUMN_NAME = 'factura_id' AND REFERENCED_TABLE_NAME IS NOT NULL",
+      { type: sequelize.QueryTypes.SELECT }
+    );
+    if (Number(fkGuiaFactura.n) === 0) {
+      await migrar.sql('ALTER TABLE GUIA_DESPACHO ADD CONSTRAINT fk_guia_factura FOREIGN KEY (factura_id) REFERENCES FACTURA (factura_id)');
+    }
+
+    // CU 26 / UR-F-29 - El stock previo al FIFO queda como lote "Stock inicial"
+    try { await crearLotesIniciales(); } catch (err) { console.error('[FIFO] No se pudieron crear los lotes iniciales:', err.message); }
+
     if (Number(colAntigua.n) > 0) {
       await migrar.sql("INSERT IGNORE INTO PROYECTO_SUBCONTRATISTA (proyecto_codigo_correlativo, proveedor_rut, proyecto_subcontratista_rol, proyecto_subcontratista_fecha) SELECT pr.proyecto_codigo_correlativo, pr.proveedor_rut, 'No especificado', CURDATE() FROM PROYECTO pr INNER JOIN PROVEEDOR pv ON pv.proveedor_rut = pr.proveedor_rut WHERE pr.proveedor_rut IS NOT NULL");
       await migrar.sql('ALTER TABLE PROYECTO DROP COLUMN proveedor_rut');

@@ -7,6 +7,8 @@ const ContratoLaboral = require('../models/ContratoLaboral');
 async function getProyectos(req, res) {
   try {
     const proyectos = await Proyecto.findAll({
+      // CU 11 / UR-F-54 - Los proyectos archivados no se ofrecen en el trabajo diario
+      where: { proyecto_archivado: false },
       include: [{ model: EstadoProyecto, attributes: ['estado_proyecto_nombre'] }]
     });
     return res.json({ success: true, data: proyectos });

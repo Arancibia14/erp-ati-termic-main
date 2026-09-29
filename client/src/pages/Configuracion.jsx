@@ -827,7 +827,18 @@ export default function Configuracion() {
                           <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>${parseFloat(c.contrato_laboral_sueldo_base).toLocaleString('es-CL')}</td>
                           <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>${parseFloat(c.contrato_laboral_leyes_sociales).toLocaleString('es-CL')}</td>
                           <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>{c.contrato_laboral_fecha_inicio}</td>
-                          <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>{c.contrato_laboral_fecha_termino || '—'}</td>
+                          <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>
+                            {c.contrato_laboral_fecha_termino || '—'}
+                            {/* CU 18 / UR-F-20 - Alerta de vencimiento */}
+                            {c.alerta?.estado === 'Por vencer' && (
+                              <span style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--color-warning)' }}>
+                                {c.alerta.dias === 0 ? 'Vence hoy' : c.alerta.dias === 1 ? 'Vence en 1 día' : `Vence en ${c.alerta.dias} días`}
+                              </span>
+                            )}
+                            {c.alerta?.estado === 'Vencido' && (
+                              <span style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--color-danger)' }}>Vencido</span>
+                            )}
+                          </td>
                           <td>
                             <div style={{ display: 'flex', gap: 6, flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
                               <button className="btn btn-secondary" style={{ padding: '5px 10px', fontSize: 12 }}

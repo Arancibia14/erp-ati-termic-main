@@ -8,6 +8,8 @@ const EntregaEpp = require('../models/EntregaEpp');
 const DocumentoLegal = require('../models/DocumentoLegal');
 const LogAuditoria = require('../models/LogAuditoria');
 const { fechaHoy, ZONA_HORARIA } = require('../utils/fecha');
+const sequelize = require('../config/database');
+const { consumirFifo, StockInsuficiente } = require('../utils/inventarioFifo');
 
 async function getTrabajadoresActivos(req, res) {
   try {
@@ -73,19 +75,29 @@ async function crearEntrega(req, res) {
     const fecha = fechaHoy();
     const lote = `LOTE-${Date.now()}`;
     const entregas = [];
-    for (const { material, cantidad } of materiales) {
-      const entrega = await EntregaEpp.create({
-        entrega_epp_cantidad: cantidad,
-        entrega_epp_fecha: fecha,
-        entrega_epp_estado: 'Pendiente',
-        entrega_epp_lote: lote,
-        material_id: material.material_id,
-        trabajador_rut,
-        usuario_rut: req.user.rut
+    // CU 22 / UR-F-29 - Cada artículo sale de bodega consumiendo primero los lotes
+    // más antiguos (FIFO). Todo el lote de entrega se registra o no se registra nada.
+    try {
+      await sequelize.transaction(async t => {
+        for (const { material, cantidad } of materiales) {
+          const entrega = await EntregaEpp.create({
+            entrega_epp_cantidad: cantidad,
+            entrega_epp_fecha: fecha,
+            entrega_epp_estado: 'Pendiente',
+            entrega_epp_lote: lote,
+            material_id: material.material_id,
+            trabajador_rut,
+            usuario_rut: req.user.rut
+          }, { transaction: t });
+          await consumirFifo(material, cantidad, t);
+          entregas.push(entrega);
+        }
       });
-      material.material_stock_minimo -= cantidad;
-      await material.save();
-      entregas.push(entrega);
+    } catch (errFifo) {
+      if (errFifo instanceof StockInsuficiente) {
+        return res.status(400).json({ success: false, error: errFifo.message });
+      }
+      throw errFifo;
     }
 
     try {

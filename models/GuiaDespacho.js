@@ -12,7 +12,13 @@ const GuiaDespacho = sequelize.define('GuiaDespacho', {
   guia_despacho_cantidad_recibida: { type: DataTypes.INTEGER, allowNull: true },
   orden_compra_id: { type: DataTypes.INTEGER, allowNull: true },
   proveedor_rut: { type: DataTypes.STRING(20), allowNull: true },
-  material_id: { type: DataTypes.INTEGER, allowNull: true }
+  material_id: { type: DataTypes.INTEGER, allowNull: true },
+  // CU 37 / UR-F-40 - Factura que cubre esta guía; nula mientras la orden no se factura
+  factura_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: { model: 'FACTURA', key: 'factura_id' }
+  }
 }, {
   tableName: 'GUIA_DESPACHO',
   timestamps: false

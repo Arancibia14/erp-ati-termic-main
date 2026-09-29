@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
-  getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos,
+  getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos, getContratosPorVencer,
   crearProyecto, crearTrabajador, crearSolicitudMaterial,
   crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
   actualizarPlazoProyecto, actualizarCajaChicaProyecto
@@ -15,6 +15,8 @@ router.get('/trabajadores',      verifyToken, getTrabajadores);
 router.get('/ordenes',           verifyToken, getOrdenes);
 // Los contratos incluyen sueldos: solo el administrador los gestiona
 router.get('/contratos',         verifyToken, requireAdmin, getContratos);
+// CU 18 / UR-F-20 - Contratos que vencen en los próximos 30 días (alerta en Inicio)
+router.get('/contratos/por-vencer', verifyToken, requireAdmin, getContratosPorVencer);
 // Altas de datos base: solo las usa Configuración, que es exclusiva del administrador
 router.post('/proyecto',         verifyToken, requireAdmin, crearProyecto);
 router.post('/trabajador',       verifyToken, requireAdmin, crearTrabajador);

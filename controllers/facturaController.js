@@ -8,6 +8,7 @@ const GuiaDespacho = require('../models/GuiaDespacho');
 const Proveedor = require('../models/Proveedor');
 const Factura = require('../models/Factura');
 const LogAuditoria = require('../models/LogAuditoria');
+const sequelize = require('../config/database');
 const { desgloseGuardado } = require('../utils/impuestos');
 
 // CU53 - La factura del proveedor trae IVA: se compara contra el total con IVA de la OC
@@ -100,24 +101,39 @@ async function vincularFactura(req, res) {
 
     const urlPdf = req.file ? `/uploads/facturas/${req.file.filename}` : null;
 
-    const factura = await Factura.create({
-      factura_folio,
-      factura_monto_total: montoFactura,
-      factura_fecha,
-      factura_url_pdf: urlPdf,
-      orden_compra_id: parseInt(id)
+    // UR-F-40 - La factura cubre el total de la orden, así que queda vinculada a
+    // todas las guías de despacho de esa orden. Todo ocurre en una transacción.
+    let factura, guias;
+    await sequelize.transaction(async t => {
+      factura = await Factura.create({
+        factura_folio,
+        factura_monto_total: montoFactura,
+        factura_fecha,
+        factura_url_pdf: urlPdf,
+        orden_compra_id: parseInt(id)
+      }, { transaction: t });
+      guias = await GuiaDespacho.findAll({ where: { orden_compra_id: orden.orden_compra_id, factura_id: null }, transaction: t });
+      if (guias.length) {
+        await GuiaDespacho.update(
+          { factura_id: factura.factura_id },
+          { where: { guia_despacho_id: guias.map(g => g.guia_despacho_id) }, transaction: t }
+        );
+      }
+      await orden.update({ orden_compra_estado: 'Facturado' }, { transaction: t });
     });
+    const numeros = guias.map(g => g.guia_despacho_numero);
 
-    await orden.update({ orden_compra_estado: 'Facturado' });
+    try {
+      await LogAuditoria.create({
+        log_auditoria_fecha_hora: new Date(),
+        log_auditoria_accion: `Factura ${factura_folio} vinculada a OC ${id} por $${montoFactura.toLocaleString('es-CL')}` +
+          (numeros.length ? ` y a las guías ${numeros.join(', ')}` : ' (la orden no tiene guías de despacho)'),
+        log_auditoria_modulo: 'FACTURA',
+        usuario_rut: req.user.rut
+      });
+    } catch (_) { /* no bloquear la operación principal */ }
 
-    await LogAuditoria.create({
-      log_auditoria_fecha_hora: new Date(),
-      log_auditoria_accion: `Factura ${factura_folio} vinculada a OC ${id} por $${montoFactura.toLocaleString('es-CL')}`,
-      log_auditoria_modulo: 'FACTURA',
-      usuario_rut: req.user.rut
-    });
-
-    return res.status(201).json({ success: true, data: factura });
+    return res.status(201).json({ success: true, data: { ...factura.toJSON(), guias_vinculadas: numeros }, mensaje: 'Factura vinculada correctamente' });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, error: 'Error al vincular factura' });

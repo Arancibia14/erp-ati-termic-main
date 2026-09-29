@@ -16,7 +16,8 @@ export default function HistorialOrdenesCompra() {
   const [detalle, setDetalle] = useState(null);
 
   useEffect(() => {
-    api.get('/portafolio')
+    // Pantalla de consulta histórica: incluye los proyectos archivados (UR-F-54)
+    api.get('/portafolio', { params: { archivados: 'incluir' } })
       .then(r => setProyectos(r.data.data))
       .catch(() => setProyectos([]));
   }, []);

@@ -3,21 +3,11 @@ const Material = require('../models/Material');
 const OrdenCompra = require('../models/OrdenCompra');
 const Proyecto = require('../models/Proyecto');
 const LogAuditoria = require('../models/LogAuditoria');
+const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
+const sequelize = require('../config/database');
+const { ingresarLote } = require('../utils/inventarioFifo');
 
-const RADIO_MAXIMO_METROS = 5000;
-
-function calcularDistancia(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
+const { RADIO_MAXIMO_METROS, calcularDistancia } = require('../utils/geo');
 
 async function getGuiasPendientes(req, res) {
   try {
@@ -91,10 +81,22 @@ async function confirmarRecepcion(req, res) {
       return res.status(409).json({ success: false, error: 'La guía ya fue recibida' });
     }
 
-    // El material ingresa al inventario al confirmarse la recepción
+    // El material ingresa al inventario al confirmarse la recepción.
+    // CU 57 / UR-F-29 - Entra como un lote nuevo con el costo unitario de la orden de compra.
     const cantidad = guia.guia_despacho_cantidad_recibida || 0;
     if (guia.material_id && cantidad > 0) {
-      await Material.increment('material_stock_minimo', { by: cantidad, where: { material_id: guia.material_id } });
+      const detalles = guia.orden_compra_id
+        ? await DetalleOrdenCompra.findAll({ where: { orden_compra_id: guia.orden_compra_id } })
+        : [];
+      const detalle = detalles.find(d => d.material_id === guia.material_id) || (detalles.length === 1 ? detalles[0] : null);
+      const costoUnitario = detalle ? parseFloat(detalle.detalle_orden_compra_precio_unitario) || 0 : 0;
+      await sequelize.transaction(t => ingresarLote({
+        material_id: guia.material_id,
+        cantidad,
+        costo_unitario: costoUnitario,
+        origen: 'Recepción en obra',
+        guia_despacho_id: guia.guia_despacho_id
+      }, t));
     }
 
     await LogAuditoria.create({

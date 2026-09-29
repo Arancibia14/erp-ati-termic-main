@@ -53,9 +53,15 @@ const upload = multer({
   }
 });
 
+// CU 11 / UR-F-54 - Por defecto no se listan los archivados. "archivados=solo"
+// muestra únicamente los archivados (filtro del Portafolio) e "incluir" muestra
+// todos, para las pantallas que consultan historia.
 async function getListadoProyectos(req, res) {
   try {
+    const modo = req.query.archivados;
+    const where = modo === 'solo' ? { proyecto_archivado: true } : modo === 'incluir' ? {} : { proyecto_archivado: false };
     const proyectos = await Proyecto.findAll({
+      where,
       include: [{ model: EstadoProyecto, attributes: ['estado_proyecto_nombre'] }]
     });
     return res.json({ success: true, data: proyectos });
@@ -294,4 +300,40 @@ async function actualizarEstadoProyecto(req, res) {
   }
 }
 
-module.exports = { getListadoProyectos, getProyecto, actualizarProyecto, detenerProyecto, actualizarEstadoProyecto, upload };
+// CU 11 / UR-F-54 - Archivar o desarchivar un proyecto. Solo se archivan los
+// finalizados; archivado deja de ofrecerse en las pantallas de trabajo diario.
+async function archivarProyecto(req, res) {
+  try {
+    const { codigo } = req.params;
+    const archivar = req.body.archivar;
+    if (typeof archivar !== 'boolean') {
+      return res.status(400).json({ success: false, error: 'Indica si el proyecto se archiva o se desarchiva' });
+    }
+    const proyecto = await Proyecto.findByPk(codigo, {
+      include: [{ model: EstadoProyecto, attributes: ['estado_proyecto_nombre'] }]
+    });
+    if (!proyecto) return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
+    const estado = proyecto.EstadoProyecto?.estado_proyecto_nombre;
+    if (archivar && estado !== 'Finalizado') {
+      return res.status(400).json({
+        success: false,
+        error: `Solo se pueden archivar proyectos en estado "Finalizado". Estado actual: "${estado}"`
+      });
+    }
+    if (proyecto.proyecto_archivado === archivar) {
+      return res.status(400).json({ success: false, error: archivar ? 'El proyecto ya está archivado' : 'El proyecto no está archivado' });
+    }
+    await proyecto.update({ proyecto_archivado: archivar, proyecto_fecha_archivado: archivar ? fechaHoy() : null });
+    await audit(`Proyecto ${codigo} ${archivar ? 'archivado' : 'desarchivado'}`, 'PORTAFOLIO', req.user.rut);
+    return res.json({
+      success: true,
+      data: proyecto,
+      mensaje: archivar ? 'Proyecto archivado correctamente' : 'Proyecto desarchivado correctamente'
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al archivar el proyecto' });
+  }
+}
+
+module.exports = { getListadoProyectos, getProyecto, actualizarProyecto, detenerProyecto, actualizarEstadoProyecto, archivarProyecto, upload };

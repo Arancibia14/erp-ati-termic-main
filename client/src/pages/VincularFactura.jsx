@@ -192,7 +192,7 @@ export default function VincularFactura() {
                         <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', gap: 8 }}>
                           <Package size={13} color="var(--color-text-muted)" />
                           <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                            Guías de Despacho ({orden.GuiaDespachos.length})
+                            Guías de Despacho que quedarán vinculadas a la factura ({orden.GuiaDespachos.length})
                           </span>
                         </div>
                         <div className="table-container">

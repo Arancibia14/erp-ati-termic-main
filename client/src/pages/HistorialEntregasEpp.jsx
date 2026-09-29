@@ -102,7 +102,8 @@ export default function HistorialEntregasEpp() {
     api.get('/entrega-epp/trabajadores')
       .then(r => setTrabajadores(r.data.data))
       .catch(() => addToast('Error al cargar trabajadores', 'error'));
-    api.get('/portafolio')
+    // Pantalla de consulta histórica: incluye los proyectos archivados (UR-F-54)
+    api.get('/portafolio', { params: { archivados: 'incluir' } })
       .then(r => setProyectos(r.data.data))
       .catch(() => setProyectos([]));
   }, []);

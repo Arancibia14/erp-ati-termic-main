@@ -6,6 +6,8 @@ const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
 const Material = require('../models/Material');
 const LogAuditoria = require('../models/LogAuditoria');
 const { fechaHoy } = require('../utils/fecha');
+const sequelize = require('../config/database');
+const { ingresarLote } = require('../utils/inventarioFifo');
 
 const ESTADOS_DANIO = ['Dañado', 'Defectuoso'];
 
@@ -134,7 +136,11 @@ async function registrarReingreso(req, res) {
     const montoRebajado = precioUnitario * cant;
 
     const vale = `VALE-${Date.now()}`;
-    const devolucion = await DevolucionObra.create({
+    // CU 32 / UR-F-29 - La devolución y su lote de reingreso se guardan juntos
+    const t = await sequelize.transaction();
+    let devolucion;
+    try {
+    devolucion = await DevolucionObra.create({
       proyecto_codigo_correlativo: proyecto,
       devolucion_obra_fase: fase || null,
       material_id,
@@ -146,11 +152,21 @@ async function registrarReingreso(req, res) {
       devolucion_obra_precio_unitario: precioUnitario,
       devolucion_obra_monto_rebajado: montoRebajado,
       usuario_rut: req.user.rut
-    });
+    }, { transaction: t });
 
-    // Actualiza el stock central
-    material.material_stock_minimo = (material.material_stock_minimo || 0) + cant;
-    await material.save();
+    // Actualiza el stock central: el sobrante vuelve a bodega como un lote nuevo
+    await ingresarLote({
+      material_id: material.material_id,
+      cantidad: cant,
+      costo_unitario: precioUnitario,
+      origen: 'Devolución de obra',
+      devolucion_obra_id: devolucion.devolucion_obra_id
+    }, t);
+    await t.commit();
+    } catch (errTx) {
+      await t.rollback();
+      throw errTx;
+    }
 
     try {
       await LogAuditoria.create({

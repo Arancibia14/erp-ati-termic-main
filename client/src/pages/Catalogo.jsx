@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Package, Plus, Trash2 } from 'lucide-react';
+import { Package, Plus, Trash2, Layers, X } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import { IlustracionCatalogoVacio } from '../components/Ilustraciones';
@@ -30,9 +30,17 @@ export default function Catalogo() {
   const [guardando, setGuardando] = useState(false);
   const [form, setForm] = useState(FORM_VACIO);
   const [camposInvalidos, setCamposInvalidos] = useState({});
+  // CU 26 / UR-F-29 - Valor del inventario por FIFO y lotes de cada material
+  const [valorizacion, setValorizacion] = useState({ materiales: [], valor_total: 0 });
+  const [lotesDe, setLotesDe] = useState(null);
+  const pesos = v => '$' + Math.round(v || 0).toLocaleString('es-CL');
+  const valorDe = id => valorizacion.materiales.find(x => x.material_id === id);
 
   const cargarMateriales = () => {
     setLoading(true);
+    api.get('/material/valorizacion')
+      .then(r => setValorizacion(r.data.data))
+      .catch(() => {});
     api.get('/material')
       .then(r => setMateriales(r.data.data))
       .catch(() => addToast('Error al cargar el catálogo de materiales', 'error'))
@@ -105,6 +113,17 @@ export default function Catalogo() {
         <Package size={20} />
         Catálogo Maestro
       </h1>
+
+      {/* CU 26 / UR-F-29 - Valor del inventario de bodega calculado por FIFO */}
+      <div className="card" style={{ maxWidth: 640, marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+        <div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Valor del inventario de bodega
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Método FIFO: primero en entrar, primero en salir</div>
+        </div>
+        <div className="valor-inventario" style={{ fontSize: 22, fontWeight: 700 }}>{pesos(valorizacion.valor_total)}</div>
+      </div>
 
       <div style={{ marginBottom: 20 }}>
         {!mostrarForm && (
@@ -228,6 +247,7 @@ export default function Catalogo() {
                   <th>Categoría</th>
                   <th>Unidad de Medida</th>
                   <th>Stock Mínimo</th>
+                  <th>Valor FIFO</th>
                   <th>Proveedor</th>
                   <th>Estado</th>
                   <th></th>
@@ -241,10 +261,18 @@ export default function Catalogo() {
                     <td style={{ fontSize: 13 }}>{m.material_categoria || '—'}</td>
                     <td style={{ fontSize: 13 }}>{m.material_unidad_medida}</td>
                     <td style={{ fontSize: 13 }}>{m.material_stock_minimo}</td>
+                    <td style={{ fontSize: 13, whiteSpace: 'nowrap' }}>{pesos(valorDe(m.material_id)?.valor_fifo)}</td>
                     <td style={{ fontSize: 13 }}>{m.Proveedor?.proveedor_razon_social || '—'}</td>
                     <td><Badge value={m.material_activo ? 'Activo' : 'Inactivo'} /></td>
                     <td>
                       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                        <button
+                          className="btn btn-secondary"
+                          style={{ padding: '5px 10px', fontSize: 12 }}
+                          onClick={() => setLotesDe(valorDe(m.material_id) || { material_nombre: m.material_nombre, lotes: [], valor_fifo: 0 })}
+                        >
+                          <Layers size={13} /> Lotes
+                        </button>
                         {m.material_activo && (
                           <button
                             className="btn btn-danger"
@@ -278,6 +306,42 @@ export default function Catalogo() {
         onCerrar={recargar => { setEliminacion(null); if (recargar) cargarMateriales(); }}
         onEliminado={() => { setEliminacion(null); cargarMateriales(); }}
       />
+
+      {/* CU 26 / UR-F-29 - Lotes de inventario del material, del más antiguo al más reciente */}
+      {lotesDe && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 500, padding: 16 }}
+          onClick={() => setLotesDe(null)}>
+          <div className="card" style={{ maxWidth: 640, width: '100%', maxHeight: '85vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0 }}>Lotes de {lotesDe.material_nombre}</h3>
+              <button type="button" className="btn btn-secondary" style={{ padding: '4px 8px' }} onClick={() => setLotesDe(null)} aria-label="Cerrar"><X size={14} /></button>
+            </div>
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 12 }}>
+              Las salidas consumen primero el lote más antiguo. Valor FIFO del material: <strong>{pesos(lotesDe.valor_fifo)}</strong>
+            </p>
+            {lotesDe.lotes.length === 0 ? (
+              <p style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>Este material aún no tiene lotes de inventario.</p>
+            ) : (
+              <div className="table-container">
+                <table>
+                  <thead><tr><th>Ingreso</th><th>Origen</th><th>Inicial</th><th>Disponible</th><th>Costo unitario</th></tr></thead>
+                  <tbody>
+                    {lotesDe.lotes.map(l => (
+                      <tr key={l.lote_material_id} style={{ opacity: l.cantidad_disponible > 0 ? 1 : 0.5 }}>
+                        <td style={{ fontSize: 12, whiteSpace: 'nowrap' }}>{new Date(l.fecha_ingreso).toLocaleDateString('es-CL', { timeZone: 'America/Santiago' })}</td>
+                        <td style={{ fontSize: 12 }}>{l.origen}</td>
+                        <td style={{ fontSize: 12 }}>{l.cantidad_inicial}</td>
+                        <td style={{ fontSize: 12 }}>{l.cantidad_disponible}</td>
+                        <td style={{ fontSize: 12, whiteSpace: 'nowrap' }}>{pesos(l.costo_unitario)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <Toast toasts={toasts} removeToast={removeToast} />
     </div>

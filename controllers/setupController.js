@@ -11,6 +11,7 @@ const ContratoLaboral  = require('../models/ContratoLaboral');
 const LogAuditoria     = require('../models/LogAuditoria');
 const EgresoCajaChica  = require('../models/EgresoCajaChica');
 const { fechaHoy } = require('../utils/fecha');
+const { DIAS_ALERTA_CONTRATO, alertaContrato } = require('../utils/contratos');
 const { validarRutChileno } = require('../utils/rut');
 
 const audit = async (accion, modulo, rut) => {
@@ -68,6 +69,8 @@ async function getEspecialidades(req, res) {
 async function getProyectos(req, res) {
   try {
     const proyectos = await Proyecto.findAll({
+      // CU 11 / UR-F-54 - Los proyectos archivados no se ofrecen en el trabajo diario
+      where: { proyecto_archivado: false },
       include: [{ model: EstadoProyecto, attributes: ['estado_proyecto_nombre'] }],
       order: [['proyecto_codigo_correlativo', 'ASC']]
     });
@@ -108,10 +111,51 @@ async function getContratos(req, res) {
       include: [{ model: Trabajador, attributes: ['trabajador_nombres', 'trabajador_apellidos'] }],
       order: [['contrato_laboral_fecha_inicio', 'DESC']]
     });
-    return res.json({ success: true, data: contratos });
+    // CU 18 / UR-F-20 - Cada contrato trae su alerta de vencimiento respecto de hoy
+    const hoy = fechaHoy();
+    const data = contratos.map(c => ({ ...c.toJSON(), alerta: alertaContrato(c.contrato_laboral_fecha_termino, hoy) }));
+    return res.json({ success: true, data });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, error: 'Error al obtener contratos laborales' });
+  }
+}
+
+// CU 18 / UR-F-20 - Contratos que vencen dentro de los próximos 30 días. Se toma solo
+// el contrato más reciente de cada trabajador activo: si ya se renovó, no se alerta.
+async function getContratosPorVencer(req, res) {
+  try {
+    const hoy = fechaHoy();
+    const contratos = await ContratoLaboral.findAll({
+      include: [
+        { model: Trabajador, attributes: ['trabajador_nombres', 'trabajador_apellidos', 'trabajador_activo'] },
+        { model: Proyecto, attributes: ['proyecto_nombre_obra'] }
+      ],
+      order: [['contrato_laboral_fecha_inicio', 'DESC'], ['contrato_laboral_id_contrato', 'DESC']]
+    });
+    const vistos = new Set();
+    const porVencer = [];
+    for (const c of contratos) {
+      if (vistos.has(c.trabajador_rut)) continue;
+      vistos.add(c.trabajador_rut);
+      if (c.Trabajador && c.Trabajador.trabajador_activo === false) continue;
+      const alerta = alertaContrato(c.contrato_laboral_fecha_termino, hoy);
+      if (alerta.estado !== 'Por vencer') continue;
+      porVencer.push({
+        contrato_laboral_id_contrato: c.contrato_laboral_id_contrato,
+        trabajador_rut: c.trabajador_rut,
+        trabajador: c.Trabajador ? `${c.Trabajador.trabajador_nombres} ${c.Trabajador.trabajador_apellidos || ''}`.trim() : c.trabajador_rut,
+        proyecto_codigo_correlativo: c.proyecto_codigo_correlativo,
+        proyecto_nombre_obra: c.Proyecto ? c.Proyecto.proyecto_nombre_obra : null,
+        contrato_laboral_fecha_termino: c.contrato_laboral_fecha_termino,
+        dias_restantes: alerta.dias
+      });
+    }
+    porVencer.sort((a, b) => a.dias_restantes - b.dias_restantes);
+    return res.json({ success: true, data: porVencer, dias_alerta: DIAS_ALERTA_CONTRATO });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al obtener los contratos por vencer' });
   }
 }
 
@@ -507,7 +551,7 @@ async function actualizarCajaChicaProyecto(req, res) {
 }
 
 module.exports = {
-  getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos,
+  getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes, getContratos, getContratosPorVencer,
   crearProyecto, crearTrabajador, crearSolicitudMaterial,
   crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
   actualizarPlazoProyecto, actualizarCajaChicaProyecto
