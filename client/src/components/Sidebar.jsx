@@ -27,6 +27,8 @@ function useTema() {
   return [tema, alternar];
 }
 
+// CU 67 - Buscando funciones del sistema: lista solo las funciones del rol y
+// filtra por nombre de función o de módulo, sin distinguir mayúsculas ni tildes
 function Paleta({ modulos, onClose }) {
   const navigate = useNavigate();
   const [consulta, setConsulta] = useState('');

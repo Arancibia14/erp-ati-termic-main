@@ -1,4 +1,4 @@
-// Crea avisos que el destinatario ve en Inicio al iniciar sesión.
+// CU 66 - Crea avisos que el destinatario ve en Inicio al iniciar sesión.
 // Nunca interrumpe la operación que los origina: si falla, solo se informa en consola.
 const sequelize = require('../config/database');
 const Notificacion = require('../models/Notificacion');

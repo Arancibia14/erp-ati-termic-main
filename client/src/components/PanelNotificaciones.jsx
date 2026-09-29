@@ -12,7 +12,7 @@ const fechaHora = f => new Date(f).toLocaleString('es-CL', {
   timeZone: 'America/Santiago', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
 });
 
-// Notificaciones del usuario en Inicio (CU 17 y CU 57): se guardan hasta que él
+// CU 66 - Notificaciones del usuario en Inicio, generadas por CU 17 y CU 57: se guardan hasta que él
 // las borra. Al entrar se avisa cuántas son nuevas y quedan marcadas como leídas.
 export default function PanelNotificaciones({ addToast }) {
   const [notificaciones, setNotificaciones] = useState([]);

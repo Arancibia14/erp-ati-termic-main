@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
+// CU 66 - Gestionando notificaciones en la pantalla de Inicio.
 // Avisos para un usuario que se muestran en Inicio al iniciar sesión.
 // CU 17: evidencia rechazada, para el supervisor que la subió.
 // CU 57: incidente SSO registrado, para los administradores.

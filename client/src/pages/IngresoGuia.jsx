@@ -48,6 +48,8 @@ export default function IngresoGuia() {
   };
 
   const cargarRegistradas = () => {
+    // CU 30 / CU 61 - Las guías pendientes de confirmar despacho solo las ve el administrador
+    if (usuario.rol !== 'admin') return;
     setLoadingRegistradas(true);
     api.get('/guia-despacho/registradas')
       .then(r => setRegistradas(r.data.data))

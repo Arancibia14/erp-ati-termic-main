@@ -1,3 +1,4 @@
+// CU 66 - Gestionando notificaciones en la pantalla de Inicio.
 // Notificaciones del usuario conectado: se listan en Inicio y él puede borrarlas.
 // Cada usuario solo ve y borra las suyas.
 const Notificacion = require('../models/Notificacion');
