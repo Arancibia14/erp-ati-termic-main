@@ -5,7 +5,7 @@ import {
   FileClock, FileInput, Truck, BadgeCheck, Undo2, Warehouse, AirVent, Wrench,
   Wallet, Paperclip, ChartLine, Calculator, HandCoins, FolderSearch, UserCog,
   SlidersHorizontal, Building2, UsersRound, Boxes, Banknote, Settings, ScrollText,
-  ShieldPlus, Megaphone
+  ShieldPlus, Megaphone, FileSignature
 } from 'lucide-react';
 
 export const MODULOS = [
@@ -26,6 +26,7 @@ export const MODULOS = [
       { to: '/recepcion-insumos', icon: PackageCheck, label: 'Recepción Insumos', short: 'Recepción' },
       { to: '/certificado', icon: Award, label: 'Certificado Técnico', short: 'Certificado' },
       { to: '/estado-proyecto', icon: PauseCircle, label: 'Estado del Proyecto', short: 'Estado' },
+      { to: '/acta-recepcion', icon: FileSignature, label: 'Acta de Recepción', short: 'Acta' },
       { to: '/portafolio', icon: Images, label: 'Portafolio de Obras', short: 'Portafolio', admin: true },
       { to: '/subcontratistas', icon: Handshake, label: 'Subcontratistas', short: 'Subcontratistas', admin: true },
       { to: '/polizas', icon: ShieldCheck, label: 'Pólizas de Seguro', short: 'Pólizas', admin: true }

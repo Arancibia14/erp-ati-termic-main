@@ -9,6 +9,12 @@ const EVENTOS_CORREO = [
     evento: 'recuperacion_credenciales',
     nombre: 'Recuperación de credenciales',
     etiquetas: ['nombre', 'token', 'link', 'minutos']
+  },
+  // CU 68 - Copia del acta de recepción final para el cliente
+  {
+    evento: 'acta_recepcion',
+    nombre: 'Acta de recepción de obra',
+    etiquetas: ['cliente', 'obra', 'codigo', 'fecha', 'fecha_garantia']
   }
 ];
 
@@ -18,6 +24,12 @@ const PLANTILLAS_POR_DEFECTO = {
     asunto: 'Recuperación de credenciales — ATI Termic',
     html: '<p>Hola {{nombre}}.</p><p>Tu token de recuperación es:</p><p style="font-size:22px;font-weight:700;letter-spacing:2px">{{token}}</p><p><a href="{{link}}">Haz clic aquí para restablecer tu contraseña</a></p><p>Este token vence en {{minutos}} minutos. Si no solicitaste este cambio, ignora este correo.</p>',
     texto: 'Hola {{nombre}}.\n\nTu token de recuperación es: {{token}}\n\nPara restablecer tu contraseña, entra a: {{link}}\n\nEste token vence en {{minutos}} minutos. Si no solicitaste este cambio, ignora este correo.'
+  },
+  acta_recepcion: {
+    nombre: 'Acta de recepción de obra',
+    asunto: 'Acta de recepción final — {{obra}}',
+    html: '<p>Estimado/a {{cliente}}.</p><p>Adjuntamos el acta de recepción final de la obra <strong>{{obra}}</strong> ({{codigo}}), firmada el {{fecha}}.</p><p>La garantía de los equipos instalados rige desde el <strong>{{fecha_garantia}}</strong>.</p><p>Saludos cordiales,<br>ATI Termic SpA</p>',
+    texto: 'Estimado/a {{cliente}}.\n\nAdjuntamos el acta de recepción final de la obra {{obra}} ({{codigo}}), firmada el {{fecha}}.\n\nLa garantía de los equipos instalados rige desde el {{fecha_garantia}}.\n\nSaludos cordiales,\nATI Termic SpA'
   }
 };
 

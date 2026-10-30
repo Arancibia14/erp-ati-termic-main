@@ -33,14 +33,16 @@ async function obtenerTransportador() {
   return transportadorPromesa;
 }
 
-async function enviarCorreo({ para, asunto, texto, html }) {
+// adjuntos: lista opcional de { filename, path }, por ejemplo el PDF del acta (CU 68)
+async function enviarCorreo({ para, asunto, texto, html, adjuntos }) {
   const transportador = await obtenerTransportador();
   const info = await transportador.sendMail({
     from: '"ATI Termic SpA" <no-responder@atitermic.cl>',
     to: para,
     subject: asunto,
     text: texto,
-    html
+    html,
+    attachments: adjuntos || []
   });
 
   const urlPreview = nodemailer.getTestMessageUrl(info);

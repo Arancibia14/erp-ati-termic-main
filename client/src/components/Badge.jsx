@@ -20,6 +20,9 @@ const TONOS = {
   // CU 67 - Documentación del trabajador
   'Firmado': 'green',
   'Terminado': 'gray',
+  // CU 68 - Acta de recepción
+  'Firmada': 'green',
+  'Anulada': 'gray',
   'Recibido': 'green',
   'Facturado': 'blue',
   'Emitida': 'blue',

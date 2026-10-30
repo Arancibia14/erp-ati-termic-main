@@ -39,6 +39,7 @@ const SolicitudMateriales = lazy(() => import('./pages/SolicitudMateriales'));
 const AprobacionesPendientes = lazy(() => import('./pages/AprobacionesPendientes'));
 const Trabajadores = lazy(() => import('./pages/Trabajadores'));
 const DocumentacionTrabajador = lazy(() => import('./pages/DocumentacionTrabajador'));
+const ActaRecepcion = lazy(() => import('./pages/ActaRecepcion'));
 const IngresoGuia = lazy(() => import('./pages/IngresoGuia'));
 const DocumentacionLaboral = lazy(() => import('./pages/DocumentacionLaboral'));
 const Liquidaciones = lazy(() => import('./pages/Liquidaciones'));
@@ -104,6 +105,7 @@ export default function App() {
         <Route path="/evidencia" element={<PrivateLayout><Evidencia /></PrivateLayout>} />
         <Route path="/comunicacion" element={<PrivateLayout><Comunicacion /></PrivateLayout>} />
         <Route path="/recepcion-insumos" element={<PrivateLayout><RecepcionInsumos /></PrivateLayout>} />
+        <Route path="/acta-recepcion" element={<PrivateLayout><ActaRecepcion /></PrivateLayout>} />
         <Route path="/certificado" element={<PrivateLayout><CertificadoTecnico /></PrivateLayout>} />
         <Route path="/solicitud-materiales" element={<PrivateLayout><SolicitudMateriales /></PrivateLayout>} />
         <Route path="/ingreso-guia" element={<PrivateLayout><IngresoGuia /></PrivateLayout>} />

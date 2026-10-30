@@ -50,6 +50,8 @@ const Aviso = require('./models/Aviso');
 const ProyectoSubcontratista = require('./models/ProyectoSubcontratista');
 const Notificacion = require('./models/Notificacion');
 const LoteMaterial = require('./models/LoteMaterial');
+const ActaRecepcion = require('./models/ActaRecepcion');
+const ActaRecepcionMaterial = require('./models/ActaRecepcionMaterial');
 const { crearLotesIniciales } = require('./utils/inventarioFifo');
 
 // Associations
@@ -158,6 +160,16 @@ EntregaEpp.belongsTo(Trabajador, { foreignKey: 'trabajador_rut' });
 Material.hasMany(EntregaEpp, { foreignKey: 'material_id' });
 EntregaEpp.belongsTo(Material, { foreignKey: 'material_id' });
 
+// CU 68 - Acta de recepción final de obra y sus materiales congelados
+Proyecto.hasMany(ActaRecepcion, { foreignKey: 'proyecto_codigo_correlativo' });
+ActaRecepcion.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
+Usuario.hasMany(ActaRecepcion, { foreignKey: 'usuario_rut' });
+ActaRecepcion.belongsTo(Usuario, { foreignKey: 'usuario_rut' });
+ActaRecepcion.hasMany(ActaRecepcionMaterial, { foreignKey: 'acta_recepcion_id' });
+ActaRecepcionMaterial.belongsTo(ActaRecepcion, { foreignKey: 'acta_recepcion_id' });
+Material.hasMany(ActaRecepcionMaterial, { foreignKey: 'material_id' });
+ActaRecepcionMaterial.belongsTo(Material, { foreignKey: 'material_id' });
+
 const app = express();
 
 app.use(cors());
@@ -210,6 +222,7 @@ app.use('/api/parametro', require('./routes/parametro'));
 app.use('/api/plantilla-correo', require('./routes/plantillaCorreo'));
 app.use('/api/aviso', require('./routes/aviso'));
 app.use('/api/notificacion', require('./routes/notificacion'));
+app.use('/api/acta-recepcion', require('./routes/actaRecepcion'));
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok', timestamp: new Date() } });

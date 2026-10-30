@@ -6,6 +6,7 @@ const EquipoHVAC = require('../models/EquipoHVAC');
 const ModeloHvac = require('../models/ModeloHvac');
 const Proyecto = require('../models/Proyecto');
 const DocumentoLegal = require('../models/DocumentoLegal');
+const ActaRecepcion = require('../models/ActaRecepcion');
 const LogAuditoria = require('../models/LogAuditoria');
 const { fechaHoy, esFechaValida } = require('../utils/fecha');
 
@@ -147,12 +148,19 @@ async function buscarGarantias(req, res) {
       }
       // garantia === null es la Excepción 1 (garantía inexistente)
 
+      // CU 68 - La garantía rige desde el acta de recepción firmada de la obra
+      const acta = await ActaRecepcion.findOne({
+        where: { proyecto_codigo_correlativo: eq.proyecto_codigo_correlativo, acta_recepcion_estado: 'Firmada' },
+        attributes: ['acta_recepcion_fecha_hora']
+      });
+
       return {
         equipo_hvac_numero_serie: eq.equipo_hvac_numero_serie,
         equipo_hvac_fecha_instalacion: eq.equipo_hvac_fecha_instalacion,
         proyecto_codigo_correlativo: eq.proyecto_codigo_correlativo,
         proyecto_nombre_obra: eq.Proyecto?.proyecto_nombre_obra || '',
         modelo_hvac_nombre: eq.ModeloHvac?.modelo_hvac_nombre || '',
+        fecha_inicio_garantia: acta ? fechaHoy(acta.acta_recepcion_fecha_hora) : null,
         garantia
       };
     }));

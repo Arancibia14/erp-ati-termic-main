@@ -21,6 +21,7 @@ const DevolucionObra = require('../models/DevolucionObra');
 const CertificadoCalidad = require('../models/CertificadoCalidad');
 const OrdenCompra = require('../models/OrdenCompra');
 const ProyectoSubcontratista = require('../models/ProyectoSubcontratista');
+const ActaRecepcionMaterial = require('../models/ActaRecepcionMaterial');
 const { normalizarRut } = require('./rut');
 
 // Cada vínculo indica la tabla, la columna que apunta al registro maestro y
@@ -53,7 +54,8 @@ const MAESTROS = {
       { modelo: DevolucionObra, campo: 'material_id', uno: 'devolución de obra', varios: 'devoluciones de obra' },
       { modelo: CertificadoCalidad, campo: 'material_id', uno: 'certificado de calidad', varios: 'certificados de calidad' },
       { modelo: EntregaEpp, campo: 'material_id', uno: 'entrega de EPP', varios: 'entregas de EPP' },
-      { modelo: LoteMaterial, campo: 'material_id', uno: 'lote de inventario', varios: 'lotes de inventario' }
+      { modelo: LoteMaterial, campo: 'material_id', uno: 'lote de inventario', varios: 'lotes de inventario' },
+      { modelo: ActaRecepcionMaterial, campo: 'material_id', uno: 'acta de recepción de obra', varios: 'actas de recepción de obra' }
     ]
   },
   proveedor: {

@@ -106,6 +106,7 @@ export default function DescargarGarantia() {
                     <th>N° Serie</th>
                     <th>Modelo</th>
                     <th>Proyecto</th>
+                    <th>Inicio Garantía</th>
                     <th>Estado de Garantía</th>
                     <th></th>
                   </tr>
@@ -116,6 +117,12 @@ export default function DescargarGarantia() {
                       <td style={{ fontSize: 12, fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>{eq.equipo_hvac_numero_serie}</td>
                       <td style={{ fontSize: 13 }}>{eq.modelo_hvac_nombre}</td>
                       <td style={{ fontSize: 13 }}>{eq.proyecto_nombre_obra || eq.proyecto_codigo_correlativo}</td>
+                      {/* CU 68 - La garantía rige desde el acta de recepción firmada */}
+                      <td style={{ fontSize: 12 }}>
+                        {eq.fecha_inicio_garantia || (
+                          <span style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Sin acta de recepción</span>
+                        )}
+                      </td>
                       <td>
                         {!eq.garantia ? (
                           // Excepción 1 - Garantía inexistente
