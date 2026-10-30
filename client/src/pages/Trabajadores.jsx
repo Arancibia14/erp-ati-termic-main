@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Users, Plus, HeartPulse, Upload, Download, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Users, Plus, HeartPulse, Upload, Download, Trash2, FolderOpen } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
@@ -20,6 +21,7 @@ const FORM_VACIO = {
 
 export default function Trabajadores() {
   const { toasts, addToast, removeToast } = useToast();
+  const navigate = useNavigate();
   // CU 49 - Trabajador cuya eliminación se está validando
   const [eliminacion, setEliminacion] = useState(null);
   const [trabajadores, setTrabajadores] = useState([]);
@@ -284,6 +286,13 @@ export default function Trabajadores() {
                           onClick={() => abrirSalud(t)}
                         >
                           <Upload size={13} /> Salud
+                        </button>
+                        <button
+                          className="btn btn-secondary"
+                          style={{ padding: '5px 10px', fontSize: 12 }}
+                          onClick={() => navigate(`/trabajadores/${encodeURIComponent(t.trabajador_rut)}/documentacion`)}
+                        >
+                          <FolderOpen size={13} /> Documentación
                         </button>
                         {t.trabajador_activo && (
                           <button

@@ -38,6 +38,7 @@ const Catalogo = lazy(() => import('./pages/Catalogo'));
 const SolicitudMateriales = lazy(() => import('./pages/SolicitudMateriales'));
 const AprobacionesPendientes = lazy(() => import('./pages/AprobacionesPendientes'));
 const Trabajadores = lazy(() => import('./pages/Trabajadores'));
+const DocumentacionTrabajador = lazy(() => import('./pages/DocumentacionTrabajador'));
 const IngresoGuia = lazy(() => import('./pages/IngresoGuia'));
 const DocumentacionLaboral = lazy(() => import('./pages/DocumentacionLaboral'));
 const Liquidaciones = lazy(() => import('./pages/Liquidaciones'));
@@ -132,6 +133,7 @@ export default function App() {
         <Route path="/proveedores" element={<PrivateLayout><AdminRoute><CatalogoProveedores /></AdminRoute></PrivateLayout>} />
         <Route path="/aprobaciones" element={<PrivateLayout><AdminRoute><AprobacionesPendientes /></AdminRoute></PrivateLayout>} />
         <Route path="/trabajadores" element={<PrivateLayout><AdminRoute><Trabajadores /></AdminRoute></PrivateLayout>} />
+        <Route path="/trabajadores/:rut/documentacion" element={<PrivateLayout><AdminRoute><DocumentacionTrabajador /></AdminRoute></PrivateLayout>} />
         <Route path="/liquidaciones" element={<PrivateLayout><AdminRoute><Liquidaciones /></AdminRoute></PrivateLayout>} />
         <Route path="/anexo-contrato" element={<PrivateLayout><AdminRoute><AnexoContrato /></AdminRoute></PrivateLayout>} />
         <Route path="/catalogo-equipos" element={<PrivateLayout><AdminRoute><CatalogoEquipos /></AdminRoute></PrivateLayout>} />

@@ -17,6 +17,9 @@ const TONOS = {
   'Activo': 'green',
   'Inactivo': 'gray',
   'PendienteFirma': 'amber',
+  // CU 67 - Documentación del trabajador
+  'Firmado': 'green',
+  'Terminado': 'gray',
   'Recibido': 'green',
   'Facturado': 'blue',
   'Emitida': 'blue',
