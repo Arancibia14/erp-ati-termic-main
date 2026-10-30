@@ -283,7 +283,7 @@ export default function Trabajadores() {
                           style={{ padding: '5px 10px', fontSize: 12 }}
                           onClick={() => abrirSalud(t)}
                         >
-                          <HeartPulse size={13} /> Salud
+                          <Upload size={13} /> Salud
                         </button>
                         {t.trabajador_activo && (
                           <button
