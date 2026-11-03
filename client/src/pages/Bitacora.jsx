@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { BookOpen, Plus, Send, X, ChevronDown } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
@@ -12,7 +13,9 @@ const DRAFT_KEY = 'erp_bitacora_draft';
 export default function Bitacora() {
   const { toasts, addToast, removeToast } = useToast();
   const [proyectos, setProyectos] = useState([]);
-  const [codigoSeleccionado, setCodigoSeleccionado] = useState('');
+  // Desde Inicio llega con el proyecto ya elegido
+  const proyectoInicial = useLocation().state?.proyecto || '';
+  const [codigoSeleccionado, setCodigoSeleccionado] = useState(proyectoInicial);
   const [bitacoras, setBitacoras] = useState([]);
   const [loadingLista, setLoadingLista] = useState(false);
   const [mostrarForm, setMostrarForm] = useState(false);

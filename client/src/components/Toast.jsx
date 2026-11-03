@@ -47,12 +47,14 @@ export default function Toast({ toasts, removeToast }) {
         const Icon = ICONS[tipo];
         return (
           <div key={grupo.clave} className={`toast toast-${tipo}`} role={tipo === 'error' ? 'alert' : 'status'}>
-            <span className="toast-icon"><Icon size={18} strokeWidth={2} /></span>
+            <span className="toast-icon">
+              <Icon size={19} strokeWidth={2.2} />
+              {grupo.ids.length > 1 && (
+                <span className="toast-count" aria-label={`Se repitió ${grupo.ids.length} veces`}>{grupo.ids.length}</span>
+              )}
+            </span>
             <div className="toast-body">
-              <div className="toast-title">
-                {TITULOS[tipo]}
-                {grupo.ids.length > 1 && <span className="toast-count">×{grupo.ids.length}</span>}
-              </div>
+              <div className="toast-title">{TITULOS[tipo]}</div>
               <div className="toast-message">{grupo.message}</div>
               {grupo.action && (
                 <button

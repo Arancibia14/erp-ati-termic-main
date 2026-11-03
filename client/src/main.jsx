@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
+import './styles/diseno.css'
 
 const raiz = document.getElementById('root')
 const UI_LISTA = '.tb, .login-wrap, .mobile-header'

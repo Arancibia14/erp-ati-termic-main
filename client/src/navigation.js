@@ -13,6 +13,7 @@ export const MODULOS = [
     id: 'terreno',
     label: 'Proyectos y Terreno',
     icon: Building2,
+    icono: 'ducto',
     acento: 'blue',
     items: [
       { to: '/bitacora', icon: BookOpen, label: 'Bitácora Diaria', short: 'Bitácora' },
@@ -36,6 +37,7 @@ export const MODULOS = [
     id: 'personal',
     label: 'Personal',
     icon: UsersRound,
+    icono: 'casco',
     acento: 'purple',
     items: [
       { to: '/trabajadores', icon: IdCard, label: 'Trabajadores', short: 'Trabajadores', admin: true },
@@ -50,6 +52,7 @@ export const MODULOS = [
     id: 'materiales',
     label: 'Materiales y Compras',
     icon: Boxes,
+    icono: 'valvula',
     acento: 'green',
     items: [
       { to: '/solicitud-materiales', icon: ClipboardPlus, label: 'Nueva Solicitud de Materiales', short: 'Solicitud' },
@@ -72,6 +75,7 @@ export const MODULOS = [
     id: 'finanzas',
     label: 'Finanzas',
     icon: Banknote,
+    icono: 'caja',
     acento: 'orange',
     items: [
       { to: '/caja-chica', icon: Wallet, label: 'Caja Chica', short: 'Caja Chica' },
@@ -85,6 +89,7 @@ export const MODULOS = [
     id: 'sistema',
     label: 'Sistema',
     icon: Settings,
+    icono: 'termostato',
     acento: 'gray',
     items: [
       { to: '/documentos', icon: FolderSearch, label: 'Buscador Documentos', short: 'Documentos', admin: true },
@@ -113,22 +118,38 @@ export function colorAcento(idModulo) {
 }
 
 export const ATAJOS_ADMIN = [
-  '/aprobaciones',
-  '/validar',
   '/orden-compra',
-  '/control-costos'
+  '/control-costos',
+  '/ingreso-guia',
+  '/caja-chica'
 ];
 
 export const ATAJOS_SUPERVISOR = [
-  '/bitacora',
   '/evidencia',
-  '/entrega-epp',
+  '/bitacora',
+  '/recepcion-insumos',
   '/sso'
 ];
 
+// Ícono dibujado de las funciones que aparecen en Inicio
+export const ICONO_RUTA = {
+  '/orden-compra': 'orden',
+  '/control-costos': 'curva',
+  '/ingreso-guia': 'guia',
+  '/caja-chica': 'caja',
+  '/evidencia': 'foto',
+  '/bitacora': 'bitacora',
+  '/recepcion-insumos': 'recepcion',
+  '/sso': 'sso',
+  '/aprobaciones': 'firma',
+  '/validar': 'revisa',
+  '/materiales-transito': 'camion',
+  '/trabajadores': 'casco'
+};
+
 export const BARRA_ADMIN = ['/validar', '/aprobaciones', '/trabajadores'];
 
-export const BARRA_SUPERVISOR = ['/bitacora', '/evidencia', '/entrega-epp'];
+export const BARRA_SUPERVISOR = ['/evidencia', '/bitacora', '/recepcion-insumos'];
 
 export function modulosVisibles(esAdmin) {
   return MODULOS

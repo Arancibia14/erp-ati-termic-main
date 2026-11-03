@@ -5,6 +5,7 @@ import {
   ArrowLeft, CornerDownLeft
 } from 'lucide-react';
 import LogoMarca from './LogoMarca';
+import IconoAti from './IconoAti';
 import avatarAdministrador from '../assets/avatar-administrador.png';
 import avatarSupervisor from '../assets/avatar-supervisor.png';
 import {
@@ -158,6 +159,23 @@ export default function Sidebar() {
     return () => window.removeEventListener('keydown', alTeclear);
   }, []);
 
+  // Las tarjetas de módulos de Inicio abren el menú del módulo: en pantalla
+  // grande el panel de la barra superior y en el celular la hoja inferior
+  useEffect(() => {
+    const abrirModulo = e => {
+      setMenuUsuario(false);
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        setModuloHoja(e.detail);
+        setHojaAbierta(true);
+      } else {
+        setPanel(e.detail);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+    window.addEventListener('ati:abrir-modulo', abrirModulo);
+    return () => window.removeEventListener('ati:abrir-modulo', abrirModulo);
+  }, []);
+
   useEffect(() => {
     document.body.classList.toggle('sheet-open', hojaAbierta);
     return () => document.body.classList.remove('sheet-open');
@@ -246,7 +264,7 @@ export default function Sidebar() {
       <header className="tb" ref={tbRef}>
         <div className="tb-inner">
           <NavLink to="/inicio" className="tb-brand" aria-label="Inicio">
-            <LogoMarca tema={tema} variante="small" />
+            <LogoMarca tema="dark" variante="small" />
           </NavLink>
 
           <nav className="tb-tabs" ref={tabsRef} aria-label="Módulos">
@@ -256,11 +274,10 @@ export default function Sidebar() {
               ref={el => { tabRefs.current.inicio = el; }}
               className={({ isActive }) => `tb-tab${isActive ? ' current' : ''}`}
             >
-              <Home size={16} strokeWidth={1.8} />
+              <IconoAti nombre="unidad" size={21} />
               <span>Inicio</span>
             </NavLink>
             {modulos.map(m => {
-              const Icon = m.icon;
               const abierto = panel === m.id;
               return (
                 <button
@@ -276,7 +293,7 @@ export default function Sidebar() {
                     setPanel(abierto ? null : m.id);
                   }}
                 >
-                  <Icon size={16} strokeWidth={1.8} />
+                  <IconoAti nombre={m.icono} size={21} />
                   <span>{m.label}</span>
                   <ChevronDown size={13} strokeWidth={2.4} className={`tb-caret${abierto ? ' open' : ''}`} />
                 </button>
@@ -370,7 +387,7 @@ export default function Sidebar() {
       <header className="mobile-header">
         {enInicio ? (
           <NavLink to="/inicio" aria-label="Inicio" className="mh-brand">
-            <LogoMarca tema={tema} variante="small" />
+            <LogoMarca tema="dark" variante="small" />
           </NavLink>
         ) : (
           <>
@@ -436,7 +453,6 @@ export default function Sidebar() {
               {!moduloDeHoja ? (
                 <div className="sheet-modules">
                   {modulos.map(m => {
-                    const Icon = m.icon;
                     return (
                       <button
                         key={m.id}
@@ -445,7 +461,7 @@ export default function Sidebar() {
                         style={{ '--acento': colorAcento(m.id) }}
                         onClick={() => setModuloHoja(m.id)}
                       >
-                        <span className="sheet-module-icon"><Icon size={22} strokeWidth={1.6} /></span>
+                        <span className="sheet-module-icon"><IconoAti nombre={m.icono} size={30} /></span>
                         <span className="sheet-module-label">{m.label}</span>
                         <span className="sheet-module-count">
                           {m.items.length} {m.items.length === 1 ? 'función' : 'funciones'}

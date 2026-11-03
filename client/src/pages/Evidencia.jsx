@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Camera, MapPin, Send, Image, X, Circle, CheckCircle2, AlertTriangle, WifiOff, RefreshCw, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
@@ -15,7 +16,9 @@ export default function Evidencia() {
   const [preview, setPreview] = useState(null);
   const [coords, setCoords] = useState({ lat: null, lng: null });
   const [locating, setLocating] = useState(false);
-  const [form, setForm] = useState({ proyecto_codigo_correlativo: '', hito_tecnico_id: '' });
+  // Desde Inicio llega con el proyecto ya elegido
+  const proyectoInicial = useLocation().state?.proyecto || '';
+  const [form, setForm] = useState({ proyecto_codigo_correlativo: proyectoInicial, hito_tecnico_id: '' });
   const [foto, setFoto] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasCamera, setHasCamera] = useState(false);
