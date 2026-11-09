@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const PDFDocument = require('pdfkit');
 const sequelize = require('../config/database');
 const ActaRecepcion = require('../models/ActaRecepcion');
 const ActaRecepcionMaterial = require('../models/ActaRecepcionMaterial');
@@ -19,6 +18,7 @@ const { validarRutChileno } = require('../utils/rut');
 const { enviarCorreo } = require('../utils/correo');
 const { aplicarPlantilla } = require('../utils/plantillaCorreo');
 const { fechaHoy, ZONA_HORARIA } = require('../utils/fecha');
+const pdf = require('../utils/pdfMembrete');
 
 // CU 68 - Generando acta de recepción final de obra
 // Una sola acta Firmada por obra. Su fecha es el inicio de la garantía de los
@@ -187,90 +187,77 @@ async function getDatosObra(req, res) {
 }
 
 function generarPdfActa({ acta, proyecto, equipos, materiales, emisor }, filePath) {
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ margin: 60, size: 'A4' });
-    const stream = fs.createWriteStream(filePath);
-    doc.pipe(stream);
-
-    const titulo = texto => {
-      doc.moveDown(0.8);
-      doc.fontSize(12).font('Helvetica-Bold').fillColor('#333').text(texto);
-      doc.moveDown(0.3);
-      doc.fontSize(10).font('Helvetica').fillColor('#000');
-    };
-
-    doc.fontSize(22).font('Helvetica-Bold').fillColor('#0a2342')
-      .text('ATI TERMIC SpA', { align: 'center' });
-    doc.fontSize(10).font('Helvetica').fillColor('#555')
-      .text('Ingeniería en Climatización y HVAC', { align: 'center' });
-    doc.moveDown(0.5);
-    doc.moveTo(60, doc.y).lineTo(535, doc.y).strokeColor('#0a2342').lineWidth(2).stroke();
-    doc.moveDown(0.5);
-    doc.fontSize(16).font('Helvetica-Bold').fillColor('#0a2342')
-      .text('ACTA DE RECEPCIÓN FINAL DE OBRA', { align: 'center' });
-    doc.fontSize(10).font('Helvetica').fillColor('#555')
-      .text(`Folio N° ${acta.acta_recepcion_id}`, { align: 'center' });
-
-    titulo('DATOS DE LA OBRA');
-    doc.text(`Código: ${proyecto.proyecto_codigo_correlativo}`);
-    doc.text(`Obra: ${proyecto.proyecto_nombre_obra}`);
-    doc.text(`Dirección: ${proyecto.proyecto_ubicacion || 'Sin dirección registrada'}`);
-
-    titulo('CLIENTE QUE RECIBE');
-    doc.text(`Nombre: ${acta.acta_recepcion_cliente_nombre}`);
-    doc.text(`RUT: ${acta.acta_recepcion_cliente_rut}`);
-    doc.text(`Cargo: ${acta.acta_recepcion_cliente_cargo}`);
-    doc.text(`Correo: ${acta.acta_recepcion_cliente_correo}`);
-
-    titulo('TRABAJOS REALIZADOS');
-    doc.text(acta.acta_recepcion_trabajos, { align: 'justify' });
-
-    titulo('EQUIPOS ENTREGADOS');
-    if (equipos.length === 0) doc.text('La obra no tiene equipos HVAC registrados.');
-    equipos.forEach((e, i) => doc.text(`  ${i + 1}.  ${e.modelo || 'Equipo HVAC'}  —  N° de serie ${e.numero_serie}`));
-
-    titulo('MATERIALES UTILIZADOS');
-    if (materiales.length === 0) doc.text('No se registran materiales recibidos en la obra.');
-    materiales.forEach((m, i) => doc.text(`  ${i + 1}.  ${m.nombre}${m.sku ? ` [${m.sku}]` : ''}  —  ${Number(m.cantidad)} ${m.unidad || ''}`.trimEnd()));
-
-    titulo('CONFORMIDAD');
-    doc.text(`Resultado: ${acta.acta_recepcion_conformidad}`);
-    if (acta.acta_recepcion_observaciones) doc.text(`Observaciones: ${acta.acta_recepcion_observaciones}`, { align: 'justify' });
-
-    doc.moveDown(1);
-    doc.moveTo(60, doc.y).lineTo(535, doc.y).strokeColor('#ccc').lineWidth(1).stroke();
-    doc.moveDown(0.5);
-    doc.fontSize(11).font('Helvetica-Bold').fillColor('#0a2342')
-      .text(`Fecha de recepción: ${formatoFechaHora(acta.acta_recepcion_fecha_hora)}`, { align: 'center' });
-    doc.fillColor('#1e7d34')
-      .text(`LA GARANTÍA DE LOS EQUIPOS RIGE DESDE EL ${formatoFecha(acta.acta_recepcion_fecha_hora)}`, { align: 'center' });
-    doc.moveDown(1);
-
-    // La firma necesita unos 120 puntos: si no caben, pasa a la página siguiente
-    if (doc.y > doc.page.height - 220) doc.addPage();
-    try {
-      const imgBuffer = Buffer.from(acta.acta_recepcion_firma_cliente.split(',')[1], 'base64');
-      doc.image(imgBuffer, doc.page.width / 2 - 110, doc.y, { width: 220 });
-      doc.moveDown(8);
-    } catch (_) {
-      doc.moveDown(3);
-    }
-
-    const yFirma = doc.y;
-    doc.moveTo(175, yFirma).lineTo(380, yFirma).strokeColor('#000').lineWidth(1).stroke();
-    doc.moveDown(0.3);
-    doc.fontSize(10).font('Helvetica').fillColor('#000')
-      .text(acta.acta_recepcion_cliente_nombre, { align: 'center' });
-    doc.text(`RUT ${acta.acta_recepcion_cliente_rut} — Cliente`, { align: 'center' });
-
-    doc.moveDown(2);
-    doc.fontSize(8).fillColor('#888')
-      .text(`Acta emitida por ${emisor} el ${formatoFechaHora(new Date())} — ATI Termic SpA. Registro inalterable.`, { align: 'center' });
-
-    doc.end();
-    stream.on('finish', resolve);
-    stream.on('error', reject);
+  const fecha = acta.acta_recepcion_fecha_hora;
+  const { doc, listo } = pdf.crearDocumento(filePath, {
+    titulo: 'Acta de recepción final de obra',
+    banda: [
+      ['Folio', `N° ${acta.acta_recepcion_id}`],
+      ['Fecha de recepción', pdf.fechaHora(fecha)],
+      ['Código de obra', proyecto.proyecto_codigo_correlativo]
+    ]
   });
+
+  pdf.parrafoMixto(doc, [
+    [`En ${pdf.EMPRESA.ciudad}, a ${pdf.fechaLarga(fecha)}, ${pdf.EMPRESA.razonSocial} hace entrega de la obra `],
+    [proyecto.proyecto_nombre_obra, true],
+    [' y el cliente individualizado a continuación la recibe, dejando constancia de los trabajos realizados, los equipos entregados y los materiales utilizados.']
+  ]);
+
+  pdf.seccion(doc, '1. Datos de la obra');
+  pdf.datos(doc, [
+    ['Código', proyecto.proyecto_codigo_correlativo],
+    ['Obra', proyecto.proyecto_nombre_obra],
+    ['Dirección', proyecto.proyecto_ubicacion || 'Sin dirección registrada']
+  ]);
+
+  pdf.seccion(doc, '2. Cliente que recibe');
+  pdf.datos(doc, [
+    ['Nombre', acta.acta_recepcion_cliente_nombre],
+    ['RUT', acta.acta_recepcion_cliente_rut],
+    ['Cargo', acta.acta_recepcion_cliente_cargo],
+    ['Correo', acta.acta_recepcion_cliente_correo]
+  ]);
+
+  pdf.seccion(doc, '3. Trabajos realizados');
+  pdf.parrafo(doc, acta.acta_recepcion_trabajos);
+
+  pdf.seccion(doc, '4. Equipos entregados');
+  pdf.tabla(doc, [
+    { titulo: 'N°', ancho: 0.08, alinear: 'center' },
+    { titulo: 'Modelo', ancho: 0.57 },
+    { titulo: 'N° de serie', ancho: 0.35 }
+  ], equipos.map((e, i) => [i + 1, e.modelo || 'Equipo HVAC', e.numero_serie]), 'La obra no tiene equipos HVAC registrados.');
+
+  pdf.seccion(doc, '5. Materiales utilizados');
+  pdf.tabla(doc, [
+    { titulo: 'N°', ancho: 0.08, alinear: 'center' },
+    { titulo: 'Material', ancho: 0.52 },
+    { titulo: 'SKU', ancho: 0.2 },
+    { titulo: 'Cantidad', ancho: 0.2, alinear: 'right' }
+  ], materiales.map((m, i) => [i + 1, m.nombre, m.sku || '—', pdf.cantidad(m.cantidad, m.unidad)]),
+  'No se registran materiales recibidos en la obra.');
+
+  pdf.seccion(doc, '6. Conformidad');
+  pdf.datos(doc, [
+    ['Resultado', acta.acta_recepcion_conformidad],
+    ['Observaciones', acta.acta_recepcion_observaciones]
+  ], 1);
+
+  pdf.recuadro(doc, `La garantía de los equipos entregados rige desde el ${pdf.fechaLarga(fecha)}.`, 'ok');
+
+  pdf.firmas(doc, [
+    {
+      titulo: 'Recibe conforme',
+      nombre: acta.acta_recepcion_cliente_nombre,
+      lineas: [`RUT ${acta.acta_recepcion_cliente_rut}`, acta.acta_recepcion_cliente_cargo],
+      imagen: acta.acta_recepcion_firma_cliente
+    },
+    pdf.firmaEmpresa('Entrega')
+  ]);
+
+  pdf.nota(doc, `Documento registrado en el sistema ERP de ${pdf.EMPRESA.razonSocial} con el folio N° ${acta.acta_recepcion_id}. Emitido por ${emisor} el ${pdf.fechaHora(new Date())}.`);
+  pdf.finalizar(doc);
+  return listo;
 }
 
 // Envía la copia al cliente. Devuelve true o false: un fallo de correo no

@@ -1,13 +1,13 @@
 const path = require('path');
 const fs = require('fs');
-const PDFDocument = require('pdfkit');
 const Proyecto = require('../models/Proyecto');
 const EquipoHVAC = require('../models/EquipoHVAC');
 const ModeloHvac = require('../models/ModeloHvac');
 const DocumentoLegal = require('../models/DocumentoLegal');
 const EstadoProyecto = require('../models/EstadoProyecto');
 const LogAuditoria = require('../models/LogAuditoria');
-const { fechaHoy, ZONA_HORARIA } = require('../utils/fecha');
+const { fechaHoy } = require('../utils/fecha');
+const pdf = require('../utils/pdfMembrete');
 
 async function generarCertificado(req, res) {
   try {
@@ -48,78 +48,57 @@ async function generarCertificado(req, res) {
     const filePath = path.join(dir, filename);
     const urlPdf = `/uploads/documentos/${filename}`;
 
-    await new Promise((resolve, reject) => {
-      const doc = new PDFDocument({ margin: 60, size: 'A4' });
-      const stream = fs.createWriteStream(filePath);
-      doc.pipe(stream);
-
-      // Encabezado
-      doc.fontSize(22).font('Helvetica-Bold').fillColor('#0a2342')
-        .text('ATI TERMIC SpA', { align: 'center' });
-      doc.fontSize(10).font('Helvetica').fillColor('#555')
-        .text('Ingeniería en Climatización y HVAC', { align: 'center' });
-      doc.moveDown(0.5);
-      doc.moveTo(60, doc.y).lineTo(535, doc.y).strokeColor('#0a2342').lineWidth(2).stroke();
-      doc.moveDown(0.5);
-      doc.fontSize(16).font('Helvetica-Bold').fillColor('#0a2342')
-        .text('CERTIFICADO DE INSTALACIÓN TÉCNICA', { align: 'center' });
-      doc.moveDown(1.5);
-
-      // Datos del proyecto
-      doc.fontSize(12).font('Helvetica-Bold').fillColor('#333').text('DATOS DEL PROYECTO');
-      doc.moveDown(0.3);
-      doc.fontSize(10).font('Helvetica').fillColor('#000');
-      doc.text(`Código de Obra:  ${proyecto_codigo_correlativo}`);
-      doc.text(`Nombre de Obra:  ${proyecto.proyecto_nombre_obra}`);
-      doc.text(`Correo Contacto: ${proyecto.proyecto_correo_contacto || '—'}`);
-      if (proyecto.proyecto_ubicacion) doc.text(`Ubicación:       ${proyecto.proyecto_ubicacion}`);
-      doc.moveDown(1);
-
-      // Datos técnicos
-      doc.fontSize(12).font('Helvetica-Bold').fillColor('#333').text('DATOS TÉCNICOS');
-      doc.moveDown(0.3);
-      doc.fontSize(10).font('Helvetica').fillColor('#000');
-      doc.text(`Técnico Responsable: ${tecnico_nombre}`);
-      doc.text(`Fecha de Instalación: ${fecha_instalacion}`);
-      if (observaciones) doc.text(`Observaciones: ${observaciones}`);
-      doc.moveDown(1);
-
-      // Equipos instalados
-      if (equipos.length > 0) {
-        doc.fontSize(12).font('Helvetica-Bold').fillColor('#333').text('EQUIPOS INSTALADOS');
-        doc.moveDown(0.3);
-        doc.fontSize(10).font('Helvetica').fillColor('#000');
-        equipos.forEach((eq, i) => {
-          doc.text(`  ${i + 1}.  ${eq.ModeloHvac?.modelo_hvac_nombre || 'Equipo HVAC'} — N° de serie: ${eq.equipo_hvac_numero_serie}`);
-        });
-        doc.moveDown(1);
-      }
-
-      // Estado
-      doc.moveDown(0.5);
-      doc.moveTo(60, doc.y).lineTo(535, doc.y).strokeColor('#ccc').lineWidth(1).stroke();
-      doc.moveDown(0.5);
-      doc.fontSize(11).font('Helvetica-Bold').fillColor('#c0392b')
-        .text('ESTADO: PENDIENTE DE FIRMA', { align: 'center' });
-      doc.moveDown(3);
-
-      // Firma
-      const yFirma = doc.y;
-      doc.moveTo(175, yFirma).lineTo(380, yFirma).strokeColor('#000').lineWidth(1).stroke();
-      doc.moveDown(0.3);
-      doc.fontSize(10).font('Helvetica').fillColor('#000')
-        .text(tecnico_nombre, { align: 'center' });
-      doc.text('Técnico Responsable', { align: 'center' });
-
-      // Pie
-      doc.moveDown(2);
-      doc.fontSize(8).fillColor('#888')
-        .text(`Emitido el ${new Date().toLocaleDateString('es-CL', { timeZone: ZONA_HORARIA })} — ATI Termic SpA`, { align: 'center' });
-
-      doc.end();
-      stream.on('finish', resolve);
-      stream.on('error', reject);
+    const fechaInstalacion = /^\d{4}-\d{2}-\d{2}$/.test(fecha_instalacion) ? pdf.fechaLarga(fecha_instalacion) : fecha_instalacion;
+    const { doc, listo } = pdf.crearDocumento(filePath, {
+      titulo: 'Certificado de instalación técnica',
+      banda: [
+        ['Fecha de emisión', pdf.fechaCorta(new Date())],
+        ['Código de obra', proyecto_codigo_correlativo],
+        ['Estado', 'Pendiente de firma', pdf.COLORES.ambar]
+      ]
     });
+
+    pdf.parrafoMixto(doc, [
+      [`${pdf.EMPRESA.razonSocial} certifica que en la obra `],
+      [proyecto.proyecto_nombre_obra, true],
+      [` (${proyecto_codigo_correlativo})${proyecto.proyecto_ubicacion ? `, ubicada en ${proyecto.proyecto_ubicacion},` : ''} se realizó la instalación de los equipos de climatización que se detallan en este documento, con fecha ${fechaInstalacion}, bajo la responsabilidad del técnico ${tecnico_nombre}.`]
+    ]);
+
+    pdf.seccion(doc, '1. Datos del proyecto');
+    pdf.datos(doc, [
+      ['Código de obra', proyecto_codigo_correlativo],
+      ['Obra', proyecto.proyecto_nombre_obra],
+      ['Ubicación', proyecto.proyecto_ubicacion],
+      ['Correo de contacto', proyecto.proyecto_correo_contacto]
+    ]);
+
+    pdf.seccion(doc, '2. Datos técnicos');
+    pdf.datos(doc, [
+      ['Técnico responsable', tecnico_nombre],
+      ['Fecha de instalación', fechaInstalacion],
+      ['Observaciones', observaciones]
+    ]);
+
+    pdf.seccion(doc, '3. Equipos instalados');
+    pdf.tabla(doc, [
+      { titulo: 'N°', ancho: 0.08, alinear: 'center' },
+      { titulo: 'Modelo', ancho: 0.57 },
+      { titulo: 'N° de serie', ancho: 0.35 }
+    ], equipos.map((eq, i) => [i + 1, eq.ModeloHvac?.modelo_hvac_nombre || 'Equipo HVAC', eq.equipo_hvac_numero_serie]),
+    'La obra no tiene equipos HVAC registrados.');
+
+    pdf.firmas(doc, [
+      {
+        titulo: 'Técnico responsable',
+        nombre: tecnico_nombre,
+        lineas: [pdf.EMPRESA.razonSocial]
+      },
+      pdf.firmaEmpresa('Por la empresa')
+    ]);
+
+    pdf.nota(doc, `Documento generado en el sistema ERP de ${pdf.EMPRESA.razonSocial} el ${pdf.fechaHora(new Date())}.`);
+    pdf.finalizar(doc);
+    await listo;
 
     const certificado = await DocumentoLegal.create({
       documento_legal_tipo: 'certificado',

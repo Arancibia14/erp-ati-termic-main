@@ -1,12 +1,12 @@
 const path = require('path');
 const fs = require('fs');
-const PDFDocument = require('pdfkit');
 const Trabajador = require('../models/Trabajador');
 const ContratoLaboral = require('../models/ContratoLaboral');
 const Proyecto = require('../models/Proyecto');
 const DocumentoLegal = require('../models/DocumentoLegal');
 const LogAuditoria = require('../models/LogAuditoria');
-const { fechaHoy, ZONA_HORARIA } = require('../utils/fecha');
+const { fechaHoy } = require('../utils/fecha');
+const pdf = require('../utils/pdfMembrete');
 
 async function getInfoContractual(req, res) {
   try {
@@ -78,67 +78,53 @@ async function generarAnexoTraslado(req, res) {
     const filePath = path.join(dir, filename);
     const urlPdf = `/uploads/documentos/${filename}`;
 
-    await new Promise((resolve, reject) => {
-      const doc = new PDFDocument({ margin: 60, size: 'A4' });
-      const stream = fs.createWriteStream(filePath);
-      doc.pipe(stream);
-
-      doc.fontSize(22).font('Helvetica-Bold').fillColor('#0a2342')
-        .text('ATI TERMIC SpA', { align: 'center' });
-      doc.fontSize(10).font('Helvetica').fillColor('#555')
-        .text('Ingeniería en Climatización y HVAC', { align: 'center' });
-      doc.moveDown(0.5);
-      doc.moveTo(60, doc.y).lineTo(535, doc.y).strokeColor('#0a2342').lineWidth(2).stroke();
-      doc.moveDown(0.5);
-      doc.fontSize(16).font('Helvetica-Bold').fillColor('#0a2342')
-        .text('ANEXO DE CONTRATO DE TRABAJO — TRASLADO DE OBRA', { align: 'center' });
-      doc.moveDown(1.5);
-
-      doc.fontSize(12).font('Helvetica-Bold').fillColor('#333').text('DATOS DEL TRABAJADOR');
-      doc.moveDown(0.3);
-      doc.fontSize(10).font('Helvetica').fillColor('#000');
-      doc.text(`RUT: ${trabajador.trabajador_rut}`);
-      doc.text(`Nombre: ${trabajador.trabajador_nombres} ${trabajador.trabajador_apellidos || ''}`.trim());
-      doc.moveDown(1);
-
-      doc.fontSize(12).font('Helvetica-Bold').fillColor('#333').text('DATOS DEL TRASLADO');
-      doc.moveDown(0.3);
-      doc.fontSize(10).font('Helvetica').fillColor('#000');
-      doc.text(`Obra de Origen: ${proyectoOrigen ? `${proyectoOrigen.proyecto_codigo_correlativo} — ${proyectoOrigen.proyecto_nombre_obra}` : 'Sin obra asignada'}`);
-      doc.text(`Obra de Destino: ${proyectoDestino.proyecto_codigo_correlativo} — ${proyectoDestino.proyecto_nombre_obra}`);
-      doc.text(`Dirección Destino: ${proyectoDestino.proyecto_ubicacion}`);
-      doc.text(`Fecha de Inicio: ${fecha_inicio}`);
-      doc.moveDown(1);
-
-      doc.fontSize(12).font('Helvetica-Bold').fillColor('#333').text('CONDICIONES CONTRACTUALES');
-      doc.moveDown(0.3);
-      doc.fontSize(10).font('Helvetica').fillColor('#000');
-      doc.text(`Sueldo Base: $${parseFloat(contratoVigente.contrato_laboral_sueldo_base).toLocaleString('es-CL')}`);
-      doc.text(`Leyes Sociales: $${parseFloat(contratoVigente.contrato_laboral_leyes_sociales).toLocaleString('es-CL')}`);
-      doc.moveDown(1);
-
-      doc.moveDown(0.5);
-      doc.moveTo(60, doc.y).lineTo(535, doc.y).strokeColor('#ccc').lineWidth(1).stroke();
-      doc.moveDown(0.5);
-      doc.fontSize(11).font('Helvetica-Bold').fillColor('#c0392b')
-        .text('ESTADO: PENDIENTE DE FIRMA', { align: 'center' });
-      doc.moveDown(3);
-
-      const yFirma = doc.y;
-      doc.moveTo(175, yFirma).lineTo(380, yFirma).strokeColor('#000').lineWidth(1).stroke();
-      doc.moveDown(0.3);
-      doc.fontSize(10).font('Helvetica').fillColor('#000')
-        .text(`${trabajador.trabajador_nombres} ${trabajador.trabajador_apellidos || ''}`.trim(), { align: 'center' });
-      doc.text('Trabajador', { align: 'center' });
-
-      doc.moveDown(2);
-      doc.fontSize(8).fillColor('#888')
-        .text(`Emitido el ${new Date().toLocaleDateString('es-CL', { timeZone: ZONA_HORARIA })} — ATI Termic SpA`, { align: 'center' });
-
-      doc.end();
-      stream.on('finish', resolve);
-      stream.on('error', reject);
+    const nombreTrabajador = `${trabajador.trabajador_nombres} ${trabajador.trabajador_apellidos || ''}`.trim();
+    const { doc, listo } = pdf.crearDocumento(filePath, {
+      titulo: 'Anexo de contrato de trabajo',
+      subtitulo: 'Traslado de obra',
+      banda: [
+        ['Fecha de emisión', pdf.fechaCorta(new Date())],
+        ['Rige desde', pdf.fechaCorta(fecha_inicio)],
+        ['Estado', 'Pendiente de firma', pdf.COLORES.ambar]
+      ]
     });
+
+    const representante = pdf.EMPRESA.representante
+      ? `, representada por ${pdf.EMPRESA.representante}${pdf.EMPRESA.representanteRut ? `, RUT ${pdf.EMPRESA.representanteRut}` : ''}`
+      : '';
+    pdf.parrafoMixto(doc, [
+      [`En ${pdf.EMPRESA.ciudad}, a ${pdf.fechaLarga(new Date())}, entre `],
+      [pdf.EMPRESA.razonSocial, true],
+      [`${pdf.EMPRESA.rut ? `, RUT ${pdf.EMPRESA.rut}` : ''}${representante}, domiciliada en ${pdf.EMPRESA.direccion}, ${pdf.EMPRESA.ciudad}, en adelante «el Empleador», y `],
+      [nombreTrabajador, true],
+      [`, RUT ${trabajador.trabajador_rut}, en adelante «el Trabajador», se acuerda el siguiente anexo al contrato de trabajo vigente entre las partes:`]
+    ]);
+
+    pdf.seccion(doc, 'Primero: traslado de obra');
+    pdf.parrafo(doc, `A contar del ${pdf.fechaLarga(fecha_inicio)}, el Trabajador prestará sus servicios en la obra ${proyectoDestino.proyecto_codigo_correlativo} — ${proyectoDestino.proyecto_nombre_obra}, ubicada en ${proyectoDestino.proyecto_ubicacion}${proyectoOrigen ? `, dejando de prestarlos en la obra ${proyectoOrigen.proyecto_codigo_correlativo} — ${proyectoOrigen.proyecto_nombre_obra}` : ''}.`);
+
+    pdf.seccion(doc, 'Segundo: condiciones que se mantienen');
+    pdf.parrafo(doc, 'Se mantienen sin modificación todas las demás estipulaciones del contrato de trabajo vigente, incluidas las siguientes condiciones:');
+    pdf.datos(doc, [
+      ['Sueldo base', pdf.pesos(contratoVigente.contrato_laboral_sueldo_base)],
+      ['Leyes sociales', pdf.pesos(contratoVigente.contrato_laboral_leyes_sociales)]
+    ]);
+
+    pdf.seccion(doc, 'Tercero: ejemplares');
+    pdf.parrafo(doc, 'El presente anexo se firma en dos ejemplares de igual tenor y fecha, quedando uno en poder de cada parte.');
+
+    pdf.firmas(doc, [
+      pdf.firmaEmpresa('Empleador'),
+      {
+        titulo: 'Trabajador',
+        nombre: nombreTrabajador,
+        lineas: [`RUT ${trabajador.trabajador_rut}`]
+      }
+    ]);
+
+    pdf.nota(doc, `Documento generado en el sistema ERP de ${pdf.EMPRESA.razonSocial} el ${pdf.fechaHora(new Date())}.`);
+    pdf.finalizar(doc);
+    await listo;
 
     const documento = await DocumentoLegal.create({
       documento_legal_tipo: 'AnexoTraslado',

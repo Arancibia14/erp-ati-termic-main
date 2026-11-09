@@ -1,13 +1,13 @@
 const path = require('path');
 const fs = require('fs');
 const { Op } = require('sequelize');
-const PDFDocument = require('pdfkit');
 const Trabajador = require('../models/Trabajador');
 const Material = require('../models/Material');
 const EntregaEpp = require('../models/EntregaEpp');
 const DocumentoLegal = require('../models/DocumentoLegal');
 const LogAuditoria = require('../models/LogAuditoria');
-const { fechaHoy, ZONA_HORARIA } = require('../utils/fecha');
+const { fechaHoy } = require('../utils/fecha');
+const pdf = require('../utils/pdfMembrete');
 const sequelize = require('../config/database');
 const { consumirFifo, StockInsuficiente } = require('../utils/inventarioFifo');
 
@@ -293,78 +293,58 @@ async function generarComprobante(req, res) {
     const urlPdf = `/uploads/documentos/${filename}`;
 
     try {
-      await new Promise((resolve, reject) => {
-        const doc = new PDFDocument({ margin: 60, size: 'A4' });
-        const stream = fs.createWriteStream(filePath);
-        doc.pipe(stream);
-
-        doc.fontSize(22).font('Helvetica-Bold').fillColor('#0a2342')
-          .text('ATI TERMIC SpA', { align: 'center' });
-        doc.fontSize(10).font('Helvetica').fillColor('#555')
-          .text('Ingeniería en Climatización y HVAC', { align: 'center' });
-        doc.moveDown(0.5);
-        doc.moveTo(60, doc.y).lineTo(535, doc.y).strokeColor('#0a2342').lineWidth(2).stroke();
-        doc.moveDown(0.5);
-        doc.fontSize(16).font('Helvetica-Bold').fillColor('#0a2342')
-          .text('COMPROBANTE DE ENTREGA DE EPP', { align: 'center' });
-        doc.moveDown(1.5);
-
-        doc.fontSize(12).font('Helvetica-Bold').fillColor('#333').text('DATOS DEL TRABAJADOR');
-        doc.moveDown(0.3);
-        doc.fontSize(10).font('Helvetica').fillColor('#000');
-        doc.text(`RUT: ${trabajador.trabajador_rut}`);
-        doc.text(`Nombre: ${trabajador.trabajador_nombres} ${trabajador.trabajador_apellidos || ''}`.trim());
-        doc.moveDown(1);
-
-        doc.fontSize(12).font('Helvetica-Bold').fillColor('#333').text('DATOS DE LA ENTREGA');
-        doc.moveDown(0.3);
-        doc.fontSize(10).font('Helvetica').fillColor('#000');
-        doc.text(`Folio de entrega: ${lote}`);
-        doc.text(`Fecha y hora de validación: ${new Date(fechaHora).toLocaleString('es-CL', { timeZone: ZONA_HORARIA })}`);
-        doc.moveDown(1);
-
-        doc.fontSize(12).font('Helvetica-Bold').fillColor('#333').text('ARTÍCULOS ENTREGADOS');
-        doc.moveDown(0.5);
-        doc.fontSize(10).font('Helvetica').fillColor('#000');
-        filas.forEach((f, i) => {
-          const m = f.Material;
-          const nombre = m ? m.material_nombre : `Material #${f.material_id}`;
-          const sku = m && m.material_codigo_sku ? ` [${m.material_codigo_sku}]` : '';
-          const unidad = m && m.material_unidad_medida ? ` ${m.material_unidad_medida}` : '';
-          doc.text(`  ${i + 1}.  ${nombre}${sku}  —  ${f.entrega_epp_cantidad}${unidad}`);
-        });
-        doc.moveDown(1.5);
-
-        doc.moveTo(60, doc.y).lineTo(535, doc.y).strokeColor('#ccc').lineWidth(1).stroke();
-        doc.moveDown(0.5);
-        doc.fontSize(11).font('Helvetica-Bold').fillColor('#1e7d34')
-          .text('RECEPCIÓN CONFORME — FIRMADO DIGITALMENTE POR EL RECEPTOR', { align: 'center' });
-        doc.moveDown(1);
-
-        try {
-          const base64 = firma.split(',')[1];
-          const imgBuffer = Buffer.from(base64, 'base64');
-          doc.image(imgBuffer, doc.page.width / 2 - 110, doc.y, { width: 220 });
-          doc.moveDown(8);
-        } catch (_) {
-          doc.moveDown(3);
-        }
-
-        const yFirma = doc.y;
-        doc.moveTo(175, yFirma).lineTo(380, yFirma).strokeColor('#000').lineWidth(1).stroke();
-        doc.moveDown(0.3);
-        doc.fontSize(10).font('Helvetica').fillColor('#000')
-          .text(`${trabajador.trabajador_nombres} ${trabajador.trabajador_apellidos || ''}`.trim(), { align: 'center' });
-        doc.text(`RUT ${trabajador.trabajador_rut} — Receptor`, { align: 'center' });
-
-        doc.moveDown(2);
-        doc.fontSize(8).fillColor('#888')
-          .text(`Documento generado el ${new Date().toLocaleString('es-CL', { timeZone: ZONA_HORARIA })} — ATI Termic SpA. Registro inalterable.`, { align: 'center' });
-
-        doc.end();
-        stream.on('finish', resolve);
-        stream.on('error', reject);
+      const nombreTrabajador = `${trabajador.trabajador_nombres} ${trabajador.trabajador_apellidos || ''}`.trim();
+      const { doc, listo } = pdf.crearDocumento(filePath, {
+        titulo: 'Comprobante de entrega de EPP',
+        subtitulo: 'Elementos de protección personal',
+        banda: [
+          ['Folio de entrega', lote],
+          ['Fecha y hora de validación', pdf.fechaHora(fechaHora)],
+          ['Estado', 'Recepción validada', pdf.COLORES.verde]
+        ]
       });
+
+      pdf.seccion(doc, '1. Datos del trabajador');
+      pdf.datos(doc, [
+        ['Nombre', nombreTrabajador],
+        ['RUT', trabajador.trabajador_rut],
+        ['Obra asignada', trabajador.proyecto_codigo_correlativo]
+      ]);
+
+      pdf.seccion(doc, '2. Elementos entregados');
+      pdf.tabla(doc, [
+        { titulo: 'N°', ancho: 0.08, alinear: 'center' },
+        { titulo: 'Elemento', ancho: 0.52 },
+        { titulo: 'SKU', ancho: 0.2 },
+        { titulo: 'Cantidad', ancho: 0.2, alinear: 'right' }
+      ], filas.map((f, i) => {
+        const m = f.Material;
+        return [
+          i + 1,
+          m ? m.material_nombre : `Material #${f.material_id}`,
+          (m && m.material_codigo_sku) || '—',
+          pdf.cantidad(f.entrega_epp_cantidad, m && m.material_unidad_medida)
+        ];
+      }), 'Sin elementos registrados.');
+
+      pdf.seccion(doc, '3. Declaración del trabajador');
+      pdf.parrafo(doc, `Declaro recibir de ${pdf.EMPRESA.razonSocial}, sin costo y en buen estado, los elementos de protección personal detallados, y me comprometo a usarlos durante mi trabajo, cuidarlos e informar su deterioro o pérdida, conforme a la Ley N° 16.744 y al D.S. N° 594.`);
+
+      pdf.recuadro(doc, `Recepción validada con la firma del trabajador el ${pdf.fechaHora(fechaHora)}.`, 'ok');
+
+      pdf.firmas(doc, [
+        {
+          titulo: 'Recibe conforme',
+          nombre: nombreTrabajador,
+          lineas: [`RUT ${trabajador.trabajador_rut}`],
+          imagen: firma
+        },
+        pdf.firmaEmpresa('Entrega')
+      ]);
+
+      pdf.nota(doc, `Documento registrado en el sistema ERP de ${pdf.EMPRESA.razonSocial} con el folio de entrega ${lote}. Generado el ${pdf.fechaHora(new Date())}.`);
+      pdf.finalizar(doc);
+      await listo;
     } catch (pdfErr) {
       console.error('Error motor PDF:', pdfErr);
       // Excepción 2: Error de generación
