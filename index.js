@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const sequelize = require('./config/database');
+const demoLog = require('./utils/demoLog');
 
 // Models
 const Usuario = require('./models/Usuario');
@@ -176,6 +177,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Log de demo (npm run demo): peticiones y SQL en la terminal. Va después de
+// /uploads para no listar cada imagen o PDF que carga el navegador.
+app.use(demoLog.middleware);
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -523,6 +527,7 @@ sequelize.authenticate()
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Backend ERP ATI Termic corriendo en http://localhost:${PORT}`);
+      demoLog.anunciar();
     });
   })
   .catch(err => {

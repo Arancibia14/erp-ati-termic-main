@@ -6,8 +6,10 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "demo": "nodemon index.js --demo-log",
     "seed": "node seed.js",
-    "reset-db": "node reset-db.js"
+    "reset-db": "node reset-db.js",
+    "seed-demo": "node seed-demo.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
