@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { upload, getModelos, crearModelo, getUnidadesModelo, crearUnidad, getDocumentosModelo, subirDocumento } = require('../controllers/equipoController');
+const { upload, getModelos, crearModelo, getUnidadesModelo, crearUnidad, getDocumentosModelo, subirDocumento } = require('../controllers/materiales/equipoController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 function subirArchivo(req, res, next) {

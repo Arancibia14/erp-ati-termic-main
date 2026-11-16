@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { upload, getLiquidacionesTrabajador, cargarLiquidacion } = require('../controllers/liquidacionController');
+const { upload, getLiquidacionesTrabajador, cargarLiquidacion } = require('../controllers/personal/liquidacionController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 function subirArchivo(req, res, next) {

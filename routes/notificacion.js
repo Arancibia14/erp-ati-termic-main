@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getMisNotificaciones, marcarLeidas, borrarNotificacion, borrarTodas } = require('../controllers/notificacionController');
+const { getMisNotificaciones, marcarLeidas, borrarNotificacion, borrarTodas } = require('../controllers/inicio/notificacionController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU 66 - Gestionando notificaciones en la pantalla de Inicio. Las generan CU 17 y CU 57.

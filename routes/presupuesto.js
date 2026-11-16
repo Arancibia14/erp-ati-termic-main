@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getPresupuestoActual, registrarCambioPpto } = require('../controllers/presupuestoController');
+const { getPresupuestoActual, registrarCambioPpto } = require('../controllers/finanzas/presupuestoController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU54 - Registrando Control de Cambios Presupuestarios

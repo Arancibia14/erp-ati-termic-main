@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { subirPoliza, upload } = require('../controllers/polizaController');
+const { subirPoliza, upload } = require('../controllers/proyectos/polizaController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU55 - Gestionando Pólizas de Seguros por Faena

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getPlanificacion, crearHito } = require('../controllers/hitoController');
+const { getPlanificacion, crearHito } = require('../controllers/proyectos/hitoController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU09 - Definiendo hitos técnicos del proyecto.

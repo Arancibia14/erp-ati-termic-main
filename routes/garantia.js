@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { upload, cargarGarantia, buscarGarantias, descargarGarantia } = require('../controllers/garantiaController');
+const { upload, cargarGarantia, buscarGarantias, descargarGarantia } = require('../controllers/materiales/garantiaController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 function subirArchivo(req, res, next) {

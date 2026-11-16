@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getTributarios, actualizarTributarios, getIvaVigente } = require('../controllers/parametroController');
+const { getTributarios, actualizarTributarios, getIvaVigente } = require('../controllers/finanzas/parametroController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 // CU52 - Configurando parámetros de IVA y retenciones (solo Administrador Total)

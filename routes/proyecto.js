@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getProveedores, getEntidadesAsociadas, asociarSubcontratista } = require('../controllers/proyectoController');
+const { getProveedores, getEntidadesAsociadas, asociarSubcontratista } = require('../controllers/proyectos/proyectoController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 // CU15 - Asociando Subcontratista a Proyecto (varios por obra, cada uno con su rol).

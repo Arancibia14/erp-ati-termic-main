@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { getProveedores, crearProveedor, cambiarEstadoProveedor } = require('../controllers/proveedorController');
+const { getProveedores, crearProveedor, cambiarEstadoProveedor } = require('../controllers/materiales/proveedorController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
-const { verificarEliminacion, eliminarDefinitivo } = require('../controllers/eliminacionController');
+const { verificarEliminacion, eliminarDefinitivo } = require('../controllers/sistema/eliminacionController');
 
 // CU34 - Gestionando catálogo de proveedores.
 // El único actor del caso de uso es el Administrador Total.

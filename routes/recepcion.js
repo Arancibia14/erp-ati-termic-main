@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getGuiasPendientes, confirmarRecepcion } = require('../controllers/recepcionController');
+const { getGuiasPendientes, confirmarRecepcion } = require('../controllers/proyectos/recepcionController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU58 - Registrando Recepción de Insumos en Obra

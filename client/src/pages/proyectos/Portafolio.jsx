@@ -1,0 +1,351 @@
+import { useState, useEffect } from 'react';
+import { Image, Edit3, Save, ChevronDown, ChevronUp, Repeat, Briefcase, Archive, ArchiveRestore } from 'lucide-react';
+import api from '../../api/axios';
+import Toast, { useToast } from '../../components/Toast';
+import Badge from '../../components/Badge';
+import Select from '../../components/Select';
+import EstadoVacio from '../../components/EstadoVacio';
+
+// CU11 - Próximos estados válidos desde el estado actual del proyecto.
+// "Detenido" no aparece nunca como destino: eso lo cubre el CU12 (exige motivo).
+function opcionesEstado(actual) {
+  if (actual === 'Finalizado') return [];
+  if (actual === 'Detenido') return ['En Ejecución'];
+  if (actual === 'Planificación') return ['En Ejecución'];
+  if (actual === 'En Ejecución') return ['Planificación', 'Finalizado'];
+  return [];
+}
+
+export default function Portafolio() {
+  const { toasts, addToast, removeToast } = useToast();
+  const [proyectos, setProyectos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [editando, setEditando] = useState(null);
+  const [imagenes, setImagenes] = useState([]);
+  const [guardando, setGuardando] = useState(false);
+  const [form, setForm] = useState({ proyecto_nombre_obra: '', proyecto_correo_contacto: '', proyecto_descripcion_tecnica: '', proyecto_ubicacion: '' });
+
+  // CU11 - Actualizando estado del proyecto
+  const [nuevoEstado, setNuevoEstado] = useState('');
+  const [cambiandoEstado, setCambiandoEstado] = useState(false);
+  const [erroresEstado, setErroresEstado] = useState([]);
+
+  // CU 11 / UR-F-54 - Archivado lógico de proyectos finalizados
+  const esAdmin = JSON.parse(localStorage.getItem('usuario') || '{}').rol === 'admin';
+  const [verArchivados, setVerArchivados] = useState(false);
+  const [archivando, setArchivando] = useState(false);
+
+  useEffect(() => {
+    cargarProyectos(verArchivados);
+  }, [verArchivados]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const cargarProyectos = (archivados = verArchivados) => {
+    setLoading(true);
+    api.get('/portafolio', { params: archivados ? { archivados: 'solo' } : {} })
+      .then(r => setProyectos(r.data.data))
+      .catch(() => addToast('Error al cargar portafolio', 'error'))
+      .finally(() => setLoading(false));
+  };
+
+  const abrirEdicion = p => {
+    setEditando(p.proyecto_codigo_correlativo);
+    setForm({
+      proyecto_nombre_obra: p.proyecto_nombre_obra,
+      proyecto_correo_contacto: p.proyecto_correo_contacto,
+      proyecto_descripcion_tecnica: p.proyecto_descripcion_tecnica || '',
+      proyecto_ubicacion: p.proyecto_ubicacion || ''
+    });
+    setImagenes([]);
+    const opciones = opcionesEstado(p.EstadoProyecto?.estado_proyecto_nombre);
+    setNuevoEstado(opciones[0] || '');
+    setErroresEstado([]);
+  };
+
+  const cerrarEdicion = () => {
+    setEditando(null);
+    setImagenes([]);
+  };
+
+  // CU11 - Actualizando estado del proyecto
+  const cambiarEstado = async codigo => {
+    if (!nuevoEstado) {
+      setErroresEstado(['estado_proyecto_nombre']);
+      return addToast('Selecciona el nuevo estado del proyecto', 'error');
+    }
+    setErroresEstado([]);
+    setCambiandoEstado(true);
+    try {
+      const r = await api.put(`/portafolio/${codigo}/estado`, { estado_proyecto_nombre: nuevoEstado });
+      addToast(r.data.mensaje || 'Estado del proyecto actualizado correctamente', 'success');
+      cargarProyectos();
+      const opciones = opcionesEstado(nuevoEstado);
+      setNuevoEstado(opciones[0] || '');
+    } catch (err) {
+      addToast(err.response?.data?.error || 'Error al cambiar el estado', 'error');
+      setErroresEstado(err.response?.data?.campos || []);
+    } finally {
+      setCambiandoEstado(false);
+    }
+  };
+
+  const handleImagenes = e => {
+    const files = Array.from(e.target.files);
+    const invalidas = files.filter(f => !/\.(jpg|jpeg|png|webp)$/i.test(f.name));
+    if (invalidas.length > 0) {
+      addToast('Solo se permiten imágenes JPG, PNG o WEBP', 'error');
+      return;
+    }
+    const grandes = files.filter(f => f.size > 10 * 1024 * 1024);
+    if (grandes.length > 0) {
+      addToast('Cada imagen debe pesar menos de 10 MB', 'error');
+      return;
+    }
+    setImagenes(files);
+  };
+
+  const guardar = async codigo => {
+    setGuardando(true);
+    try {
+      const fd = new FormData();
+      fd.append('proyecto_nombre_obra', form.proyecto_nombre_obra);
+      fd.append('proyecto_correo_contacto', form.proyecto_correo_contacto);
+      fd.append('proyecto_descripcion_tecnica', form.proyecto_descripcion_tecnica);
+      fd.append('proyecto_ubicacion', form.proyecto_ubicacion);
+      imagenes.forEach(img => fd.append('imagenes', img));
+
+      await api.put(`/portafolio/${codigo}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      addToast('Portafolio actualizado exitosamente', 'success');
+      cerrarEdicion();
+      cargarProyectos();
+    } catch (err) {
+      addToast(err.response?.data?.error || 'Error al actualizar', 'error');
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  const archivar = (p, archivarlo) => {
+    setArchivando(true);
+    api.put(`/portafolio/${p.proyecto_codigo_correlativo}/archivo`, { archivar: archivarlo })
+      .then(r => {
+        addToast(r.data.mensaje, 'success');
+        setEditando(null);
+        cargarProyectos();
+      })
+      .catch(err => addToast(err.response?.data?.error || 'Error al archivar el proyecto', 'error'))
+      .finally(() => setArchivando(false));
+  };
+
+  return (
+    <div className="page-container">
+      <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <Image size={20} />
+        Portafolio de Obras
+      </h1>
+
+      {/* CU 11 / UR-F-54 - Filtro de proyectos archivados */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+        <button type="button" className="btn btn-secondary" onClick={() => { setEditando(null); setVerArchivados(v => !v); }}>
+          {verArchivados ? <><Briefcase size={14} /> Ver proyectos activos</> : <><Archive size={14} /> Ver archivados</>}
+        </button>
+        <span style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>
+          {verArchivados ? 'Mostrando proyectos archivados' : 'Los proyectos archivados no aparecen en esta lista'}
+        </span>
+      </div>
+      {!loading && verArchivados && proyectos.length === 0 && (
+        <p style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>No hay proyectos archivados.</p>
+      )}
+
+      {loading && <p style={{ color: 'var(--color-text-muted)', marginBottom: 20 }}>Cargando proyectos...</p>}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 800 }}>
+        {proyectos.map(p => (
+          <div key={p.proyecto_codigo_correlativo} className="card" style={{ padding: 0 }}>
+            {/* Header de la tarjeta */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 20px',
+              cursor: 'pointer'
+            }}
+              onClick={() => editando === p.proyecto_codigo_correlativo ? cerrarEdicion() : abrirEdicion(p)}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>{p.proyecto_nombre_obra}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', ui-monospace, monospace", color: 'var(--color-text-muted)' }}>
+                      {p.proyecto_codigo_correlativo}
+                    </span>
+                    <Badge value={p.EstadoProyecto?.estado_proyecto_nombre} />
+                    {p.proyecto_archivado && <Badge value="Archivado" />}
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>
+                  {parseFloat(p.proyecto_porcentaje_avance).toFixed(1)}% avance
+                </span>
+                {editando === p.proyecto_codigo_correlativo
+                  ? <ChevronUp size={16} color="var(--color-text-muted)" />
+                  : <ChevronDown size={16} color="var(--color-text-muted)" />
+                }
+              </div>
+            </div>
+
+            {/* Panel de edición */}
+            {editando === p.proyecto_codigo_correlativo && (
+              <div style={{ borderTop: '1px solid var(--color-border)', padding: 20 }}>
+                {/* CU 11 / UR-F-54 - Archivar o desarchivar */}
+                {esAdmin && (p.proyecto_archivado || p.EstadoProyecto?.estado_proyecto_nombre === 'Finalizado') && (
+                  <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                    <button type="button" className="btn btn-secondary" disabled={archivando}
+                      onClick={() => archivar(p, !p.proyecto_archivado)}>
+                      {p.proyecto_archivado ? <><ArchiveRestore size={14} /> Desarchivar</> : <><Archive size={14} /> Archivar proyecto</>}
+                    </button>
+                    <span style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
+                      {p.proyecto_archivado
+                        ? `Archivado el ${p.proyecto_fecha_archivado?.split('-').reverse().join('-')}. Al desarchivarlo vuelve a las pantallas de trabajo diario.`
+                        : 'Al archivarlo deja de aparecer en las pantallas de trabajo diario y queda consultable en "Ver archivados".'}
+                    </span>
+                  </div>
+                )}
+
+                {/* CU11 - Actualizando estado del proyecto */}
+                <div className="form-group">
+                  <label className="form-label">Estado del Proyecto</label>
+                  {opcionesEstado(p.EstadoProyecto?.estado_proyecto_nombre).length === 0 ? (
+                    <p style={{ fontSize: 13, color: 'var(--color-text-muted)', margin: 0 }}>
+                      {p.EstadoProyecto?.estado_proyecto_nombre === 'Finalizado'
+                        ? 'Proyecto finalizado: no se puede cambiar de estado.'
+                        : 'No hay transiciones disponibles para este estado.'}
+                    </p>
+                  ) : (
+                    <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <Select
+                        className={'form-select' + (erroresEstado.includes('estado_proyecto_nombre') ? ' is-invalid' : '')}
+                        style={{ maxWidth: 220 }}
+                        value={nuevoEstado}
+                        onChange={e => { setNuevoEstado(e.target.value); setErroresEstado([]); }}
+                      >
+                        {opcionesEstado(p.EstadoProyecto?.estado_proyecto_nombre).map(op => (
+                          <option key={op} value={op}>{op}</option>
+                        ))}
+                      </Select>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => cambiarEstado(p.proyecto_codigo_correlativo)}
+                        disabled={cambiandoEstado}
+                      >
+                        <Repeat size={14} />
+                        {cambiandoEstado ? 'Cambiando...' : 'Cambiar Estado'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="form-grid-2" style={{ marginBottom: 16 }}>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">Nombre / Título de Obra</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={form.proyecto_nombre_obra}
+                      onChange={e => setForm(f => ({ ...f, proyecto_nombre_obra: e.target.value }))}
+                    />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">Ubicación</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ej: Santiago, Región Metropolitana"
+                      value={form.proyecto_ubicacion}
+                      onChange={e => setForm(f => ({ ...f, proyecto_ubicacion: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Descripción Técnica</label>
+                  <textarea
+                    className="form-textarea"
+                    rows={3}
+                    placeholder="Describe el alcance técnico del proyecto, sistemas instalados, características especiales..."
+                    value={form.proyecto_descripcion_tecnica}
+                    onChange={e => setForm(f => ({ ...f, proyecto_descripcion_tecnica: e.target.value }))}
+                  />
+                </div>
+
+                <div className="form-grid-2" style={{ marginBottom: 16 }}>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">Correo de Contacto</label>
+                    <input
+                      type="email"
+                      className="form-input"
+                      value={form.proyecto_correo_contacto}
+                      onChange={e => setForm(f => ({ ...f, proyecto_correo_contacto: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Fotografías (JPG, PNG, WEBP — máx. 10MB c/u)</label>
+                  <label style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '8px 12px',
+                    background: 'var(--color-bg-elevated)',
+                    border: '1px dashed var(--color-border)',
+                    borderRadius: 4,
+                    cursor: 'pointer',
+                    fontSize: 13,
+                    color: imagenes.length > 0 ? 'var(--color-text-primary)' : 'var(--color-text-muted)'
+                  }}>
+                    <Image size={14} />
+                    {imagenes.length > 0
+                      ? `${imagenes.length} imagen(es) seleccionada(s)`
+                      : 'Seleccionar imágenes...'
+                    }
+                    <input
+                      type="file"
+                      accept=".jpg,.jpeg,.png,.webp"
+                      multiple
+                      style={{ display: 'none' }}
+                      onChange={handleImagenes}
+                    />
+                  </label>
+                </div>
+
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => guardar(p.proyecto_codigo_correlativo)}
+                    disabled={guardando}
+                  >
+                    <Save size={15} />
+                    {guardando ? 'Guardando...' : 'Guardar Cambios'}
+                  </button>
+                  <button className="btn btn-secondary" onClick={cerrarEdicion}>
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+
+        {!loading && proyectos.length === 0 && (
+          <div className="card" style={{ padding: 0 }}>
+            <EstadoVacio icon={Briefcase}>No hay proyectos registrados.</EstadoVacio>
+          </div>
+        )}
+      </div>
+
+      <Toast toasts={toasts} removeToast={removeToast} />
+    </div>
+  );
+}

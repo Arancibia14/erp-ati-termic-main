@@ -6,7 +6,7 @@ const {
   generarOrdenCompra,
   getHistorial,
   getDetalle
-} = require('../controllers/ordenCompraController');
+} = require('../controllers/materiales/ordenCompraController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 // CU35 - Generando Orden de Compra Automáticamente

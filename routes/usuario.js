@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUsuarios, crearUsuario, cambiarRol } = require('../controllers/usuarioController');
+const { getUsuarios, crearUsuario, cambiarRol } = require('../controllers/acceso/usuarioController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 // CU 63 - Registrando nuevo usuario del sistema

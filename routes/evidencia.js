@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getHitosPorProyecto, subirEvidencia, getPendientes, validarEvidencia, upload } = require('../controllers/evidenciaController');
+const { getHitosPorProyecto, subirEvidencia, getPendientes, validarEvidencia, upload } = require('../controllers/proyectos/evidenciaController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 router.get('/hito/:codigo', verifyToken, getHitosPorProyecto);

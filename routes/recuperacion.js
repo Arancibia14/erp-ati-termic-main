@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { solicitarRecuperacion, restablecerContrasena } = require('../controllers/recuperacionController');
+const { solicitarRecuperacion, restablecerContrasena } = require('../controllers/acceso/recuperacionController');
 
 // CU06 - Solicitando recuperación de credenciales (sin sesión: el usuario no puede loguearse)
 router.post('/solicitar', solicitarRecuperacion);

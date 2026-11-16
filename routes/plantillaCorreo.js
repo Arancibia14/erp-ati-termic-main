@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getEventos, getPlantilla, actualizarPlantilla } = require('../controllers/plantillaCorreoController');
+const { getEventos, getPlantilla, actualizarPlantilla } = require('../controllers/sistema/plantillaCorreoController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 // CU48 - Editando plantillas de correo electrónico (solo Administrador Total)

@@ -5,7 +5,7 @@ const {
   crearProyecto, crearTrabajador, crearSolicitudMaterial,
   crearGuiaDespacho, crearContratoLaboral, actualizarContratoLaboral, eliminarContratoLaboral,
   actualizarPlazoProyecto, actualizarCajaChicaProyecto
-} = require('../controllers/setupController');
+} = require('../controllers/acceso/setupController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 router.get('/estados',           verifyToken, getEstados);

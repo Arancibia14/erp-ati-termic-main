@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getHistorialComunicaciones, registrarComunicacion, upload } = require('../controllers/comunicacionController');
+const { getHistorialComunicaciones, registrarComunicacion, upload } = require('../controllers/proyectos/comunicacionController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU44 - Registrando Comunicación del Proyecto

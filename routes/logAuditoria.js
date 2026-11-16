@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getLogs, getModulos, getDetalle } = require('../controllers/logAuditoriaController');
+const { getLogs, getModulos, getDetalle } = require('../controllers/sistema/logAuditoriaController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 // CU04 - Visualizando registros de auditoría (solo Administrador Total)

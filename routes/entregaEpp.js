@@ -7,7 +7,7 @@ const {
   getHistorial,
   validarEntrega,
   generarComprobante
-} = require('../controllers/entregaEppController');
+} = require('../controllers/personal/entregaEppController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU22 - Registrando Entrega de EPP

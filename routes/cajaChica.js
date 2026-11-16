@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   getProyectos, getSaldo, registrarEgreso, getEgresosByProyecto, recibirComprobante, adjuntarComprobante
-} = require('../controllers/cajaChicaController');
+} = require('../controllers/finanzas/cajaChicaController');
 const { verifyToken } = require('../middleware/auth');
 
 router.get('/proyectos', verifyToken, getProyectos);

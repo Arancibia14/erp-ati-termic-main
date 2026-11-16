@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { upload, getCertificadosProyecto, cargarCertificados } = require('../controllers/certificadoLaboralController');
+const { upload, getCertificadosProyecto, cargarCertificados } = require('../controllers/personal/certificadoLaboralController');
 const { verifyToken } = require('../middleware/auth');
 
 function subirArchivos(req, res, next) {

@@ -5,7 +5,7 @@ const {
   getDespachado,
   registrarReingreso,
   getHistorial
-} = require('../controllers/devolucionObraController');
+} = require('../controllers/materiales/devolucionObraController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU32 - Registrando reingreso de materiales sobrantes (Admin Total y Supervisor de Obra)

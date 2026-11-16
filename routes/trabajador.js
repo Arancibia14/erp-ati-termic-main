@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { getEspecialidades, getTrabajadores, crearTrabajador, actualizarTrabajador, desactivarTrabajador } = require('../controllers/trabajadorController');
+const { getEspecialidades, getTrabajadores, crearTrabajador, actualizarTrabajador, desactivarTrabajador } = require('../controllers/personal/trabajadorController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
-const { verificarEliminacion, eliminarDefinitivo } = require('../controllers/eliminacionController');
-const { getDocumentacionTrabajador } = require('../controllers/documentacionTrabajadorController');
+const { verificarEliminacion, eliminarDefinitivo } = require('../controllers/sistema/eliminacionController');
+const { getDocumentacionTrabajador } = require('../controllers/personal/documentacionTrabajadorController');
 
 router.get('/especialidades', verifyToken, requireAdmin, getEspecialidades);
 router.get('/', verifyToken, requireAdmin, getTrabajadores);

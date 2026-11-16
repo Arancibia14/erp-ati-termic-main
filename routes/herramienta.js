@@ -10,7 +10,7 @@ const {
   getHistorial,
   getDocumentos,
   subirDocumento
-} = require('../controllers/herramientaController');
+} = require('../controllers/materiales/herramientaController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 function subirArchivo(req, res, next) {

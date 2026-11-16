@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { getMateriales, getMaterial, crearMaterial, actualizarMaterial, desactivarMaterial, getValorizacion } = require('../controllers/materialController');
+const { getMateriales, getMaterial, crearMaterial, actualizarMaterial, desactivarMaterial, getValorizacion } = require('../controllers/materiales/materialController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
-const { verificarEliminacion, eliminarDefinitivo } = require('../controllers/eliminacionController');
+const { verificarEliminacion, eliminarDefinitivo } = require('../controllers/sistema/eliminacionController');
 
 router.get('/', verifyToken, getMateriales);
 // CU 26 / UR-F-29 - Valoración FIFO del inventario (antes de /:id para que no la capture)

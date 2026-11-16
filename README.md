@@ -50,7 +50,11 @@ Si tienes el archivo `.zip`, extráelo directamente en esa ubicación.
 
 > **El cotejamiento importa.** Debe ser `utf8mb4_general_ci`, que es el que usa el sistema. Si dejas el que MySQL 8 trae por defecto (`utf8mb4_0900_ai_ci`), el backend no puede crear las llaves foráneas y falla al arrancar.
 
-> **Alternativa:** en lugar de crear la base a mano, puedes importar `schema.sql` desde phpMyAdmin. Ese archivo crea la base, sus 36 tablas y las llaves foráneas con el cotejamiento correcto.
+> **Alternativa:** en lugar de crear la base a mano, puedes usar los scripts de la carpeta `base-de-datos/` desde phpMyAdmin (pestaña **Importar**), en este orden:
+> 1. `DDL_erp_ati_termic.sql`: crea la base, sus 47 tablas, las llaves y los índices con el cotejamiento correcto.
+> 2. `DML_erp_ati_termic.sql`: carga los datos iniciales, los mismos que carga `reset-db.js`, incluidos los usuarios Administrador y Supervisor.
+>
+> Si importas los dos scripts, omite el Paso 8 (`node reset-db.js`).
 
 ---
 
@@ -216,7 +220,7 @@ Y asegurarte de que **MySQL esté iniciado en XAMPP**.
 | `Error al conectar a la base de datos` | MySQL no está corriendo o datos del .env incorrectos | Iniciar MySQL en XAMPP y revisar `.env` |
 | `Access denied for user 'root'` | Contraseña de MySQL incorrecta | Cambiar `DB_PASS` en el `.env` |
 | `Database 'erp_ati_termic' doesn't exist` | Base de datos no fue creada | Crear la BD en phpMyAdmin (Paso 3) |
-| `...are incompatible` al arrancar | La base se creó con otro cotejamiento | Recrearla con `utf8mb4_general_ci` o importar `schema.sql` (Paso 3) |
+| `...are incompatible` al arrancar | La base se creó con otro cotejamiento | Recrearla con `utf8mb4_general_ci` o importar `base-de-datos/DDL_erp_ati_termic.sql` (Paso 3) |
 | El frontend no carga datos | El backend no está corriendo | Verificar que `node index.js` esté activo |
 | Puerto 3000 en uso | Otro proceso ocupa el puerto | Cambiar `PORT=3001` en el `.env` (y ajustar el proxy de `client/vite.config.js`) |
 
@@ -228,7 +232,9 @@ Y asegurarte de que **MySQL esté iniciado en XAMPP**.
 erp-ati-termic-main/
 ├── client/                          → Frontend React (Vite, puerto 3001)
 │   ├── src/
-│   │   ├── pages/                   → Vistas (una por módulo del ERP)
+│   │   ├── pages/                   → Vistas, ordenadas por módulo del menú:
+│   │   │                               acceso, inicio, proyectos, personal,
+│   │   │                               materiales, finanzas y sistema
 │   │   ├── components/              → Componentes reutilizables (Sidebar, Toast, Badge)
 │   │   ├── api/                     → Configuración de Axios para llamadas al backend
 │   │   ├── utils/                   → Utilidades del navegador (fechas locales, cola de evidencias)
@@ -236,9 +242,10 @@ erp-ati-termic-main/
 │   │   └── assets/                  → Imágenes e íconos
 │   └── vite.config.js               → Puerto del frontend y proxy hacia el backend
 ├── config/                          → Conexión a la base de datos (Sequelize)
-├── controllers/                     → Lógica de negocio de cada módulo
+├── controllers/                     → Lógica de negocio, ordenada en las mismas
+│                                       carpetas por módulo que las vistas
 ├── middleware/                      → Validación de tokens JWT y roles
-├── models/                          → Definición de las 36 tablas con Sequelize (ORM)
+├── models/                          → Definición de las 47 tablas con Sequelize (ORM)
 ├── routes/                          → Definición de endpoints REST de la API
 ├── utils/                           → Utilidades del backend:
 │                                       fecha.js (fechas en hora de Chile)
@@ -250,6 +257,8 @@ erp-ati-termic-main/
 ├── index.js                         → Punto de entrada del servidor y migraciones de arranque
 ├── reset-db.js                      → Reinicia y puebla la base de datos
 ├── seed.js                          → Solo inserta datos de prueba (sin borrar)
-├── schema.sql                       → Estructura completa de la base: 36 tablas y sus llaves foráneas
+├── base-de-datos/                   → Scripts SQL de la base de datos:
+│                                       DDL_erp_ati_termic.sql (estructura: 47 tablas y sus llaves)
+│                                       DML_erp_ati_termic.sql (datos iniciales)
 └── .env                             → Variables de entorno (NO compartir)
 ```

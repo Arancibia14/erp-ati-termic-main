@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUbicacion, buscarDireccion, guardarUbicacion } = require('../controllers/ubicacionController');
+const { getUbicacion, buscarDireccion, guardarUbicacion } = require('../controllers/proyectos/ubicacionController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU10 - Registrando geolocalización de la obra.

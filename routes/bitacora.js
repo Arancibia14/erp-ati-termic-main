@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getProyectos, registrarBitacora, getBitacorasByProyecto } = require('../controllers/bitacoraController');
+const { getProyectos, registrarBitacora, getBitacorasByProyecto } = require('../controllers/proyectos/bitacoraController');
 const { verifyToken } = require('../middleware/auth');
 
 router.get('/proyectos', verifyToken, getProyectos);

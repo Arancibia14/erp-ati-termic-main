@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { generarCertificado } = require('../controllers/certificadoController');
+const { generarCertificado } = require('../controllers/proyectos/certificadoController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU56 - Emitiendo Certificado de Instalación Técnica

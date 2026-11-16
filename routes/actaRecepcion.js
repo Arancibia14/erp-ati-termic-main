@@ -8,7 +8,7 @@ const {
   listarActas,
   anularActa,
   reenviarCorreoActa
-} = require('../controllers/actaRecepcionController');
+} = require('../controllers/proyectos/actaRecepcionController');
 
 // CU 68 - Generando acta de recepción final de obra
 router.get('/obras', verifyToken, getObrasHabilitadas);

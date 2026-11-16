@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getMisSolicitudes, crearSolicitud, getSolicitudesPendientes, aprobarSolicitud, rechazarSolicitud } = require('../controllers/solicitudMaterialController');
+const { getMisSolicitudes, crearSolicitud, getSolicitudesPendientes, aprobarSolicitud, rechazarSolicitud } = require('../controllers/materiales/solicitudMaterialController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 router.get('/mis-solicitudes', verifyToken, getMisSolicitudes);

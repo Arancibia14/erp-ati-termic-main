@@ -7,7 +7,7 @@ const {
   crearGuia,
   getGuiasRegistradas,
   confirmarDespacho
-} = require('../controllers/guiaDespachoController');
+} = require('../controllers/materiales/guiaDespachoController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 router.get('/proveedores', verifyToken, getProveedores);

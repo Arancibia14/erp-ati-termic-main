@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { recibirImagen, getAvisos, getAvisosVigentes, crearAviso, actualizarAviso, cambiarEstado } = require('../controllers/avisoController');
+const { recibirImagen, getAvisos, getAvisosVigentes, crearAviso, actualizarAviso, cambiarEstado } = require('../controllers/inicio/avisoController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 // CU 46 - Gestionando avisos temporales (módulo "Avisos Internos").

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getOrdenesPendientesFact, vincularFactura, upload } = require('../controllers/facturaController');
+const { getOrdenesPendientesFact, vincularFactura, upload } = require('../controllers/finanzas/facturaController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU37 - Vinculando Facturas Digitales a Procesos de Compra

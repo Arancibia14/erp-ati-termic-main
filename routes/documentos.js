@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { buscarDocumentos } = require('../controllers/documentoController');
+const { buscarDocumentos } = require('../controllers/sistema/documentoController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU47 - Buscando Documentos Legales

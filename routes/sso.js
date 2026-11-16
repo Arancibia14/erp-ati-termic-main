@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getProyectos, getTrabajadores, registrarIncidente, upload } = require('../controllers/ssoController');
+const { getProyectos, getTrabajadores, registrarIncidente, upload } = require('../controllers/proyectos/ssoController');
 const { verifyToken } = require('../middleware/auth');
 
 router.get('/proyectos', verifyToken, getProyectos);

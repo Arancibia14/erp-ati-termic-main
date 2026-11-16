@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getInfoContractual, generarAnexoTraslado } = require('../controllers/anexoContratoController');
+const { getInfoContractual, generarAnexoTraslado } = require('../controllers/personal/anexoContratoController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 // CU21 - Generando Anexo de Contrato por Traslado

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getListadoProyectos, getProyecto, actualizarProyecto, detenerProyecto, actualizarEstadoProyecto, archivarProyecto, upload } = require('../controllers/portafolioController');
+const { getListadoProyectos, getProyecto, actualizarProyecto, detenerProyecto, actualizarEstadoProyecto, archivarProyecto, upload } = require('../controllers/proyectos/portafolioController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 // CU45 - Gestionando Portafolio de Obras

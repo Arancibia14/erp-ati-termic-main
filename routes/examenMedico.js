@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { upload, getExamenesTrabajador, cargarExamen } = require('../controllers/examenMedicoController');
+const { upload, getExamenesTrabajador, cargarExamen } = require('../controllers/personal/examenMedicoController');
 const { verifyToken, requireAdmin } = require('../middleware/auth');
 
 function subirArchivo(req, res, next) {

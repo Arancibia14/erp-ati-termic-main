@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { subirEspecificacion, getEspecificaciones, cargarEspecificacion } = require('../controllers/especificacionController');
+const { subirEspecificacion, getEspecificaciones, cargarEspecificacion } = require('../controllers/proyectos/especificacionController');
 const { verifyToken } = require('../middleware/auth');
 
 // CU13 - Gestionando Especificaciones Técnicas.
